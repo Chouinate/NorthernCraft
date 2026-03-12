@@ -260,10 +260,11 @@
       grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
       gap: 24px;
     }
-    .product-card { cursor: pointer; }
+    .product-card { cursor: pointer; position: relative; }
     .product-card-img {
       background: var(--cream-dark);
       aspect-ratio: 1/1;
+      position: relative;
       display: flex;
       align-items: center;
       justify-content: center;
@@ -273,15 +274,16 @@
     .product-card:hover .product-card-img { opacity: 0.85; }
     .product-card-img img { width: 100%; height: 100%; object-fit: cover; }
     .product-card-placeholder { display: none; }
-    .product-card-info {
-      margin-top: 12px;
-      text-align: center;
-    }
+    .product-card-info { display: none; }
     .product-card-name {
+      position: absolute;
+      bottom: 14px;
+      left: 14px;
       font-family: var(--ff-serif);
-      font-size: 16px;
+      font-size: 15px;
       font-weight: 400;
-      color: var(--charcoal);
+      color: #fff;
+      pointer-events: none;
     }
     /* ── BUNDLES ── */
     #bundles { background: var(--cream-dark); }
@@ -497,97 +499,97 @@
       <div class="product-card">
         <div class="product-card-img">
           <img src="Products/Solstice.jpg" alt="Solstice">
+          <p class="product-card-name">Solstice</p>
         </div>
         <div class="product-card-info">
-          <p class="product-card-name">Solstice</p>
         </div>
       </div>
       <div class="product-card">
         <div class="product-card-img">
           <img src="Products/Bloom.jpg" alt="Bloom">
+          <p class="product-card-name">Bloom</p>
         </div>
         <div class="product-card-info">
-          <p class="product-card-name">Bloom</p>
         </div>
       </div>
       <div class="product-card">
         <div class="product-card-img">
           <img src="Products/Petal.jpg" alt="Petal">
+          <p class="product-card-name">Petal</p>
         </div>
         <div class="product-card-info">
-          <p class="product-card-name">Petal</p>
         </div>
       </div>
       <div class="product-card">
         <div class="product-card-img">
           <img src="Products/Quarry.jpg" alt="Quarry">
+          <p class="product-card-name">Quarry</p>
         </div>
         <div class="product-card-info">
-          <p class="product-card-name">Quarry</p>
         </div>
       </div>
       <div class="product-card">
         <div class="product-card-img">
           <img src="Products/Meadow.jpg" alt="Meadow">
+          <p class="product-card-name">Meadow</p>
         </div>
         <div class="product-card-info">
-          <p class="product-card-name">Meadow</p>
         </div>
       </div>
       <div class="product-card">
         <div class="product-card-img">
           <img src="Products/Summit.jpg" alt="Summit">
+          <p class="product-card-name">Summit</p>
         </div>
         <div class="product-card-info">
-          <p class="product-card-name">Summit</p>
         </div>
       </div>
       <div class="product-card">
         <div class="product-card-img">
           <img src="Products/Grove.jpg" alt="Grove">
+          <p class="product-card-name">Grove</p>
         </div>
         <div class="product-card-info">
-          <p class="product-card-name">Grove</p>
         </div>
       </div>
       <div class="product-card">
         <div class="product-card-img">
           <img src="Products/Flora.jpg" alt="Flora">
+          <p class="product-card-name">Flora</p>
         </div>
         <div class="product-card-info">
-          <p class="product-card-name">Flora</p>
         </div>
       </div>
       <div class="product-card">
         <div class="product-card-img">
           <img src="Products/North.jpg" alt="North">
+          <p class="product-card-name">North</p>
         </div>
         <div class="product-card-info">
-          <p class="product-card-name">North</p>
         </div>
       </div>
       <div class="product-card">
         <div class="product-card-img">
           <img src="Products/Blossom.jpg" alt="Blossom">
+          <p class="product-card-name">Blossom</p>
         </div>
         <div class="product-card-info">
-          <p class="product-card-name">Blossom</p>
         </div>
       </div>
       <div class="product-card">
         <div class="product-card-img">
           <img src="Products/Rosette.jpg" alt="Rosette">
+          <p class="product-card-name">Rosette</p>
         </div>
         <div class="product-card-info">
-          <p class="product-card-name">Rosette</p>
         </div>
       </div>
       <div class="product-card">
         <div class="product-card-img">
           <img src="Products/Flare.jpg" alt="Flare">
+          <p class="product-card-name">Flare</p>
         </div>
         <div class="product-card-info">
-          <p class="product-card-name">Flare</p>
         </div>
       </div>
     </div>
