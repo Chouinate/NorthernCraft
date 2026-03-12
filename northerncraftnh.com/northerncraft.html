@@ -284,7 +284,10 @@
       font-weight: 400;
       color: #fff;
       pointer-events: none;
+      opacity: 0;
+      transition: opacity 0.2s;
     }
+    .product-card:hover .product-card-name { opacity: 1; }
     /* ── BUNDLES ── */
     #bundles { background: var(--cream-dark); }
     .bundles-grid {
