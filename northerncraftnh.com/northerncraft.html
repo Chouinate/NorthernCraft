@@ -486,6 +486,7 @@
       <span></span><span></span><span></span>
     </button>
   </nav>
+  <script>document.body.style.paddingTop = document.querySelector('nav').offsetHeight + 'px';</script>
   <!-- HERO -->
   <section class="hero" style="padding: 0 0px 0 0;">
     <div class="hero-left">
@@ -731,7 +732,6 @@
     const startH = 120;
     const startTaglineH = tagline.offsetHeight;
 
-    document.body.style.paddingTop = nav.offsetHeight + 'px';
     let raf;
     window.addEventListener('scroll', () => {
       cancelAnimationFrame(raf);
