@@ -346,17 +346,18 @@
       text-decoration: none;
       align-self: end;
       justify-self: center;
-      display: inline-flex;
+      display: flex;
+      flex-direction: column;
       align-items: center;
-      gap: 8px;
       transition: color 0.2s;
     }
     .bundle-card-link::after {
-      content: '→';
-      font-size: 14px;
-      letter-spacing: 0;
-      font-weight: 300;
-      opacity: 0.6;
+      content: '';
+      display: block;
+      width: 100%;
+      height: 1px;
+      background: rgba(92, 53, 69, 0.3);
+      margin-top: 6px;
     }
     .bundle-card-link:hover { color: var(--mauve); }
     /* ── ABOUT ── */
