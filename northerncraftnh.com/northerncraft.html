@@ -346,7 +346,18 @@
       text-decoration: none;
       align-self: end;
       justify-self: center;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
       transition: color 0.2s;
+    }
+    .bundle-card-link::after {
+      content: '';
+      display: block;
+      width: 85%;
+      height: 1px;
+      background: var(--mauve-dark);
+      margin-top: 6px;
     }
     .bundle-card-link:hover { color: var(--mauve); }
     /* ── ABOUT ── */
