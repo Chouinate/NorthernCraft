@@ -296,13 +296,16 @@
     .bundles-grid {
       display: grid;
       grid-template-columns: 1fr 1fr;
+      grid-template-rows: auto auto auto;
       gap: 24px;
+      align-items: start;
     }
     .bundle-card {
       background: var(--cream);
       padding: 40px;
-      display: flex;
-      flex-direction: column;
+      display: grid;
+      grid-template-rows: subgrid;
+      grid-row: span 3;
       gap: 20px;
     }
     .bundle-card-header {
