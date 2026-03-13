@@ -307,15 +307,6 @@
       display: grid;
       grid-template-rows: subgrid;
       grid-row: span 3;
-      position: relative;
-    }
-    .bundle-card::after {
-      content: '';
-      position: absolute;
-      bottom: 20px;
-      left: 0;
-      right: 0;
-      border-bottom: 1px solid rgba(92, 53, 69, 0.4);
     }
     .bundle-card-header {
       display: flex;
@@ -353,9 +344,20 @@
       text-transform: lowercase;
       color: var(--mauve-dark);
       text-decoration: none;
-      align-self: start;
-      margin-top: 8px;
+      align-self: end;
+      justify-self: center;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
       transition: color 0.2s;
+    }
+    .bundle-card-link::after {
+      content: '';
+      display: block;
+      width: 20px;
+      height: 1px;
+      background: var(--mauve-dark);
+      margin-top: 6px;
     }
     .bundle-card-link:hover { color: var(--mauve); }
     /* ── ABOUT ── */
