@@ -307,6 +307,14 @@
       display: grid;
       grid-template-rows: subgrid;
       grid-row: span 3;
+      position: relative;
+    }
+    .bundle-card::after {
+      content: '';
+      position: absolute;
+      bottom: 5px;
+      left: 0;
+      right: 0;
       border-bottom: 1px solid rgba(92, 53, 69, 0.4);
     }
     .bundle-card-header {
