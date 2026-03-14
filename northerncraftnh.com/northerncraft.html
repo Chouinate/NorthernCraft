@@ -106,6 +106,8 @@
     .nav-hamburger.open span:nth-child(2) { opacity: 0; }
     .nav-hamburger.open span:nth-child(3) { transform: translateY(-6.25px) rotate(-45deg); }
     @media (max-width: 768px) {
+      html { scroll-snap-type: y proximity; }
+      section, footer { scroll-snap-align: start; }
       .nav-hamburger { display: flex; }
       .nav-links {
         display: none;
