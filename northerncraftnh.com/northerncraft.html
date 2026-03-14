@@ -790,17 +790,23 @@
     // Mobile section snapping
     if (window.matchMedia('(max-width: 768px)').matches) {
       const snapSections = [...document.querySelectorAll('section, footer')];
-      const snapThreshold = () => window.innerHeight * 0.25;
+      const snapThreshold = () => window.innerHeight * 0.2;
+      let snapping = false;
 
       function snapIfNear() {
+        if (snapping) return;
         const scrollY = window.scrollY;
+        const navH = nav.offsetHeight;
         let nearest = null, nearestDist = Infinity;
         for (const el of snapSections) {
-          const dist = Math.abs(scrollY - el.offsetTop);
-          if (dist < nearestDist) { nearestDist = dist; nearest = el.offsetTop; }
+          const target = Math.max(0, el.offsetTop - navH);
+          const dist = Math.abs(scrollY - target);
+          if (dist < nearestDist) { nearestDist = dist; nearest = target; }
         }
-        if (nearestDist < snapThreshold()) {
+        if (nearestDist > 1 && nearestDist < snapThreshold()) {
+          snapping = true;
           window.scrollTo({ top: nearest, behavior: 'smooth' });
+          setTimeout(() => { snapping = false; }, 600);
         }
       }
 
