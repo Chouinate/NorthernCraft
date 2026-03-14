@@ -812,9 +812,9 @@
           setTimeout(() => {
             // Disable snap so the browser doesn't immediately snap back to 0
             bundlesGrid.style.scrollSnapType = 'none';
-            animateTo(0, peekAmount, 1200, () => {
+            animateTo(0, peekAmount, 800, () => {
               setTimeout(() => {
-                animateTo(peekAmount, 0, 1000, () => {
+                animateTo(peekAmount, 0, 650, () => {
                   bundlesGrid.style.scrollSnapType = '';
                 });
               }, 700);
