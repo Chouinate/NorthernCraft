@@ -752,7 +752,7 @@
     const tagline = document.querySelector('.nav-tagline');
     const SCROLL_END = 80;
     const lerp = (a, b, t) => a + (b - a) * t;
-    const startH = 60;
+    const startH = 80;
     const startTaglineH = tagline.offsetHeight;
 
     let raf;
@@ -762,7 +762,7 @@
         const t = Math.min(window.scrollY / SCROLL_END, 1);
         nav.style.paddingTop    = `${lerp(20, 8, t)}px`;
         nav.style.paddingBottom = `${lerp(20, 8, t)}px`;
-        logo.style.height       = `${lerp(startH, 36, t)}px`;
+        logo.style.height       = `${lerp(startH, 60, t)}px`;
         tagline.style.opacity      = `${lerp(1, 0, t)}`;
         tagline.style.marginTop    = `${lerp(8, 0, t)}px`;
         tagline.style.paddingBottom = `${lerp(12, 0, t)}px`;
