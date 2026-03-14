@@ -801,7 +801,7 @@
           // Only run on mobile
           if (window.innerWidth > 900) return;
           const thirdCard = bundlesGrid.children[2];
-          const peekAmount = thirdCard ? thirdCard.offsetLeft : 80;
+          const peekAmount = thirdCard ? Math.max(0, thirdCard.offsetLeft - Math.round(bundlesGrid.offsetWidth * 0.35)) : 80;
           setTimeout(() => {
             // Disable snap so the browser doesn't immediately snap back to 0
             bundlesGrid.style.scrollSnapType = 'none';
