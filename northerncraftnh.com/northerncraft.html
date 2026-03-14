@@ -795,8 +795,8 @@
       const hintObserver = new IntersectionObserver((entries) => {
         if (entries[0].isIntersecting) {
           hintObserver.disconnect();
-          // Only run when the grid is actually a horizontal carousel
-          if (window.getComputedStyle(bundlesGrid).overflowX !== 'auto') return;
+          // Only run on mobile
+          if (window.innerWidth > 900) return;
           setTimeout(() => {
             // Disable snap so the browser doesn't immediately snap back to 0
             bundlesGrid.style.scrollSnapType = 'none';
