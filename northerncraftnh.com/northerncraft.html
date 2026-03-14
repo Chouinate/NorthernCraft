@@ -775,6 +775,35 @@
       hamburger.classList.toggle('open');
       navLinks.classList.toggle('open');
     });
-  </script>
+
+    // Swipe hint animation for bundle carousel on mobile
+    const bundlesGrid = document.querySelector('.bundles-grid');
+    const bundlesSection = document.querySelector('#bundles');
+    if (bundlesGrid && bundlesSection && window.innerWidth <= 900) {
+      const peekAmount = 72;
+      function easeInOut(t) { return t < 0.5 ? 2*t*t : -1 + (4 - 2*t)*t; }
+      function animateTo(from, to, duration, onDone) {
+        const start = performance.now();
+        function step(now) {
+          const t = Math.min((now - start) / duration, 1);
+          bundlesGrid.scrollLeft = from + (to - from) * easeInOut(t);
+          if (t < 1) requestAnimationFrame(step);
+          else if (onDone) onDone();
+        }
+        requestAnimationFrame(step);
+      }
+      const hintObserver = new IntersectionObserver((entries) => {
+        if (entries[0].isIntersecting) {
+          hintObserver.disconnect();
+          setTimeout(() => {
+            animateTo(0, peekAmount, 480, () => {
+              setTimeout(() => animateTo(peekAmount, 0, 380), 120);
+            });
+          }, 500);
+        }
+      }, { threshold: 0.6 });
+      hintObserver.observe(bundlesSection);
+    }
+</script>
 </body>
 </html>
