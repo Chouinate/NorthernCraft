@@ -791,49 +791,32 @@
     if (window.matchMedia('(max-width: 768px)').matches) {
       const snapSections = [...document.querySelectorAll('section, footer')];
       let snapping = false;
-      let scrollDir = 1;
-      let prevY = window.scrollY;
+      let lastY = window.scrollY;
+
+      function doSnap(target) {
+        snapping = true;
+        window.scrollTo({ top: target, behavior: 'smooth' });
+        const done = () => { snapping = false; lastY = window.scrollY; };
+        if ('onscrollend' in window) {
+          window.addEventListener('scrollend', done, { once: true });
+        } else {
+          setTimeout(done, 600);
+        }
+      }
 
       window.addEventListener('scroll', () => {
-        const y = window.scrollY;
-        if (Math.abs(y - prevY) > 5) scrollDir = y > prevY ? 1 : -1;
-        prevY = y;
-      }, { passive: true });
-
-      function snapIfNear() {
         if (snapping) return;
-        const scrollY = window.scrollY;
+        const y = window.scrollY;
         const navH = nav.offsetHeight;
-        const th = window.innerHeight * 0.2;
-        let nearest = null, nearestDist = Infinity;
-
         for (const el of snapSections) {
           const target = Math.max(0, el.offsetTop - navH);
-          const diff = target - scrollY; // positive = section is below us
-          // When scrolling down: snap to sections ahead (diff >= 0) or tiny overshoot (diff >= -50)
-          // When scrolling up:   snap to sections above (diff <= 0) or tiny overshoot (diff <= 50)
-          const inRange = scrollDir > 0
-            ? diff >= -50 && diff < th
-            : diff > -th && diff <= 50;
-          if (inRange) {
-            const dist = Math.abs(diff);
-            if (dist < nearestDist) { nearestDist = dist; nearest = target; }
+          if ((lastY < target && y >= target) || (lastY > target && y <= target)) {
+            doSnap(target);
+            break;
           }
         }
-
-        if (nearest !== null && nearestDist > 1) {
-          snapping = true;
-          window.scrollTo({ top: nearest, behavior: 'smooth' });
-          setTimeout(() => { snapping = false; }, 600);
-        }
-      }
-
-      if ('onscrollend' in window) {
-        window.addEventListener('scrollend', snapIfNear);
-      } else {
-        let t;
-        window.addEventListener('scroll', () => { clearTimeout(t); t = setTimeout(snapIfNear, 150); }, { passive: true });
-      }
+        lastY = y;
+      }, { passive: true });
     }
 
     // Swipe hint animation for bundle carousel
