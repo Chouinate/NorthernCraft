@@ -755,19 +755,21 @@
     const startH = 80;
     const startTaglineH = tagline.offsetHeight;
 
+    function applyNavState() {
+      const t = Math.min(window.scrollY / SCROLL_END, 1);
+      nav.style.paddingTop    = `${lerp(20, 8, t)}px`;
+      nav.style.paddingBottom = `${lerp(20, 8, t)}px`;
+      logo.style.height       = `${lerp(startH, 60, t)}px`;
+      tagline.style.opacity      = `${lerp(1, 0, t)}`;
+      tagline.style.marginTop    = `${lerp(8, 0, t)}px`;
+      tagline.style.paddingBottom = `${lerp(12, 0, t)}px`;
+      tagline.style.height = `${lerp(startTaglineH, 0, t)}px`;
+    }
+    applyNavState();
     let raf;
     window.addEventListener('scroll', () => {
       cancelAnimationFrame(raf);
-      raf = requestAnimationFrame(() => {
-        const t = Math.min(window.scrollY / SCROLL_END, 1);
-        nav.style.paddingTop    = `${lerp(20, 8, t)}px`;
-        nav.style.paddingBottom = `${lerp(20, 8, t)}px`;
-        logo.style.height       = `${lerp(startH, 60, t)}px`;
-        tagline.style.opacity      = `${lerp(1, 0, t)}`;
-        tagline.style.marginTop    = `${lerp(8, 0, t)}px`;
-        tagline.style.paddingBottom = `${lerp(12, 0, t)}px`;
-        tagline.style.height = `${lerp(startTaglineH, 0, t)}px`;
-      });
+      raf = requestAnimationFrame(applyNavState);
     }, { passive: true });
 
     const hamburger = document.querySelector('.nav-hamburger');
