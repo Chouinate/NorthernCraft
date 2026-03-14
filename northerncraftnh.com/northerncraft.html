@@ -784,7 +784,6 @@
     const bundlesGrid = document.querySelector('.bundles-grid');
     const bundlesSection = document.querySelector('#bundles');
     if (bundlesGrid && bundlesSection) {
-      const peekAmount = 80;
       function easeInOut(t) { return t < 0.5 ? 2*t*t : -1 + (4 - 2*t)*t; }
       function animateTo(from, to, duration, onDone) {
         const start = performance.now();
@@ -801,12 +800,14 @@
           hintObserver.disconnect();
           // Only run on mobile
           if (window.innerWidth > 900) return;
+          const thirdCard = bundlesGrid.children[2];
+          const peekAmount = thirdCard ? thirdCard.offsetLeft : 80;
           setTimeout(() => {
             // Disable snap so the browser doesn't immediately snap back to 0
             bundlesGrid.style.scrollSnapType = 'none';
-            animateTo(0, peekAmount, 480, () => {
+            animateTo(0, peekAmount, 700, () => {
               setTimeout(() => {
-                animateTo(peekAmount, 0, 380, () => {
+                animateTo(peekAmount, 0, 600, () => {
                   bundlesGrid.style.scrollSnapType = '';
                 });
               }, 700);
