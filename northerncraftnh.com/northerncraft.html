@@ -766,6 +766,7 @@
       tagline.style.height = `${lerp(startTaglineH, 0, t)}px`;
     }
     applyNavState();
+    document.body.style.paddingTop = nav.offsetHeight + 'px';
     let raf;
     window.addEventListener('scroll', () => {
       cancelAnimationFrame(raf);
