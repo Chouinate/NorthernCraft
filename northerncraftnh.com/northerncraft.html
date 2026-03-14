@@ -106,8 +106,6 @@
     .nav-hamburger.open span:nth-child(2) { opacity: 0; }
     .nav-hamburger.open span:nth-child(3) { transform: translateY(-6.25px) rotate(-45deg); }
     @media (max-width: 768px) {
-      html { scroll-snap-type: y proximity; }
-      section, footer { scroll-snap-align: start; }
       .nav-hamburger { display: flex; }
       .nav-links {
         display: none;
@@ -788,6 +786,31 @@
         navLinks.classList.remove('open');
       });
     });
+
+    // Mobile section snapping
+    if (window.matchMedia('(max-width: 768px)').matches) {
+      const snapSections = [...document.querySelectorAll('section, footer')];
+      const snapThreshold = () => window.innerHeight * 0.25;
+
+      function snapIfNear() {
+        const scrollY = window.scrollY;
+        let nearest = null, nearestDist = Infinity;
+        for (const el of snapSections) {
+          const dist = Math.abs(scrollY - el.offsetTop);
+          if (dist < nearestDist) { nearestDist = dist; nearest = el.offsetTop; }
+        }
+        if (nearestDist < snapThreshold()) {
+          window.scrollTo({ top: nearest, behavior: 'smooth' });
+        }
+      }
+
+      if ('onscrollend' in window) {
+        window.addEventListener('scrollend', snapIfNear);
+      } else {
+        let t;
+        window.addEventListener('scroll', () => { clearTimeout(t); t = setTimeout(snapIfNear, 150); }, { passive: true });
+      }
+    }
 
     // Swipe hint animation for bundle carousel
     const bundlesGrid = document.querySelector('.bundles-grid');
