@@ -776,11 +776,11 @@
       navLinks.classList.toggle('open');
     });
 
-    // Swipe hint animation for bundle carousel on mobile
+    // Swipe hint animation for bundle carousel
     const bundlesGrid = document.querySelector('.bundles-grid');
     const bundlesSection = document.querySelector('#bundles');
-    if (bundlesGrid && bundlesSection && window.innerWidth <= 900) {
-      const peekAmount = 72;
+    if (bundlesGrid && bundlesSection) {
+      const peekAmount = 80;
       function easeInOut(t) { return t < 0.5 ? 2*t*t : -1 + (4 - 2*t)*t; }
       function animateTo(from, to, duration, onDone) {
         const start = performance.now();
@@ -795,13 +795,21 @@
       const hintObserver = new IntersectionObserver((entries) => {
         if (entries[0].isIntersecting) {
           hintObserver.disconnect();
+          // Only run when the grid is actually a horizontal carousel
+          if (window.getComputedStyle(bundlesGrid).overflowX !== 'auto') return;
           setTimeout(() => {
+            // Disable snap so the browser doesn't immediately snap back to 0
+            bundlesGrid.style.scrollSnapType = 'none';
             animateTo(0, peekAmount, 480, () => {
-              setTimeout(() => animateTo(peekAmount, 0, 380), 120);
+              setTimeout(() => {
+                animateTo(peekAmount, 0, 380, () => {
+                  bundlesGrid.style.scrollSnapType = '';
+                });
+              }, 150);
             });
           }, 500);
         }
-      }, { threshold: 0.6 });
+      }, { threshold: 0.4 });
       hintObserver.observe(bundlesSection);
     }
 </script>
