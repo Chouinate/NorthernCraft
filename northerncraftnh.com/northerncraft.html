@@ -790,20 +790,38 @@
     // Mobile section snapping
     if (window.matchMedia('(max-width: 768px)').matches) {
       const snapSections = [...document.querySelectorAll('section, footer')];
-      const snapThreshold = () => window.innerHeight * 0.2;
       let snapping = false;
+      let scrollDir = 1;
+      let prevY = window.scrollY;
+
+      window.addEventListener('scroll', () => {
+        const y = window.scrollY;
+        if (Math.abs(y - prevY) > 5) scrollDir = y > prevY ? 1 : -1;
+        prevY = y;
+      }, { passive: true });
 
       function snapIfNear() {
         if (snapping) return;
         const scrollY = window.scrollY;
         const navH = nav.offsetHeight;
+        const th = window.innerHeight * 0.2;
         let nearest = null, nearestDist = Infinity;
+
         for (const el of snapSections) {
           const target = Math.max(0, el.offsetTop - navH);
-          const dist = Math.abs(scrollY - target);
-          if (dist < nearestDist) { nearestDist = dist; nearest = target; }
+          const diff = target - scrollY; // positive = section is below us
+          // When scrolling down: snap to sections ahead (diff >= 0) or tiny overshoot (diff >= -50)
+          // When scrolling up:   snap to sections above (diff <= 0) or tiny overshoot (diff <= 50)
+          const inRange = scrollDir > 0
+            ? diff >= -50 && diff < th
+            : diff > -th && diff <= 50;
+          if (inRange) {
+            const dist = Math.abs(diff);
+            if (dist < nearestDist) { nearestDist = dist; nearest = target; }
+          }
         }
-        if (nearestDist > 1 && nearestDist < snapThreshold()) {
+
+        if (nearest !== null && nearestDist > 1) {
           snapping = true;
           window.scrollTo({ top: nearest, behavior: 'smooth' });
           setTimeout(() => { snapping = false; }, 600);
