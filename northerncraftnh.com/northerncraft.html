@@ -474,7 +474,9 @@
         scroll-snap-align: none;
       }
       .bundle-card:nth-child(odd) { scroll-snap-align: start; }
-      .bundle-card .bundle-card-link { align-self: center; }
+      .bundle-card .bundle-card-header { align-self: stretch; }
+      .bundle-card .bundle-card-desc { flex: 1; }
+      .bundle-card .bundle-card-link { margin-top: auto; align-self: center; }
       .product-grid { grid-template-columns: 1fr 1fr; }
       .process-steps { grid-template-columns: 1fr 1fr; }
       footer {
