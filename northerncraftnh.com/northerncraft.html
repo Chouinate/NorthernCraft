@@ -780,6 +780,13 @@
       navLinks.classList.toggle('open');
     });
 
+    navLinks.querySelectorAll('a').forEach(link => {
+      link.addEventListener('click', () => {
+        hamburger.classList.remove('open');
+        navLinks.classList.remove('open');
+      });
+    });
+
     // Swipe hint animation for bundle carousel
     const bundlesGrid = document.querySelector('.bundles-grid');
     const bundlesSection = document.querySelector('#bundles');
