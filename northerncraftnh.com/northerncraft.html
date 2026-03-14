@@ -450,31 +450,8 @@
       .hero-right { height: 380px; max-height: 380px; }
       .hero-left { padding: 40px 28px; }
       #about { grid-template-columns: 1fr; gap: 40px; padding: 60px 28px; }
-      /* Bundles — horizontal scroll carousel, 2 cards visible at a time */
-      #bundles { padding: 60px 0 60px 28px !important; }
-      .bundles-grid {
-        grid-template-columns: unset !important;
-        display: flex !important;
-        overflow-x: auto;
-        scroll-snap-type: x mandatory;
-        -webkit-overflow-scrolling: touch;
-        gap: 16px;
-        padding-right: 28px;
-        scrollbar-width: none;
-        -ms-overflow-style: none;
-      }
-      .bundles-grid::-webkit-scrollbar { display: none; }
-      .bundle-card {
-        flex: 0 0 calc(50% - 8px);
-        min-width: 200px;
-        scroll-snap-align: start;
-        grid-template-rows: unset;
-        grid-row: unset;
-        display: flex;
-        flex-direction: column;
-        gap: 16px;
-        padding: 24px;
-      }
+      .bundles-grid { grid-template-columns: 1fr 1fr !important; row-gap: 24px; }
+      .bundle-card { padding: 24px; }
       .product-grid { grid-template-columns: 1fr 1fr; }
       .process-steps { grid-template-columns: 1fr 1fr; }
       footer {
