@@ -795,13 +795,9 @@
 
       function doSnap(target) {
         snapping = true;
+        lastY = target; // prevent the smooth scroll's own events from re-triggering
         window.scrollTo({ top: target, behavior: 'smooth' });
-        const done = () => { snapping = false; lastY = window.scrollY; };
-        if ('onscrollend' in window) {
-          window.addEventListener('scrollend', done, { once: true });
-        } else {
-          setTimeout(done, 600);
-        }
+        setTimeout(() => { snapping = false; lastY = window.scrollY; }, 800);
       }
 
       window.addEventListener('scroll', () => {
