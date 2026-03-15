@@ -795,9 +795,9 @@
 
       function doSnap(target) {
         snapping = true;
-        lastY = target; // prevent the smooth scroll's own events from re-triggering
-        window.scrollTo({ top: target, behavior: 'smooth' });
-        setTimeout(() => { snapping = false; lastY = window.scrollY; }, 800);
+        lastY = target;
+        window.scrollTo({ top: target, behavior: 'instant' });
+        setTimeout(() => { snapping = false; lastY = window.scrollY; }, 200);
       }
 
       window.addEventListener('scroll', () => {
@@ -808,7 +808,7 @@
           const target = Math.max(0, el.offsetTop - navH);
           if ((lastY < target && y >= target) || (lastY > target && y <= target)) {
             doSnap(target);
-            break;
+            return; // return, not break — keeps lastY = target (set in doSnap)
           }
         }
         lastY = y;
