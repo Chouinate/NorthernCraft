@@ -6,7 +6,7 @@
   <title>Northern Craft NH — Modern Geometric Wall Art</title>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Arizonia&family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400&family=Merriweather:wght@300&family=Montserrat:wght@300;400;500&family=Newsreader:ital,wght@1,300&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Arizonia&family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400&family=Merriweather:wght@300&family=Montserrat:wght@300;400;500&family=Newsreader:ital,wght@1,300&family=Zeyada&display=swap" rel="stylesheet" />
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
     :root {
@@ -382,6 +382,7 @@
     /* ── ABOUT SIGN-OFF ── */
     .about-signoff {
       display: block;
+      position: relative;
       background: var(--mauve);
       padding: 55px 40px;
       margin-top: 56px;
@@ -396,6 +397,16 @@
       letter-spacing: 0.5px;
       color: var(--cream);
       margin: 0;
+    }
+    .signoff-name {
+      position: absolute;
+      bottom: 22px;
+      right: 32px;
+      font-family: 'Zeyada', cursive;
+      font-size: 12px;
+      color: var(--cream);
+      opacity: 0.85;
+      line-height: 1;
     }
 /* ── PROCESS ── */
     #process { background: var(--panel); }
@@ -718,6 +729,7 @@
       </p>
       <div class="about-signoff">
         <p class="signoff-quote">If I wouldn't put it on my own wall, it doesn't make it into the collection.</p>
+        <span class="signoff-name">&#8212; Nate C</span>
       </div>
 
     </div>
