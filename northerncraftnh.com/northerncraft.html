@@ -6,7 +6,7 @@
   <title>Northern Craft NH — Modern Geometric Wall Art</title>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,300;1,400&family=Montserrat:wght@300;400;500&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,300;1,400&family=Montserrat:wght@300;400;500&family=Hurricane&display=swap" rel="stylesheet" />
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
     :root {
@@ -379,15 +379,36 @@
       color: #623a4a;
       margin-bottom: 32px;
     }
-    .about-quote {
+    /* ── QUOTE BAR ── */
+    #quote-bar {
+      background: var(--charcoal);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 180px;
+      padding: 48px 40px;
+    }
+    .quote-bar-inner {
+      max-width: 780px;
+      width: 100%;
+      text-align: center;
+    }
+    .quote-bar-text {
       font-family: var(--ff-serif);
       font-style: italic;
-      font-size: 17px;
-      line-height: 1.8;
-      color: #623a4a;
+      font-size: 20px;
+      line-height: 1.7;
+      color: #fff;
       margin: 0;
-      padding: 0;
-      border: none;
+    }
+    .quote-bar-sig {
+      font-family: 'Hurricane', cursive;
+      font-size: 38px;
+      color: rgba(255,255,255,0.55);
+      margin-top: 14px;
+      display: block;
+      text-align: right;
+      padding-right: 24px;
     }
     /* ── PROCESS ── */
     #process { background: var(--panel); }
@@ -708,9 +729,13 @@
         Every design is created digitally and printed to order in New Hampshire. Nothing gets released
         until it's been tested, adjusted, and approved by someone who won't spare my feelings.
       </p>
-      <blockquote class="about-quote">
-        "If I wouldn't put it on my own wall, it doesn't make it into the collection."
-      </blockquote>
+    </div>
+  </section>
+  <!-- QUOTE BAR -->
+  <section id="quote-bar">
+    <div class="quote-bar-inner">
+      <p class="quote-bar-text">"If I wouldn't put it on my own wall, it doesn't make it into the collection."</p>
+      <span class="quote-bar-sig">Northern Craft</span>
     </div>
   </section>
   <!-- PROCESS -->
