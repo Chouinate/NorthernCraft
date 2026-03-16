@@ -381,35 +381,34 @@
     }
     /* ── QUOTE BAR ── */
     #quote-bar {
-      background: var(--charcoal);
+      background: var(--mauve-dark);
       display: flex;
       align-items: center;
       justify-content: center;
-      min-height: 180px;
-      padding: 48px 40px;
+      min-height: 200px;
+      padding: 64px 48px;
     }
     .quote-bar-inner {
       max-width: 780px;
       width: 100%;
-      text-align: center;
     }
     .quote-bar-text {
       font-family: var(--ff-serif);
       font-weight: 300;
       font-style: normal;
-      font-size: 20px;
-      line-height: 1.7;
-      color: #fff;
+      font-size: clamp(24px, 2.5vw, 30px);
+      line-height: 1.5;
+      color: var(--cream);
+      text-align: center;
       margin: 0;
     }
     .quote-bar-sig {
       font-family: 'Sacramento', cursive;
-      font-size: 38px;
-      color: rgba(255,255,255,0.55);
-      margin-top: 14px;
+      font-size: clamp(10px, 1vw, 11px);
+      color: var(--cream);
+      margin-top: 18px;
       display: block;
       text-align: right;
-      padding-right: 24px;
     }
     /* ── PROCESS ── */
     #process { background: var(--panel); }
@@ -735,8 +734,8 @@
   <!-- QUOTE BAR -->
   <section id="quote-bar">
     <div class="quote-bar-inner">
-      <p class="quote-bar-text">"If I wouldn't put it on my own wall, it doesn't make it into the collection."</p>
-      <span class="quote-bar-sig">Northern Craft</span>
+      <p class="quote-bar-text">If I wouldn't put it on my own wall, it doesn't make it into the collection.</p>
+      <span class="quote-bar-sig">Nate C</span>
     </div>
   </section>
   <!-- PROCESS -->
