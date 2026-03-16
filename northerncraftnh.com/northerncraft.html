@@ -385,31 +385,37 @@
       display: flex;
       align-items: center;
       justify-content: center;
-      min-height: 200px;
-      padding: 80px 48px;
+      padding: 22px 48px;
     }
     .quote-bar-inner {
-      max-width: 780px;
+      max-width: 860px;
       width: 100%;
+      display: flex;
+      align-items: baseline;
+      gap: 0;
+      flex-wrap: wrap;
+      justify-content: center;
     }
     .quote-bar-text {
-      font-family: 'Merriweather', Georgia, serif;
+      font-family: 'Montserrat', sans-serif;
       font-weight: 300;
-      font-style: normal;
-      font-size: clamp(24px, 2.5vw, 30px);
-      line-height: 1.5;
-      color: #fff;
+      font-size: 11px;
+      letter-spacing: 2.5px;
+      text-transform: uppercase;
+      line-height: 1.6;
+      color: rgba(255,255,255,0.85);
       text-align: center;
       margin: 0;
     }
     .quote-bar-sig {
       font-family: 'Mr Dafoe', cursive;
       font-weight: 400;
-      font-size: 28px;
+      font-size: 22px;
       color: #fff;
-      margin-top: 16px;
-      display: block;
-      text-align: right;
+      display: inline-block;
+      margin-left: 6px;
+      position: relative;
+      top: 4px;
     }
     /* ── PROCESS ── */
     #process { background: var(--panel); }
@@ -735,8 +741,7 @@
   <!-- QUOTE BAR -->
   <section id="quote-bar">
     <div class="quote-bar-inner">
-      <p class="quote-bar-text">If I wouldn't put it on my own wall, it doesn't make it into the collection.</p>
-      <span class="quote-bar-sig">Nate C</span>
+      <p class="quote-bar-text">If I wouldn't put it on my own wall, it doesn't make it into the collection. &nbsp;<span class="quote-bar-sig">Nate C</span></p>
     </div>
   </section>
   <!-- PROCESS -->
