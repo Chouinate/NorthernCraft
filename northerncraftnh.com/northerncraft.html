@@ -383,14 +383,28 @@
     .about-signoff {
       display: block;
       background: var(--mauve);
-      padding: 20px 24px;
+      padding: 60px 40px;
       margin-top: 56px;
-      font-family: 'Newsreader', Georgia, serif;
-      font-style: italic;
-      font-weight: 300;
-      font-size: 20px;
-      line-height: 1.7;
+      text-align: center;
+    }
+    .signoff-quote {
+      font-family: var(--ff-serif);
+      font-style: normal;
+      font-weight: 400;
+      font-size: 24px;
+      line-height: 1.65;
+      letter-spacing: 0.5px;
       color: var(--cream);
+      margin: 0 0 28px 0;
+    }
+    .signoff-sig {
+      font-family: var(--ff-sans);
+      font-weight: 400;
+      font-size: 11px;
+      letter-spacing: 3px;
+      text-transform: uppercase;
+      color: rgba(246, 238, 228, 0.55);
+      margin: 0;
     }
 /* ── PROCESS ── */
     #process { background: var(--panel); }
@@ -711,7 +725,10 @@
         Every design is created digitally and printed to order in New Hampshire. Nothing gets released
         until it's been tested, adjusted, and approved by someone who won't spare my feelings.
       </p>
-      <p class="about-signoff">If I wouldn't put it on my own wall, it doesn't make it into the collection.</p>
+      <div class="about-signoff">
+        <p class="signoff-quote">If I wouldn't put it on my own wall, it doesn't make it into the collection.</p>
+        <p class="signoff-sig">— NorthernCraft</p>
+      </div>
 
     </div>
   </section>
