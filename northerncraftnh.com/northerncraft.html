@@ -541,7 +541,6 @@
       <span></span><span></span><span></span>
     </button>
   </nav>
-  <script>document.body.style.paddingTop = document.querySelector('nav').offsetHeight + 'px';</script>
   <!-- HERO -->
   <section class="hero" style="padding: 0 0px 0 0;">
     <div class="hero-left">
@@ -783,10 +782,12 @@
     const nav     = document.querySelector('nav');
     const logo    = document.querySelector('.nav-logo img');
     const tagline = document.querySelector('.nav-tagline');
-    nav.style.paddingTop    = '8px';
-    nav.style.paddingBottom = '8px';
-    logo.style.height       = '60px';
-    document.body.style.paddingTop = nav.offsetHeight + 'px';
+    nav.style.paddingTop    = '14px';
+    nav.style.paddingBottom = '14px';
+    logo.style.height       = '68px';
+    requestAnimationFrame(() => {
+      document.body.style.paddingTop = nav.offsetHeight + 'px';
+    });
 
     const hamburger = document.querySelector('.nav-hamburger');
     const navLinks  = document.querySelector('.nav-links');
