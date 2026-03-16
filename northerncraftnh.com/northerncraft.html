@@ -6,7 +6,7 @@
   <title>Northern Craft NH — Modern Geometric Wall Art</title>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,300;1,400&family=Montserrat:wght@300;400;500&family=Pinyon+Script&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,300;1,400&family=Montserrat:wght@300;400;500&display=swap" rel="stylesheet" />
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
     :root {
@@ -379,11 +379,15 @@
       color: #623a4a;
       margin-bottom: 32px;
     }
-    .about-signature {
-      font-family: 'Pinyon Script', cursive;
-      font-size: 34px;
-      color: #a07080;
-      margin-top: -8px;
+    .about-quote {
+      font-family: var(--ff-serif);
+      font-style: italic;
+      font-size: 17px;
+      line-height: 1.8;
+      color: #623a4a;
+      margin: 0;
+      padding: 0;
+      border: none;
     }
     /* ── PROCESS ── */
     #process { background: var(--panel); }
@@ -704,10 +708,9 @@
         Every design is created digitally and printed to order in New Hampshire. Nothing gets released
         until it's been tested, adjusted, and approved by someone who won't spare my feelings.
       </p>
-      <p class="about-body">
-        If I wouldn't put it on my own wall, it doesn't make it into the collection.
-      </p>
-      <p class="about-signature">— Made in NH, one piece at a time</p>
+      <blockquote class="about-quote">
+        "If I wouldn't put it on my own wall, it doesn't make it into the collection."
+      </blockquote>
     </div>
   </section>
   <!-- PROCESS -->
