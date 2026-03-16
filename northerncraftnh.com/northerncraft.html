@@ -783,28 +783,14 @@
     const nav     = document.querySelector('nav');
     const logo    = document.querySelector('.nav-logo img');
     const tagline = document.querySelector('.nav-tagline');
-    const SCROLL_END = 80;
-    const lerp = (a, b, t) => a + (b - a) * t;
-    const startH = 80;
-    const startTaglineH = tagline.offsetHeight;
-
-    function applyNavState() {
-      const t = Math.min(window.scrollY / SCROLL_END, 1);
-      nav.style.paddingTop    = `${lerp(20, 8, t)}px`;
-      nav.style.paddingBottom = `${lerp(20, 8, t)}px`;
-      logo.style.height       = `${lerp(startH, 60, t)}px`;
-      tagline.style.opacity      = `${lerp(1, 0, t)}`;
-      tagline.style.marginTop    = `${lerp(8, 0, t)}px`;
-      tagline.style.paddingBottom = `${lerp(12, 0, t)}px`;
-      tagline.style.height = `${lerp(startTaglineH, 0, t)}px`;
-    }
-    applyNavState();
+    nav.style.paddingTop    = '8px';
+    nav.style.paddingBottom = '8px';
+    logo.style.height       = '60px';
+    tagline.style.opacity   = '0';
+    tagline.style.height    = '0';
+    tagline.style.marginTop = '0';
+    tagline.style.paddingBottom = '0';
     document.body.style.paddingTop = nav.offsetHeight + 'px';
-    let raf;
-    window.addEventListener('scroll', () => {
-      cancelAnimationFrame(raf);
-      raf = requestAnimationFrame(applyNavState);
-    }, { passive: true });
 
     const hamburger = document.querySelector('.nav-hamburger');
     const navLinks  = document.querySelector('.nav-links');
