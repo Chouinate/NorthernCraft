@@ -311,14 +311,14 @@
       flex-direction: column;
     }
     .bundle-card-visual {
-      flex: 1;
+      flex: 0 0 62%;
       display: flex;
       align-items: center;
       justify-content: center;
     }
     .bundle-card-icon {
       display: block;
-      height: 45%;
+      height: 55%;
       width: auto;
       max-width: 85%;
       pointer-events: none;
@@ -327,11 +327,12 @@
     .bundle-card-icon .frame { stroke: var(--wood); stroke-width: 2.5px; fill: none; vector-effect: non-scaling-stroke; }
     .bundle-card-icon .gem   { fill: var(--rose); stroke: none; }
     .bundle-card-footer {
-      flex-shrink: 0;
+      flex: 1;
       display: flex;
       flex-direction: column;
+      justify-content: flex-end;
       gap: 4px;
-      padding: 16px 20px 22px;
+      padding: 0 20px 22px;
     }
     .bundle-card-row {
       display: flex;
