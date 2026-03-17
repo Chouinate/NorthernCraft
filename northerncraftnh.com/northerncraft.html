@@ -16,6 +16,8 @@
       --charcoal: #2a2523;
       --mauve: #7b4f5c;
       --mauve-dark: #5c3545;
+      --wood: #c2a87c;
+      --rose: #8f6070;
       --text-muted: #7a6f68;
       --ff-serif: 'Cormorant Garamond', Georgia, serif;
       --ff-sans: 'Montserrat', sans-serif;
@@ -321,8 +323,8 @@
       pointer-events: none;
       color: var(--mauve-dark);
     }
-    .bundle-card-icon .frame { stroke: var(--cream); stroke-width: 2.5px; fill: none; vector-effect: non-scaling-stroke; }
-    .bundle-card-icon .gem   { fill: var(--mauve-dark); stroke: none; }
+    .bundle-card-icon .frame { stroke: var(--wood); stroke-width: 2.5px; fill: none; vector-effect: non-scaling-stroke; }
+    .bundle-card-icon .gem   { fill: var(--rose); stroke: none; }
     .bundle-card-footer {
       flex-shrink: 0;
       display: flex;
@@ -366,7 +368,8 @@
     }
     .bundle-card-link:hover { opacity: 0.7; }
     .bundle-card--full-wall { background: var(--mauve-dark); }
-    .bundle-card--full-wall .bundle-card-icon .gem { fill: var(--cream); }
+    .bundle-card--full-wall .bundle-card-icon .frame { stroke: var(--wood); }
+    .bundle-card--full-wall .bundle-card-icon .gem { fill: var(--wood); }
     .bundle-card--full-wall .bundle-card-name,
     .bundle-card--full-wall .bundle-card-desc,
     .bundle-card--full-wall .bundle-card-link { color: var(--cream); opacity: 1; }
