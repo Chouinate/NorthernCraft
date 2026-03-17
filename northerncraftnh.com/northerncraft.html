@@ -298,47 +298,59 @@
     .bundles-grid {
       display: grid;
       grid-template-columns: 1fr 1fr;
-      grid-template-rows: auto auto auto;
       column-gap: 24px;
-      row-gap: 48px;
-      align-items: start;
+      row-gap: 24px;
     }
     .bundle-card {
       background: var(--cream);
-      padding: 16px 20px;
-      display: grid;
-      grid-template-rows: subgrid;
-      grid-row: span 3;
-    }
-    .bundle-card-header {
+      position: relative;
+      aspect-ratio: 1;
+      overflow: hidden;
       display: flex;
-      align-items: flex-start;
-      justify-content: space-between;
-      align-self: start;
+      align-items: center;
+      justify-content: center;
     }
-   .bundle-card-icon {
-  display: grid;
-  gap: 4px;
-  flex-shrink: 0;
-}
+    .bundle-card-icon {
+      display: grid;
+      gap: 5px;
+      height: 40%;
+      grid-auto-rows: 1fr;
+      pointer-events: none;
+    }
     .bundle-card-icon span {
       display: block;
-      background: #A8607A;
+      background: var(--mauve);
       aspect-ratio: 1;
+    }
+    .bundle-card-footer {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-end;
+      padding: 18px 20px;
+      gap: 12px;
+    }
+    .bundle-card-info {
+      display: flex;
+      flex-direction: column;
+      gap: 3px;
     }
     .bundle-card-name {
       font-family: var(--ff-serif);
-      font-size: 22px;
+      font-size: 18px;
       font-weight: 400;
-      color: #623a4a;
+      color: var(--mauve-dark);
+      line-height: 1;
       font-variant-numeric: lining-nums;
-      margin-top: -4px;
     }
     .bundle-card-desc {
-      font-size: 13px;
-      line-height: 1.7;
+      font-size: 11px;
+      line-height: 1.5;
       color: var(--mauve-dark);
-      max-width: 340px;
+      opacity: 0.8;
     }
     .bundle-card-link {
       font-family: var(--ff-sans);
@@ -346,15 +358,20 @@
       font-weight: 400;
       letter-spacing: 0.3em;
       text-transform: uppercase;
-      color: var(--text-muted);
+      color: var(--mauve);
       text-decoration: none;
-      border-bottom: 1px solid var(--text-muted);
+      border-bottom: 1px solid currentColor;
       padding-bottom: 2px;
-      align-self: end;
-      justify-self: center;
-      transition: color 0.2s, border-color 0.2s;
+      white-space: nowrap;
+      flex-shrink: 0;
+      transition: opacity 0.2s;
     }
-    .bundle-card-link:hover { color: var(--mauve); border-color: var(--mauve); }
+    .bundle-card-link:hover { opacity: 0.7; }
+    .bundle-card--full-wall { background: var(--mauve); }
+    .bundle-card--full-wall .bundle-card-icon span { background: var(--cream); }
+    .bundle-card--full-wall .bundle-card-name,
+    .bundle-card--full-wall .bundle-card-desc { color: var(--cream); opacity: 1; }
+    .bundle-card--full-wall .bundle-card-link { color: var(--cream); }
     /* ── ABOUT ── */
     #about {
       background: var(--cream);
@@ -498,19 +515,10 @@
       }
       .bundles-grid::-webkit-scrollbar { display: none; }
       .bundle-card {
-        flex: 0 0 calc(50% - 12px);
-        grid-template-rows: unset;
-        grid-row: unset;
-        display: flex;
-        flex-direction: column;
-        gap: 16px;
-        padding: 24px;
+        flex: 0 0 calc(70vw - 24px);
         scroll-snap-align: none;
       }
       .bundle-card:nth-child(odd) { scroll-snap-align: start; }
-      .bundle-card .bundle-card-header { align-self: stretch; }
-      .bundle-card .bundle-card-desc { flex: 1; }
-      .bundle-card .bundle-card-link { margin-top: auto; align-self: center; }
       .product-grid { grid-template-columns: 1fr 1fr; }
       .process-steps { grid-template-columns: 1fr 1fr; }
       footer {
@@ -673,36 +681,44 @@
     <h2 class="section-title">Build a <em>Set</em></h2>
     <div class="bundles-grid" style="grid-template-columns: repeat(4, 1fr);">
       <div class="bundle-card">
-        <div class="bundle-card-header">
-          <p class="bundle-card-name">Pair</p>
-          <div class="bundle-card-icon" style="grid-template-columns:1fr 1fr; width:30px;"><span></span><span></span></div>
+        <div class="bundle-card-icon" style="grid-template-columns:repeat(2,auto)"><span></span><span></span></div>
+        <div class="bundle-card-footer">
+          <div class="bundle-card-info">
+            <p class="bundle-card-name">Pair</p>
+            <p class="bundle-card-desc">A simple starting point.</p>
+          </div>
+          <a href="#" class="bundle-card-link">Shop</a>
         </div>
-        <p class="bundle-card-desc">A simple starting point.</p>
-        <a href="#" class="bundle-card-link">Shop Pairs</a>
       </div>
       <div class="bundle-card">
-        <div class="bundle-card-header">
-          <p class="bundle-card-name">Set of 4</p>
-          <div class="bundle-card-icon" style="grid-template-columns:1fr 1fr; width:30px;"><span></span><span></span><span></span><span></span></div>
+        <div class="bundle-card-icon" style="grid-template-columns:repeat(2,auto)"><span></span><span></span><span></span><span></span></div>
+        <div class="bundle-card-footer">
+          <div class="bundle-card-info">
+            <p class="bundle-card-name">Set of 4</p>
+            <p class="bundle-card-desc">Four pieces that work just about anywhere.</p>
+          </div>
+          <a href="#" class="bundle-card-link">Shop</a>
         </div>
-        <p class="bundle-card-desc">Four pieces that work just about anywhere.</p>
-        <a href="#" class="bundle-card-link">Shop Sets of 4</a>
       </div>
       <div class="bundle-card">
-        <div class="bundle-card-header">
-          <p class="bundle-card-name">Set of 6</p>
-          <div class="bundle-card-icon" style="grid-template-columns:1fr 1fr 1fr; width:45px;"><span></span><span></span><span></span><span></span><span></span><span></span></div>
+        <div class="bundle-card-icon" style="grid-template-columns:repeat(3,auto)"><span></span><span></span><span></span><span></span><span></span><span></span></div>
+        <div class="bundle-card-footer">
+          <div class="bundle-card-info">
+            <p class="bundle-card-name">Set of 6</p>
+            <p class="bundle-card-desc">The most popular choice. Enough to make a real statement.</p>
+          </div>
+          <a href="#" class="bundle-card-link">Shop</a>
         </div>
-        <p class="bundle-card-desc">The most popular choice. Enough to make a real statement.</p>
-        <a href="#" class="bundle-card-link">Shop Sets of 6</a>
       </div>
-      <div class="bundle-card">
-        <div class="bundle-card-header">
-          <p class="bundle-card-name">Full Wall</p>
-          <div class="bundle-card-icon" style="grid-template-columns:1fr 1fr 1fr 1fr; width:60px;"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></div>
+      <div class="bundle-card bundle-card--full-wall">
+        <div class="bundle-card-icon" style="grid-template-columns:repeat(4,auto)"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></div>
+        <div class="bundle-card-footer">
+          <div class="bundle-card-info">
+            <p class="bundle-card-name">Full Wall</p>
+            <p class="bundle-card-desc">The whole collection on one wall. Twelve pieces, nothing missing.</p>
+          </div>
+          <a href="#" class="bundle-card-link">Shop</a>
         </div>
-        <p class="bundle-card-desc">The whole collection on one wall. Twelve pieces, nothing missing.</p>
-        <a href="#" class="bundle-card-link">Shop Full Wall</a>
       </div>
     </div>
   </section>
@@ -784,9 +800,7 @@
     nav.style.paddingTop    = '14px';
     nav.style.paddingBottom = '14px';
     logo.style.height       = '68px';
-    requestAnimationFrame(() => {
-      document.body.style.paddingTop = nav.offsetHeight + 'px';
-    });
+    document.body.style.paddingTop = nav.offsetHeight + 'px';
 
     const hamburger = document.querySelector('.nav-hamburger');
     const navLinks  = document.querySelector('.nav-links');
