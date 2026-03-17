@@ -319,8 +319,10 @@
     }
     .bundle-card-icon span {
       display: block;
-      background: var(--mauve-dark);
+      background: transparent;
+      border: 1.5px solid var(--mauve-dark);
       aspect-ratio: 1;
+      box-sizing: border-box;
     }
     .bundle-card-footer {
       position: absolute;
@@ -368,7 +370,7 @@
     }
     .bundle-card-link:hover { opacity: 0.7; }
     .bundle-card--full-wall { background: var(--mauve-dark); }
-    .bundle-card--full-wall .bundle-card-icon span { background: var(--cream); }
+    .bundle-card--full-wall .bundle-card-icon span { background: transparent; border-color: var(--cream); }
     .bundle-card--full-wall .bundle-card-name,
     .bundle-card--full-wall .bundle-card-desc { color: var(--cream); opacity: 1; }
     .bundle-card--full-wall .bundle-card-link { color: var(--cream); }
