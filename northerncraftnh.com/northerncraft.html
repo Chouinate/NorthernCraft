@@ -311,19 +311,15 @@
       justify-content: center;
     }
     .bundle-card-icon {
-      display: grid;
-      gap: 5px;
-      height: 40%;
-      grid-auto-rows: 1fr;
-      pointer-events: none;
-    }
-    .bundle-card-icon span {
       display: block;
-      background: transparent;
-      border: 2px solid var(--mauve-dark);
-      aspect-ratio: 1;
-      box-sizing: border-box;
+      height: 32%;
+      width: auto;
+      pointer-events: none;
+      color: var(--mauve-dark);
     }
+    .bundle-card-icon .frame { stroke-width: 0.75px; vector-effect: non-scaling-stroke; }
+    .bundle-card-icon .gem   { stroke-width: 2px;    vector-effect: non-scaling-stroke; }
+    .bundle-card-icon .ridge { stroke-width: 0.75px; vector-effect: non-scaling-stroke; }
     .bundle-card-footer {
       position: absolute;
       bottom: 0;
@@ -370,7 +366,7 @@
     }
     .bundle-card-link:hover { opacity: 0.7; }
     .bundle-card--full-wall { background: var(--mauve-dark); }
-    .bundle-card--full-wall .bundle-card-icon span { background: transparent; border-color: var(--cream); }
+    .bundle-card--full-wall .bundle-card-icon { color: var(--cream); }
     .bundle-card--full-wall .bundle-card-name,
     .bundle-card--full-wall .bundle-card-desc { color: var(--cream); opacity: 1; }
     .bundle-card--full-wall .bundle-card-link { color: var(--cream); }
@@ -683,7 +679,15 @@
     <h2 class="section-title">Build a <em>Set</em></h2>
     <div class="bundles-grid" style="grid-template-columns: repeat(4, 1fr);">
       <div class="bundle-card">
-        <div class="bundle-card-icon" style="grid-template-columns:repeat(2,auto)"><span></span><span></span></div>
+        <!-- Pair: 2 pieces side by side (viewBox 22×10) -->
+        <svg class="bundle-card-icon" viewBox="0 0 22 10" fill="none" stroke="currentColor" xmlns="http://www.w3.org/2000/svg">
+          <rect class="frame" x=".5" y=".5" width="9" height="9"/>
+          <polygon class="gem" points="5,1.5 8.5,5 5,8.5 1.5,5"/>
+          <line class="ridge" x1="5" y1="1.5" x2="5" y2="8.5"/>
+          <rect class="frame" x="12.5" y=".5" width="9" height="9"/>
+          <polygon class="gem" points="17,1.5 20.5,5 17,8.5 13.5,5"/>
+          <line class="ridge" x1="17" y1="1.5" x2="17" y2="8.5"/>
+        </svg>
         <div class="bundle-card-footer">
           <div class="bundle-card-info">
             <p class="bundle-card-name">Pair</p>
@@ -693,7 +697,21 @@
         </div>
       </div>
       <div class="bundle-card">
-        <div class="bundle-card-icon" style="grid-template-columns:repeat(2,auto)"><span></span><span></span><span></span><span></span></div>
+        <!-- Set of 4: 2×2 grid (viewBox 22×22) -->
+        <svg class="bundle-card-icon" viewBox="0 0 22 22" fill="none" stroke="currentColor" xmlns="http://www.w3.org/2000/svg">
+          <rect class="frame" x=".5" y=".5" width="9" height="9"/>
+          <polygon class="gem" points="5,1.5 8.5,5 5,8.5 1.5,5"/>
+          <line class="ridge" x1="5" y1="1.5" x2="5" y2="8.5"/>
+          <rect class="frame" x="12.5" y=".5" width="9" height="9"/>
+          <polygon class="gem" points="17,1.5 20.5,5 17,8.5 13.5,5"/>
+          <line class="ridge" x1="17" y1="1.5" x2="17" y2="8.5"/>
+          <rect class="frame" x=".5" y="12.5" width="9" height="9"/>
+          <polygon class="gem" points="5,13.5 8.5,17 5,20.5 1.5,17"/>
+          <line class="ridge" x1="5" y1="13.5" x2="5" y2="20.5"/>
+          <rect class="frame" x="12.5" y="12.5" width="9" height="9"/>
+          <polygon class="gem" points="17,13.5 20.5,17 17,20.5 13.5,17"/>
+          <line class="ridge" x1="17" y1="13.5" x2="17" y2="20.5"/>
+        </svg>
         <div class="bundle-card-footer">
           <div class="bundle-card-info">
             <p class="bundle-card-name">Set of 4</p>
@@ -703,7 +721,27 @@
         </div>
       </div>
       <div class="bundle-card">
-        <div class="bundle-card-icon" style="grid-template-columns:repeat(3,auto)"><span></span><span></span><span></span><span></span><span></span><span></span></div>
+        <!-- Set of 6: 3×2 grid (viewBox 34×22) -->
+        <svg class="bundle-card-icon" viewBox="0 0 34 22" fill="none" stroke="currentColor" xmlns="http://www.w3.org/2000/svg">
+          <rect class="frame" x=".5" y=".5" width="9" height="9"/>
+          <polygon class="gem" points="5,1.5 8.5,5 5,8.5 1.5,5"/>
+          <line class="ridge" x1="5" y1="1.5" x2="5" y2="8.5"/>
+          <rect class="frame" x="12.5" y=".5" width="9" height="9"/>
+          <polygon class="gem" points="17,1.5 20.5,5 17,8.5 13.5,5"/>
+          <line class="ridge" x1="17" y1="1.5" x2="17" y2="8.5"/>
+          <rect class="frame" x="24.5" y=".5" width="9" height="9"/>
+          <polygon class="gem" points="29,1.5 32.5,5 29,8.5 25.5,5"/>
+          <line class="ridge" x1="29" y1="1.5" x2="29" y2="8.5"/>
+          <rect class="frame" x=".5" y="12.5" width="9" height="9"/>
+          <polygon class="gem" points="5,13.5 8.5,17 5,20.5 1.5,17"/>
+          <line class="ridge" x1="5" y1="13.5" x2="5" y2="20.5"/>
+          <rect class="frame" x="12.5" y="12.5" width="9" height="9"/>
+          <polygon class="gem" points="17,13.5 20.5,17 17,20.5 13.5,17"/>
+          <line class="ridge" x1="17" y1="13.5" x2="17" y2="20.5"/>
+          <rect class="frame" x="24.5" y="12.5" width="9" height="9"/>
+          <polygon class="gem" points="29,13.5 32.5,17 29,20.5 25.5,17"/>
+          <line class="ridge" x1="29" y1="13.5" x2="29" y2="20.5"/>
+        </svg>
         <div class="bundle-card-footer">
           <div class="bundle-card-info">
             <p class="bundle-card-name">Set of 6</p>
@@ -713,7 +751,45 @@
         </div>
       </div>
       <div class="bundle-card bundle-card--full-wall">
-        <div class="bundle-card-icon" style="grid-template-columns:repeat(4,auto)"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></div>
+        <!-- Full Wall: 4×3 grid (viewBox 46×34), cross-ridge detail on each piece -->
+        <svg class="bundle-card-icon" viewBox="0 0 46 34" fill="none" stroke="currentColor" xmlns="http://www.w3.org/2000/svg">
+          <rect class="frame" x=".5" y=".5" width="9" height="9"/>
+          <polygon class="gem" points="5,1.5 8.5,5 5,8.5 1.5,5"/>
+          <line class="ridge" x1="5" y1="1.5" x2="5" y2="8.5"/><line class="ridge" x1="1.5" y1="5" x2="8.5" y2="5"/>
+          <rect class="frame" x="12.5" y=".5" width="9" height="9"/>
+          <polygon class="gem" points="17,1.5 20.5,5 17,8.5 13.5,5"/>
+          <line class="ridge" x1="17" y1="1.5" x2="17" y2="8.5"/><line class="ridge" x1="13.5" y1="5" x2="20.5" y2="5"/>
+          <rect class="frame" x="24.5" y=".5" width="9" height="9"/>
+          <polygon class="gem" points="29,1.5 32.5,5 29,8.5 25.5,5"/>
+          <line class="ridge" x1="29" y1="1.5" x2="29" y2="8.5"/><line class="ridge" x1="25.5" y1="5" x2="32.5" y2="5"/>
+          <rect class="frame" x="36.5" y=".5" width="9" height="9"/>
+          <polygon class="gem" points="41,1.5 44.5,5 41,8.5 37.5,5"/>
+          <line class="ridge" x1="41" y1="1.5" x2="41" y2="8.5"/><line class="ridge" x1="37.5" y1="5" x2="44.5" y2="5"/>
+          <rect class="frame" x=".5" y="12.5" width="9" height="9"/>
+          <polygon class="gem" points="5,13.5 8.5,17 5,20.5 1.5,17"/>
+          <line class="ridge" x1="5" y1="13.5" x2="5" y2="20.5"/><line class="ridge" x1="1.5" y1="17" x2="8.5" y2="17"/>
+          <rect class="frame" x="12.5" y="12.5" width="9" height="9"/>
+          <polygon class="gem" points="17,13.5 20.5,17 17,20.5 13.5,17"/>
+          <line class="ridge" x1="17" y1="13.5" x2="17" y2="20.5"/><line class="ridge" x1="13.5" y1="17" x2="20.5" y2="17"/>
+          <rect class="frame" x="24.5" y="12.5" width="9" height="9"/>
+          <polygon class="gem" points="29,13.5 32.5,17 29,20.5 25.5,17"/>
+          <line class="ridge" x1="29" y1="13.5" x2="29" y2="20.5"/><line class="ridge" x1="25.5" y1="17" x2="32.5" y2="17"/>
+          <rect class="frame" x="36.5" y="12.5" width="9" height="9"/>
+          <polygon class="gem" points="41,13.5 44.5,17 41,20.5 37.5,17"/>
+          <line class="ridge" x1="41" y1="13.5" x2="41" y2="20.5"/><line class="ridge" x1="37.5" y1="17" x2="44.5" y2="17"/>
+          <rect class="frame" x=".5" y="24.5" width="9" height="9"/>
+          <polygon class="gem" points="5,25.5 8.5,29 5,32.5 1.5,29"/>
+          <line class="ridge" x1="5" y1="25.5" x2="5" y2="32.5"/><line class="ridge" x1="1.5" y1="29" x2="8.5" y2="29"/>
+          <rect class="frame" x="12.5" y="24.5" width="9" height="9"/>
+          <polygon class="gem" points="17,25.5 20.5,29 17,32.5 13.5,29"/>
+          <line class="ridge" x1="17" y1="25.5" x2="17" y2="32.5"/><line class="ridge" x1="13.5" y1="29" x2="20.5" y2="29"/>
+          <rect class="frame" x="24.5" y="24.5" width="9" height="9"/>
+          <polygon class="gem" points="29,25.5 32.5,29 29,32.5 25.5,29"/>
+          <line class="ridge" x1="29" y1="25.5" x2="29" y2="32.5"/><line class="ridge" x1="25.5" y1="29" x2="32.5" y2="29"/>
+          <rect class="frame" x="36.5" y="24.5" width="9" height="9"/>
+          <polygon class="gem" points="41,25.5 44.5,29 41,32.5 37.5,29"/>
+          <line class="ridge" x1="41" y1="25.5" x2="41" y2="32.5"/><line class="ridge" x1="37.5" y1="29" x2="44.5" y2="29"/>
+        </svg>
         <div class="bundle-card-footer">
           <div class="bundle-card-info">
             <p class="bundle-card-name">Full Wall</p>
