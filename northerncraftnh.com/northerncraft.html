@@ -307,12 +307,13 @@
       aspect-ratio: 1;
       overflow: hidden;
       position: relative;
-      box-shadow: inset 0 0 0 1px rgba(92, 53, 69, 0.10);
+      box-shadow: inset 0 0 0 1px rgba(92, 53, 69, 0.12), 0 1px 6px rgba(92, 53, 69, 0.07);
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
     }
     .bundle-card-visual {
-      position: absolute;
-      top: 0; left: 0; right: 0;
-      height: 65%;
+      flex: 0 0 65%;
       display: flex;
       align-items: center;
       justify-content: center;
@@ -327,13 +328,21 @@
     }
     .bundle-card-icon .frame { stroke: var(--wood); stroke-width: 1.5px; fill: none; vector-effect: non-scaling-stroke; }
     .bundle-card-icon .gem   { fill: var(--rose); stroke: none; }
+    .bundle-card-badge {
+      font-family: var(--ff-sans);
+      font-size: 9px;
+      font-weight: 300;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--mauve);
+      opacity: 0.85;
+    }
     .bundle-card-footer {
-      position: absolute;
-      bottom: 0; left: 0; right: 0;
+      flex: 0 0 auto;
       display: flex;
       flex-direction: column;
       gap: 8px;
-      padding: 6px 20px 22px;
+      padding: 8px 20px 36px;
     }
     .bundle-card-name {
       font-family: var(--ff-serif);
@@ -343,6 +352,7 @@
       line-height: 1;
       font-variant-numeric: lining-nums;
     }
+    .bundle-card--full-wall .bundle-card-name { color: var(--charcoal); }
     .bundle-card-desc {
       font-size: 11px;
       line-height: 1.6;
@@ -731,6 +741,7 @@
           </svg>
         </div>
         <div class="bundle-card-footer">
+          <span class="bundle-card-badge">Most popular</span>
           <p class="bundle-card-name">Set of 6</p>
           <p class="bundle-card-desc">The most popular choice.</p>
           <a href="#" class="bundle-card-link">Shop</a>
