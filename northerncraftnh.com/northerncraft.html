@@ -300,8 +300,7 @@
     .bundles-grid {
       display: grid;
       grid-template-columns: 1fr 1fr;
-      column-gap: 24px;
-      row-gap: 24px;
+      gap: 2px;
     }
     .bundle-card {
       background: var(--cream);
@@ -325,7 +324,7 @@
       pointer-events: none;
       color: var(--mauve-dark);
     }
-    .bundle-card-icon .frame { stroke: var(--wood); stroke-width: 2.5px; fill: none; vector-effect: non-scaling-stroke; }
+    .bundle-card-icon .frame { stroke: var(--wood); stroke-width: 1.5px; fill: none; vector-effect: non-scaling-stroke; }
     .bundle-card-icon .gem   { fill: var(--rose); stroke: none; }
     .bundle-card-footer {
       position: absolute;
@@ -355,14 +354,12 @@
       bottom: 22px;
       right: 20px;
       font-family: var(--ff-sans);
-      font-size: 10px;
-      font-weight: 400;
-      letter-spacing: 0.3em;
+      font-size: 11px;
+      font-weight: 300;
+      letter-spacing: 0.18em;
       text-transform: uppercase;
       color: var(--mauve);
       text-decoration: none;
-      border-bottom: 1px solid currentColor;
-      padding-bottom: 2px;
       white-space: nowrap;
       transition: opacity 0.2s;
     }
@@ -678,11 +675,11 @@
       <div class="bundle-card">
         <!-- Pair: 2 pieces side by side (viewBox 22×10) -->
         <div class="bundle-card-visual">
-          <svg class="bundle-card-icon" viewBox="0 0 22 10" fill="none" stroke="none" xmlns="http://www.w3.org/2000/svg">
+          <svg class="bundle-card-icon" viewBox="0 0 20 10" fill="none" stroke="none" xmlns="http://www.w3.org/2000/svg">
             <rect class="frame" x=".5" y=".5" width="9" height="9"/>
             <rect class="gem" x="1.25" y="1.25" width="7.5" height="7.5"/>
-            <rect class="frame" x="12.5" y=".5" width="9" height="9"/>
-            <rect class="gem" x="13.25" y="1.25" width="7.5" height="7.5"/>
+            <rect class="frame" x="10.5" y=".5" width="9" height="9"/>
+            <rect class="gem" x="11.25" y="1.25" width="7.5" height="7.5"/>
           </svg>
         </div>
         <div class="bundle-card-footer">
