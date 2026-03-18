@@ -335,12 +335,6 @@
       gap: 4px;
       padding: 0 20px 22px;
     }
-    .bundle-card-row {
-      display: flex;
-      justify-content: space-between;
-      align-items: baseline;
-      gap: 12px;
-    }
     .bundle-card-name {
       font-family: var(--ff-serif);
       font-size: 18px;
@@ -354,8 +348,12 @@
       line-height: 1.5;
       color: var(--mauve-dark);
       opacity: 0.8;
+      padding-right: 54px;
     }
     .bundle-card-link {
+      position: absolute;
+      bottom: 22px;
+      right: 20px;
       font-family: var(--ff-sans);
       font-size: 10px;
       font-weight: 400;
@@ -366,7 +364,6 @@
       border-bottom: 1px solid currentColor;
       padding-bottom: 2px;
       white-space: nowrap;
-      flex-shrink: 0;
       transition: opacity 0.2s;
     }
     .bundle-card-link:hover { opacity: 0.7; }
@@ -690,10 +687,8 @@
         </div>
         <div class="bundle-card-footer">
           <p class="bundle-card-name">Pair</p>
-          <div class="bundle-card-row">
-            <p class="bundle-card-desc">A simple starting point.</p>
-            <a href="#" class="bundle-card-link">Shop</a>
-          </div>
+          <p class="bundle-card-desc">A simple starting point.</p>
+          <a href="#" class="bundle-card-link">Shop</a>
         </div>
       </div>
       <div class="bundle-card">
@@ -712,10 +707,8 @@
         </div>
         <div class="bundle-card-footer">
           <p class="bundle-card-name">Set of 4</p>
-          <div class="bundle-card-row">
-            <p class="bundle-card-desc">Four pieces that work just about anywhere.</p>
-            <a href="#" class="bundle-card-link">Shop</a>
-          </div>
+          <p class="bundle-card-desc">Four pieces that work just about anywhere.</p>
+          <a href="#" class="bundle-card-link">Shop</a>
         </div>
       </div>
       <div class="bundle-card">
@@ -738,10 +731,8 @@
         </div>
         <div class="bundle-card-footer">
           <p class="bundle-card-name">Set of 6</p>
-          <div class="bundle-card-row">
-            <p class="bundle-card-desc">The most popular choice. Enough to make a real statement.</p>
-            <a href="#" class="bundle-card-link">Shop</a>
-          </div>
+          <p class="bundle-card-desc">The most popular choice. Enough to make a real statement.</p>
+          <a href="#" class="bundle-card-link">Shop</a>
         </div>
       </div>
       <div class="bundle-card bundle-card--full-wall">
@@ -776,10 +767,8 @@
         </div>
         <div class="bundle-card-footer">
           <p class="bundle-card-name">Full Wall</p>
-          <div class="bundle-card-row">
-            <p class="bundle-card-desc">The whole collection on one wall. Twelve pieces, nothing missing.</p>
-            <a href="#" class="bundle-card-link">Shop</a>
-          </div>
+          <p class="bundle-card-desc">The whole collection on one wall. Twelve pieces, nothing missing.</p>
+          <a href="#" class="bundle-card-link">Shop</a>
         </div>
       </div>
     </div>
