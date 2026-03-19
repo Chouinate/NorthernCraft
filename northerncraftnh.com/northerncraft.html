@@ -54,12 +54,16 @@
       width: auto;
       display: block;
     }
+    .nav-brand {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+    }
     .nav-tagline {
       font-size: 9px;
       letter-spacing: 0.18em;
       text-transform: uppercase;
       color: var(--text-muted);
-      margin-left: 20px;
     }
     .nav-links {
       display: flex;
@@ -533,10 +537,12 @@
 <body>
   <!-- NAV -->
   <nav>
-    <a class="nav-logo" href="#">
-      <img src="NCNH_Logo.png" alt="Northern Craft NH" />
-    </a>
-    <span class="nav-tagline">Designed &amp; Printed in New Hampshire</span>
+    <div class="nav-brand">
+      <a class="nav-logo" href="#">
+        <img src="NCNH_Logo.png" alt="Northern Craft NH" />
+      </a>
+      <span class="nav-tagline">Designed &amp; Printed in New Hampshire</span>
+    </div>
     <ul class="nav-links">
       <li><a href="#collection">Collection</a></li>
       <li><a href="#bundles">Bundles</a></li>
