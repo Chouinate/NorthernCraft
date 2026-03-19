@@ -320,15 +320,18 @@
     }
     .bundle-card-icon {
       display: block;
-      height: 72%;
+      height: 58%;
       width: auto;
-      max-width: 88%;
+      max-width: 82%;
       pointer-events: none;
       color: var(--mauve-dark);
     }
     .bundle-card-icon .frame { stroke: var(--wood); stroke-width: 1.5px; fill: none; vector-effect: non-scaling-stroke; }
     .bundle-card-icon .gem   { fill: var(--rose); stroke: none; }
     .bundle-card-badge {
+      position: absolute;
+      top: -18px;
+      left: 0;
       font-family: var(--ff-sans);
       font-size: 9px;
       font-weight: 300;
@@ -339,10 +342,11 @@
     }
     .bundle-card-footer {
       flex: 0 0 auto;
+      position: relative;
       display: flex;
       flex-direction: column;
       gap: 8px;
-      padding: 8px 20px 52px;
+      padding: 4px 20px 40px;
     }
     .bundle-card-name {
       font-family: var(--ff-serif);
