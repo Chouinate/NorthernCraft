@@ -35,7 +35,7 @@
       display: flex;
       align-items: center;
       justify-content: space-between;
-      padding: 20px 56px;
+      padding: 10px 56px;
       background: var(--cream);
       position: fixed;
       top: 0;
@@ -46,26 +46,21 @@
     }
     .nav-logo {
       display: flex;
-      flex-direction: column;
-      align-items: flex-start;
+      align-items: center;
       text-decoration: none;
     }
     .nav-logo img {
-      height: 80px;
+      height: 48px;
       width: auto;
       display: block;
     }
     .nav-tagline {
-      display: block;
-      width: 100%;
+      flex: 1;
       font-size: 9px;
       letter-spacing: 0.18em;
       text-transform: uppercase;
       color: var(--text-muted);
       text-align: center;
-      margin-top: 4px;
-      padding-bottom: 0;
-      overflow: hidden;
     }
     .nav-links {
       display: flex;
@@ -494,7 +489,8 @@
     .footer-copy { font-size: 11px; letter-spacing: 0.08em; }
     /* ── RESPONSIVE (MOBILE) ── */
     @media (max-width: 900px) {
-      nav { padding: 18px 28px; }
+      nav { padding: 10px 28px; }
+      .nav-tagline { display: none; }
       section { padding: 60px 28px; }
       .hero {
         grid-template-columns: 1fr;
@@ -540,8 +536,8 @@
   <nav>
     <a class="nav-logo" href="#">
       <img src="NCNH_Logo.png" alt="Northern Craft NH" />
-      <span class="nav-tagline">Designed &amp; Printed in New Hampshire</span>
     </a>
+    <span class="nav-tagline">Designed &amp; Printed in New Hampshire</span>
     <ul class="nav-links">
       <li><a href="#collection">Collection</a></li>
       <li><a href="#bundles">Bundles</a></li>
@@ -861,9 +857,9 @@
     const nav     = document.querySelector('nav');
     const logo    = document.querySelector('.nav-logo img');
     const tagline = document.querySelector('.nav-tagline');
-    nav.style.paddingTop    = '14px';
-    nav.style.paddingBottom = '14px';
-    logo.style.height       = '68px';
+    nav.style.paddingTop    = '10px';
+    nav.style.paddingBottom = '10px';
+    logo.style.height       = '48px';
     document.body.style.paddingTop = nav.offsetHeight + 'px';
 
     const hamburger = document.querySelector('.nav-hamburger');
