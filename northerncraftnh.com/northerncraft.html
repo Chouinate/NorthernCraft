@@ -257,18 +257,21 @@
     .section-title em { font-style: italic; color: var(--mauve); }
     /* ── COLLECTION ── */
     #collection { background: var(--cream); }
-    #collection .section-title { margin-bottom: 0; }
+    #collection .section-title { margin-bottom: 0; grid-column: 1; grid-row: 2; }
     .collection-header {
-      display: flex;
-      align-items: flex-end;
-      gap: 48px;
+      display: grid;
+      grid-template-columns: auto 1fr;
+      column-gap: 48px;
+      align-items: end;
       margin-bottom: 20px;
       width: 100%;
     }
+    .collection-header-left { display: contents; }
     .specs-bar {
       display: grid;
       grid-template-columns: repeat(3, 1fr);
-      flex: 1;
+      grid-column: 2;
+      grid-row: 2;
       font-size: 12px;
       letter-spacing: 0.09em;
     }
@@ -552,7 +555,9 @@
       .bundle-card:nth-child(odd) { scroll-snap-align: start; }
       .product-grid { grid-template-columns: 1fr 1fr; }
       .process-steps { grid-template-columns: 1fr 1fr; }
-      .collection-header { align-items: center; }
+      .collection-header { display: flex; align-items: center; }
+      .collection-header-left { display: block; }
+      .specs-bar { grid-column: unset; grid-row: unset; flex: 1; }
       footer {
         flex-direction: column;
         gap: 28px;
