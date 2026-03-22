@@ -257,6 +257,7 @@
     .section-title em { font-style: italic; color: var(--mauve); }
     /* ── COLLECTION ── */
     #collection { background: var(--cream); }
+    #collection .section-label { grid-column: 1; grid-row: 1; }
     #collection .section-title { margin-bottom: 0; grid-column: 1; grid-row: 2; }
     .collection-header {
       display: grid;
@@ -266,7 +267,6 @@
       margin-bottom: 20px;
       width: 100%;
     }
-    .collection-header-left { display: contents; }
     .specs-bar {
       display: grid;
       grid-template-columns: repeat(3, 1fr);
@@ -555,9 +555,10 @@
       .bundle-card:nth-child(odd) { scroll-snap-align: start; }
       .product-grid { grid-template-columns: 1fr 1fr; }
       .process-steps { grid-template-columns: 1fr 1fr; }
-      .collection-header { display: flex; align-items: center; }
-      .collection-header-left { display: block; }
-      .specs-bar { grid-column: unset; grid-row: unset; flex: 1; }
+      #collection .section-label { grid-row: 1; grid-column: 1; }
+      #collection .section-title { grid-row: 2; grid-column: 1; }
+      .collection-header { align-items: center; }
+      .specs-bar { grid-row: 1 / span 2; grid-column: 2; align-self: center; }
       footer {
         flex-direction: column;
         gap: 28px;
@@ -612,10 +613,8 @@
   <!-- COLLECTION -->
   <section id="collection">
     <div class="collection-header">
-      <div class="collection-header-left">
-        <p class="section-label">Shop</p>
-        <h2 class="section-title">Current <em>Designs</em></h2>
-      </div>
+      <p class="section-label">Shop</p>
+      <h2 class="section-title">Current <em>Designs</em></h2>
       <div class="specs-bar">
         <div class="spec-col">
           <span class="spec-item">~8" Square</span>
