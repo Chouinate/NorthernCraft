@@ -258,11 +258,16 @@
     /* ── COLLECTION ── */
     #collection { background: var(--cream); }
     #collection .section-title { margin-bottom: 0; }
+    .collection-header {
+      display: flex;
+      align-items: center;
+      gap: 48px;
+      margin-bottom: 20px;
+    }
     .specs-bar {
       display: grid;
       grid-template-columns: repeat(3, 1fr);
-      width: 100%;
-      padding: 16px 0 48px;
+      flex: 1;
       font-size: 12px;
       letter-spacing: 0.09em;
     }
@@ -599,20 +604,24 @@
   </section>
   <!-- COLLECTION -->
   <section id="collection">
-    <p class="section-label">Shop</p>
-    <h2 class="section-title">Current <em>Designs</em></h2>
-    <div class="specs-bar">
-      <div class="spec-col">
-        <span class="spec-item">~8" Square</span>
-        <span class="spec-sub">Custom sizes up to 12"</span>
+    <div class="collection-header">
+      <div class="collection-header-left">
+        <p class="section-label">Shop</p>
+        <h2 class="section-title">Current <em>Designs</em></h2>
       </div>
-      <div class="spec-col">
-        <span class="spec-item">Beige &amp; Metallic Rose</span>
-        <span class="spec-sub">Custom colors available</span>
-      </div>
-      <div class="spec-col">
-        <span class="spec-item">Inquiries</span>
-        <a href="mailto:northerncraftnh@gmail.com" class="spec-email">northerncraftnh@gmail.com</a>
+      <div class="specs-bar">
+        <div class="spec-col">
+          <span class="spec-item">~8" Square</span>
+          <span class="spec-sub">Custom sizes up to 12"</span>
+        </div>
+        <div class="spec-col">
+          <span class="spec-item">Beige &amp; Metallic Rose</span>
+          <span class="spec-sub">Custom colors available</span>
+        </div>
+        <div class="spec-col">
+          <span class="spec-item">Inquiries</span>
+          <a href="mailto:northerncraftnh@gmail.com" class="spec-email">northerncraftnh@gmail.com</a>
+        </div>
       </div>
     </div>
     <div class="product-grid">
