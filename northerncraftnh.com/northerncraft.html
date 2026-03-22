@@ -259,18 +259,25 @@
     #collection { background: var(--cream); }
     #collection .section-title { margin-bottom: 0; }
     .specs-bar {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      flex-wrap: wrap;
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
       width: 100%;
-      padding: 32px 0 102px;
+      padding: 16px 0 48px;
       font-size: 12px;
       letter-spacing: 0.09em;
     }
+    .spec-col {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 5px;
+      padding: 14px 24px;
+    }
+    .spec-col:not(:last-child) {
+      border-right: 1px solid #e6e0e3;
+    }
     .spec-item { color: var(--mauve-dark); white-space: nowrap; }
     .spec-sub { color: #9e9098; font-style: italic; font-size: 11px; }
-    .spec-divider { color: #ddd8da; padding: 0 24px; font-weight: 300; }
     .spec-email { color: var(--mauve-dark); text-decoration: underline; text-underline-offset: 3px; }
     .product-grid {
       display: grid;
@@ -592,14 +599,20 @@
   </section>
   <!-- COLLECTION -->
   <section id="collection">
-    <p class="section-label">Shop</p>
     <h2 class="section-title">Current <em>Designs</em></h2>
     <div class="specs-bar">
-      <span class="spec-item">~8" Square <span class="spec-sub">(Custom sizes up to 12")</span></span>
-      <span class="spec-divider">|</span>
-      <span class="spec-item">Matte Beige &amp; Metallic Rose <span class="spec-sub">(Custom colors available)</span></span>
-      <span class="spec-divider">|</span>
-      <span class="spec-item">Inquiries: <a href="mailto:northerncraftnh@gmail.com" class="spec-email">northerncraftnh@gmail.com</a></span>
+      <div class="spec-col">
+        <span class="spec-item">~8" Square</span>
+        <span class="spec-sub">Custom sizes up to 12"</span>
+      </div>
+      <div class="spec-col">
+        <span class="spec-item">Beige &amp; Metallic Rose</span>
+        <span class="spec-sub">Custom colors available</span>
+      </div>
+      <div class="spec-col">
+        <span class="spec-item">Inquiries</span>
+        <a href="mailto:northerncraftnh@gmail.com" class="spec-email">northerncraftnh@gmail.com</a>
+      </div>
     </div>
     <div class="product-grid">
       <div class="product-card">
