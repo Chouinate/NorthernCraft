@@ -138,8 +138,7 @@
 
     /* ── Payment brand icons row ── */
     '.nc-cart-pay-badges {',
-    '  display: flex; flex-wrap: wrap; gap: 5px;',
-    '  margin-top: 10px; justify-content: center; align-items: center;',
+    '  display: block; width: 100%; margin-top: 10px;',
     '}',
 
     /* ── Payment picker modal ── */
@@ -560,40 +559,10 @@
       payArea.appendChild(btn);
 
       // Payment brand icons
-      var badges = document.createElement('div');
+      var badges = document.createElement('img');
+      badges.src = 'Payments.png';
+      badges.alt = 'Accepted payment methods: Google Pay, Apple Pay, Stripe, Klarna, Visa, Mastercard, Discover, Amex';
       badges.className = 'nc-cart-pay-badges';
-      badges.innerHTML =
-        // Visa
-        '<svg width="38" height="24" viewBox="0 0 38 24" xmlns="http://www.w3.org/2000/svg" aria-label="Visa">' +
-          '<rect width="38" height="24" rx="3" fill="#1a1f71"/>' +
-          '<text x="19" y="17" text-anchor="middle" fill="#fff" font-family="Arial,sans-serif" font-size="11" font-weight="bold" font-style="italic">VISA</text>' +
-        '</svg>' +
-        // Mastercard
-        '<svg width="38" height="24" viewBox="0 0 38 24" xmlns="http://www.w3.org/2000/svg" aria-label="Mastercard">' +
-          '<rect width="38" height="24" rx="3" fill="#f2f2f2"/>' +
-          '<circle cx="15" cy="12" r="7" fill="#eb001b"/>' +
-          '<circle cx="23" cy="12" r="7" fill="#f79e1b"/>' +
-          '<path d="M19 6.8a7 7 0 0 1 0 10.4A7 7 0 0 1 19 6.8z" fill="#ff5f00"/>' +
-        '</svg>' +
-        // Amex
-        '<svg width="38" height="24" viewBox="0 0 38 24" xmlns="http://www.w3.org/2000/svg" aria-label="American Express">' +
-          '<rect width="38" height="24" rx="3" fill="#016fcf"/>' +
-          '<text x="19" y="16" text-anchor="middle" fill="#fff" font-family="Arial,sans-serif" font-size="8" font-weight="bold" letter-spacing="0.5">AMEX</text>' +
-        '</svg>' +
-        // Klarna
-        '<svg width="38" height="24" viewBox="0 0 38 24" xmlns="http://www.w3.org/2000/svg" aria-label="Klarna">' +
-          '<rect width="38" height="24" rx="3" fill="#ffb3c7"/>' +
-          '<text x="19" y="17" text-anchor="middle" fill="#000" font-family="Arial,sans-serif" font-size="12" font-weight="bold">K</text>' +
-        '</svg>' +
-        // Google Pay (multicolor G)
-        '<svg width="38" height="24" viewBox="0 0 38 24" xmlns="http://www.w3.org/2000/svg" aria-label="Google Pay">' +
-          '<rect width="38" height="24" rx="3" fill="#fff" stroke="#dadce0" stroke-width="0.8"/>' +
-          '<path d="M22.8 9.2 A5.5 5.5 0 0 0 12.5 12" stroke="#4285F4" stroke-width="2.2" fill="none" stroke-linecap="butt"/>' +
-          '<path d="M12.5 12 A5.5 5.5 0 0 0 15.2 16.8" stroke="#EA4335" stroke-width="2.2" fill="none" stroke-linecap="butt"/>' +
-          '<path d="M15.2 16.8 A5.5 5.5 0 0 0 20.8 16.8" stroke="#FBBC05" stroke-width="2.2" fill="none" stroke-linecap="butt"/>' +
-          '<path d="M20.8 16.8 A5.5 5.5 0 0 0 22.8 14.8" stroke="#34A853" stroke-width="2.2" fill="none" stroke-linecap="butt"/>' +
-          '<path d="M18 12 H23.5" stroke="#34A853" stroke-width="2.2" fill="none" stroke-linecap="round"/>' +
-        '</svg>';
       payArea.appendChild(badges);
     }
 
