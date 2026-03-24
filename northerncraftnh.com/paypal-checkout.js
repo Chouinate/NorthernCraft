@@ -145,16 +145,13 @@
       return;
     }
 
-    // Divider
-    var divider = document.createElement('div');
-    divider.className = 'nc-paypal-divider';
-    divider.textContent = 'or pay with PayPal';
-    container.appendChild(divider);
+    // Render into #nc-paypal-mount if present (keeps PayPal above the Stripe button),
+    // falling back to #checkout-buttons for backwards compatibility.
+    var mountTarget = document.getElementById('nc-paypal-mount') || container;
 
-    // Button mount point
     var btnWrap = document.createElement('div');
     btnWrap.id = 'nc-paypal-btn';
-    container.appendChild(btnWrap);
+    mountTarget.appendChild(btnWrap);
 
     paypal.Buttons({
       style: {

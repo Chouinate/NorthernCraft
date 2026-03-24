@@ -569,7 +569,9 @@
     }
   </style>
   <script src="cart.js" defer></script>
-  <script src="cart-checkout.js" defer></script>
+  <script src="https://js.stripe.com/v3/" async></script>
+  <script src="stripe-checkout.js" defer></script>
+  <script src="paypal-checkout.js" defer></script>
   <script src="product-cards.js" defer></script>
 </head>
 <body>
@@ -849,9 +851,11 @@
       </div>
     </div>
   </section>
-  <!-- CHECKOUT — padding starts at 0; cart-checkout.js sets it when content appears -->
-  <section id="checkout" style="padding: 0;">
-    <div id="checkout-buttons"></div>
+  <!-- CHECKOUT -->
+  <section id="checkout">
+    <div id="checkout-buttons">
+      <div id="nc-paypal-mount"></div>
+    </div>
     <div id="stripe-checkout-container"></div>
   </section>
   <!-- ABOUT -->
