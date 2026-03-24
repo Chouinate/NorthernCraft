@@ -465,10 +465,14 @@
           '<rect width="38" height="24" rx="3" fill="#ffb3c7"/>' +
           '<text x="19" y="17" text-anchor="middle" fill="#000" font-family="Arial,sans-serif" font-size="12" font-weight="bold">K</text>' +
         '</svg>' +
-        // Afterpay
-        '<svg width="38" height="24" viewBox="0 0 38 24" xmlns="http://www.w3.org/2000/svg" aria-label="Afterpay">' +
-          '<rect width="38" height="24" rx="3" fill="#b2fce4"/>' +
-          '<text x="19" y="15" text-anchor="middle" fill="#000" font-family="Arial,sans-serif" font-size="5.5" font-weight="bold" letter-spacing="0.3">AFTERPAY</text>' +
+        // Google Pay (multicolor G)
+        '<svg width="38" height="24" viewBox="0 0 38 24" xmlns="http://www.w3.org/2000/svg" aria-label="Google Pay">' +
+          '<rect width="38" height="24" rx="3" fill="#fff" stroke="#dadce0" stroke-width="0.8"/>' +
+          '<path d="M22.8 9.2 A5.5 5.5 0 0 0 12.5 12" stroke="#4285F4" stroke-width="2.2" fill="none" stroke-linecap="butt"/>' +
+          '<path d="M12.5 12 A5.5 5.5 0 0 0 15.2 16.8" stroke="#EA4335" stroke-width="2.2" fill="none" stroke-linecap="butt"/>' +
+          '<path d="M15.2 16.8 A5.5 5.5 0 0 0 20.8 16.8" stroke="#FBBC05" stroke-width="2.2" fill="none" stroke-linecap="butt"/>' +
+          '<path d="M20.8 16.8 A5.5 5.5 0 0 0 22.8 14.8" stroke="#34A853" stroke-width="2.2" fill="none" stroke-linecap="butt"/>' +
+          '<path d="M18 12 H23.5" stroke="#34A853" stroke-width="2.2" fill="none" stroke-linecap="round"/>' +
         '</svg>';
       payArea.appendChild(badges);
     }
