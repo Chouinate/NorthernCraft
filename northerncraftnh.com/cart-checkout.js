@@ -397,6 +397,8 @@
 
     var methods = [
       { label: 'Credit / Debit Card',  sub: 'Visa, Mastercard, Amex & more', types: ['card'] },
+      { label: 'Apple Pay',            sub: 'Pay with Touch ID or Face ID',   types: ['card'] },
+      { label: 'Google Pay',           sub: 'Fast checkout with Google',      types: ['card'] },
       { label: 'Klarna',               sub: 'Buy now, pay later',             types: ['klarna'] },
       { label: 'Afterpay',             sub: '4 interest-free payments',       types: ['afterpay_clearpay'] },
     ];
