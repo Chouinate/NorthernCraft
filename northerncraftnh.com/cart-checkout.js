@@ -142,6 +142,30 @@
     '  margin-top: 10px; justify-content: center; align-items: center;',
     '}',
 
+    /* ── Payment picker modal ── */
+    '.nc-picker-inner { max-width: 400px; padding: 52px 28px 32px; }',
+    '.nc-picker-title {',
+    '  font-family: "Cormorant Garamond", Georgia, serif;',
+    '  font-size: 20px; font-weight: 400; color: #2a2523;',
+    '  letter-spacing: 0.04em; margin: 0 0 20px; text-align: center;',
+    '}',
+    '.nc-picker-option {',
+    '  display: flex; flex-direction: column; align-items: flex-start;',
+    '  width: 100%; background: #fff; border: 1px solid #cbc5bc;',
+    '  cursor: pointer; padding: 14px 16px; margin-bottom: 8px;',
+    '  transition: border-color 0.2s; text-align: left;',
+    '}',
+    '.nc-picker-option:last-child { margin-bottom: 0; }',
+    '.nc-picker-option:hover { border-color: #5c3545; }',
+    '.nc-picker-option-label {',
+    '  font-family: "Montserrat", sans-serif; font-size: 10px;',
+    '  font-weight: 600; letter-spacing: 0.14em; text-transform: uppercase; color: #2a2523;',
+    '}',
+    '.nc-picker-option-sub {',
+    '  font-family: "Montserrat", sans-serif; font-size: 9px;',
+    '  letter-spacing: 0.10em; color: #9e9098; margin-top: 3px;',
+    '}',
+
   ].join('\n');
 
   // ── Helpers ─────────────────────────────────────────────────────────────────
@@ -343,6 +367,63 @@
       });
   }
 
+  // ── Payment picker modal ─────────────────────────────────────────────────────
+  function _openPaymentPickerModal() {
+    var existing = document.getElementById('nc-payment-picker-modal');
+    if (existing) existing.remove();
+
+    var modal = document.createElement('div');
+    modal.id = 'nc-payment-picker-modal';
+    modal.className = 'nc-stripe-modal';
+
+    var inner = document.createElement('div');
+    inner.className = 'nc-stripe-modal-inner nc-picker-inner';
+
+    var closeBtn = document.createElement('button');
+    closeBtn.className = 'nc-stripe-modal-close';
+    closeBtn.setAttribute('aria-label', 'Close');
+    closeBtn.innerHTML = '&#x2715;';
+    closeBtn.addEventListener('click', function () {
+      modal.remove();
+      document.body.style.overflow = '';
+    });
+
+    var title = document.createElement('p');
+    title.className = 'nc-picker-title';
+    title.textContent = 'How would you like to pay?';
+
+    inner.appendChild(closeBtn);
+    inner.appendChild(title);
+
+    var methods = [
+      { label: 'Credit / Debit Card',  sub: 'Visa, Mastercard, Amex & more', types: ['card'] },
+      { label: 'Klarna',               sub: 'Buy now, pay later',             types: ['klarna'] },
+      { label: 'Afterpay',             sub: '4 interest-free payments',       types: ['afterpay_clearpay'] },
+    ];
+
+    methods.forEach(function (m) {
+      var btn = document.createElement('button');
+      btn.className = 'nc-picker-option';
+      btn.innerHTML =
+        '<span class="nc-picker-option-label">' + m.label + '</span>' +
+        '<span class="nc-picker-option-sub">' + m.sub + '</span>';
+      btn.addEventListener('click', function () {
+        modal.remove();
+        document.body.style.overflow = '';
+        _startStripeCheckout(m.types, null, m.label);
+      });
+      inner.appendChild(btn);
+    });
+
+    modal.appendChild(inner);
+    modal.addEventListener('click', function (e) {
+      if (e.target === modal) { modal.remove(); document.body.style.overflow = ''; }
+    });
+
+    document.body.appendChild(modal);
+    document.body.style.overflow = 'hidden';
+  }
+
   // ── Render payment options ───────────────────────────────────────────────────
   function _renderPaymentOptions(payArea, hasPayPal, hasStripe) {
     // PayPal button (rendered by SDK)
@@ -426,10 +507,7 @@
       var btn = document.createElement('button');
       btn.className = 'nc-cart-checkout-btn';
       btn.textContent = 'More Ways to Pay';
-      btn.addEventListener('click', function () {
-        // null = no method restriction; Stripe shows all enabled methods
-        _startStripeCheckout(['card', 'klarna', 'afterpay_clearpay'], btn, 'More Ways to Pay');
-      });
+      btn.addEventListener('click', _openPaymentPickerModal);
       payArea.appendChild(btn);
 
       // Payment brand icons
