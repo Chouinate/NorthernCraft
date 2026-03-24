@@ -423,19 +423,12 @@
 
     // Divider + single checkout button
     if (hasStripe) {
-      if (hasPayPal) {
-        var divider = document.createElement('div');
-        divider.className = 'nc-cart-pay-divider';
-        divider.textContent = 'other payment options';
-        payArea.appendChild(divider);
-      }
-
       var btn = document.createElement('button');
       btn.className = 'nc-cart-checkout-btn';
-      btn.textContent = 'Checkout Securely';
+      btn.textContent = 'More Ways to Pay';
       btn.addEventListener('click', function () {
         // null = no method restriction; Stripe shows all enabled methods
-        _startStripeCheckout(['card', 'klarna', 'afterpay_clearpay'], btn, 'Checkout Securely');
+        _startStripeCheckout(['card', 'klarna', 'afterpay_clearpay'], btn, 'More Ways to Pay');
       });
       payArea.appendChild(btn);
 
