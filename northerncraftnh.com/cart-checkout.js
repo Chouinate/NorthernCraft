@@ -138,9 +138,34 @@
 
     /* ── Payment brand icons row ── */
     '.nc-cart-pay-badges {',
-    '  display: flex; flex-wrap: wrap; gap: 5px;',
-    '  margin-top: 10px; justify-content: center; align-items: center;',
+    '  display: block; width: 100%; margin-top: 10px;',
     '}',
+
+    /* ── Payment picker modal ── */
+    '.nc-picker-inner { max-width: 400px; padding: 52px 28px 32px; }',
+    '.nc-picker-title {',
+    '  font-family: "Cormorant Garamond", Georgia, serif;',
+    '  font-size: 20px; font-weight: 400; color: #2a2523;',
+    '  letter-spacing: 0.04em; margin: 0 0 20px; text-align: center;',
+    '}',
+    '.nc-picker-option {',
+    '  display: flex; flex-direction: column; align-items: flex-start;',
+    '  width: 100%; background: #fff; border: 1px solid #cbc5bc;',
+    '  cursor: pointer; padding: 14px 16px; margin-bottom: 8px;',
+    '  transition: border-color 0.2s; text-align: left;',
+    '}',
+    '.nc-picker-option:last-child { margin-bottom: 0; }',
+    '.nc-picker-option:hover { border-color: #5c3545; }',
+    '.nc-picker-option-label {',
+    '  font-family: "Montserrat", sans-serif; font-size: 10px;',
+    '  font-weight: 600; letter-spacing: 0.14em; text-transform: uppercase; color: #2a2523;',
+    '}',
+    '.nc-picker-option-sub {',
+    '  font-family: "Montserrat", sans-serif; font-size: 9px;',
+    '  letter-spacing: 0.10em; color: #9e9098; margin-top: 3px;',
+    '}',
+    '.nc-picker-option-brand { padding: 0; border-color: transparent; }',
+    '.nc-picker-option-brand svg { display: block; width: 100%; height: auto; border-radius: 2px; }',
 
   ].join('\n');
 
@@ -343,6 +368,110 @@
       });
   }
 
+  // ── Payment picker modal ─────────────────────────────────────────────────────
+  function _openPaymentPickerModal() {
+    var existing = document.getElementById('nc-payment-picker-modal');
+    if (existing) existing.remove();
+
+    var modal = document.createElement('div');
+    modal.id = 'nc-payment-picker-modal';
+    modal.className = 'nc-stripe-modal';
+
+    var inner = document.createElement('div');
+    inner.className = 'nc-stripe-modal-inner nc-picker-inner';
+
+    var closeBtn = document.createElement('button');
+    closeBtn.className = 'nc-stripe-modal-close';
+    closeBtn.setAttribute('aria-label', 'Close');
+    closeBtn.innerHTML = '&#x2715;';
+    closeBtn.addEventListener('click', function () {
+      modal.remove();
+      document.body.style.overflow = '';
+    });
+
+    var title = document.createElement('p');
+    title.className = 'nc-picker-title';
+    title.textContent = 'How would you like to pay?';
+
+    inner.appendChild(closeBtn);
+    inner.appendChild(title);
+
+    var APPLE_PAY_SVG =
+      '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 280 52" role="img" aria-label="Apple Pay">' +
+        '<rect width="280" height="52" rx="4" fill="#000"/>' +
+        // Apple logo
+        '<path d="M118.8 16.4c1-1.2 1.7-2.9 1.5-4.6-1.5.1-3.2 1-4.2 2.2-.9 1.1-1.7 2.8-1.5 4.4 1.6.1 3.2-.7 4.2-2z" fill="#fff"/>' +
+        '<path d="M120.3 18.9c-2.3-.1-4.3 1.3-5.4 1.3s-2.7-1.2-4.5-1.2c-2.3.1-4.4 1.3-5.6 3.4-2.4 4.1-.6 10.2 1.7 13.6 1.1 1.6 2.5 3.4 4.2 3.4 1.7-.1 2.3-1.1 4.4-1.1s2.6 1.1 4.4 1.1c1.8 0 2.9-1.7 4-3.3.8-1.2 1.4-2.4 1.8-3.7-2.2-.9-3.6-3-3.6-5.3 0-2.1 1.2-4 3.1-5-.9-1.7-2.7-3-4.5-3.2z" fill="#fff"/>' +
+        // "Pay" text
+        '<text x="148" y="34" font-family="-apple-system,BlinkMacSystemFont,\'Helvetica Neue\',sans-serif" font-size="22" font-weight="500" fill="#fff">Pay</text>' +
+      '</svg>';
+
+    var GOOGLE_PAY_SVG =
+      '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 280 52" role="img" aria-label="Google Pay">' +
+        '<rect width="280" height="52" rx="4" fill="#fff" stroke="#dadce0" stroke-width="1"/>' +
+        // Google G
+        '<path d="M122.5 26c0-1-.1-1.9-.3-2.8H112v5.3h5.9c-.3 1.4-1 2.6-2.2 3.4v2.8h3.5c2.1-1.9 3.3-4.8 3.3-8.7z" fill="#4285F4"/>' +
+        '<path d="M112 35.5c3 0 5.5-1 7.3-2.7l-3.5-2.8c-1 .7-2.3 1.1-3.8 1.1-2.9 0-5.4-2-6.3-4.6h-3.6v2.9c1.8 3.6 5.5 6.1 9.9 6.1z" fill="#34A853"/>' +
+        '<path d="M105.7 26.5c-.2-.7-.4-1.5-.4-2.3s.1-1.6.4-2.3v-2.9h-3.6c-.8 1.6-1.2 3.3-1.2 5.2s.4 3.6 1.2 5.2l3.6-2.9z" fill="#FBBC04"/>' +
+        '<path d="M112 19.6c1.6 0 3.1.6 4.2 1.7l3.2-3.2c-1.9-1.8-4.5-2.9-7.4-2.9-4.4 0-8.1 2.5-9.9 6.1l3.6 2.9c.9-2.7 3.4-4.6 6.3-4.6z" fill="#EA4335"/>' +
+        // "Pay" text
+        '<text x="126" y="33" font-family="\'Roboto\',Arial,sans-serif" font-size="22" font-weight="500" fill="#3c4043">Pay</text>' +
+      '</svg>';
+
+    var KLARNA_SVG =
+      '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 280 52" role="img" aria-label="Klarna">' +
+        '<rect width="280" height="52" rx="4" fill="#FFB3C7"/>' +
+        // Klarna wordmark — lowercase, bold, black
+        '<text x="140" y="35" font-family="\'Helvetica Neue\',Arial,sans-serif" font-size="26" font-weight="700" fill="#000" text-anchor="middle" letter-spacing="-0.5">klarna</text>' +
+      '</svg>';
+
+    var AFTERPAY_SVG =
+      '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 280 52" role="img" aria-label="Afterpay">' +
+        '<rect width="280" height="52" rx="4" fill="#000"/>' +
+        // Afterpay mint logomark (simplified mint circle with "A")
+        '<circle cx="104" cy="26" r="12" fill="#B2FCE4"/>' +
+        '<text x="104" y="31" font-family="\'Helvetica Neue\',Arial,sans-serif" font-size="14" font-weight="800" fill="#000" text-anchor="middle">A</text>' +
+        // Afterpay wordmark
+        '<text x="154" y="33" font-family="\'Helvetica Neue\',Arial,sans-serif" font-size="20" font-weight="700" fill="#fff" text-anchor="middle" letter-spacing="-0.3">Afterpay</text>' +
+      '</svg>';
+
+    var methods = [
+      { label: 'Credit / Debit Card',  sub: 'Visa, Mastercard, Amex & more', types: ['card'] },
+      { label: 'Apple Pay',  brandSvg: APPLE_PAY_SVG,  types: ['card'] },
+      { label: 'Google Pay', brandSvg: GOOGLE_PAY_SVG, types: ['card'] },
+      { label: 'Klarna',   brandSvg: KLARNA_SVG,   types: ['klarna'] },
+      { label: 'Afterpay', brandSvg: AFTERPAY_SVG, types: ['afterpay_clearpay'] },
+    ];
+
+    methods.forEach(function (m) {
+      var btn = document.createElement('button');
+      if (m.brandSvg) {
+        btn.className = 'nc-picker-option nc-picker-option-brand';
+        btn.setAttribute('aria-label', m.label);
+        btn.innerHTML = m.brandSvg;
+      } else {
+        btn.className = 'nc-picker-option';
+        btn.innerHTML =
+          '<span class="nc-picker-option-label">' + m.label + '</span>' +
+          '<span class="nc-picker-option-sub">' + m.sub + '</span>';
+      }
+      btn.addEventListener('click', function () {
+        modal.remove();
+        document.body.style.overflow = '';
+        _startStripeCheckout(m.types, null, m.label);
+      });
+      inner.appendChild(btn);
+    });
+
+    modal.appendChild(inner);
+    modal.addEventListener('click', function (e) {
+      if (e.target === modal) { modal.remove(); document.body.style.overflow = ''; }
+    });
+
+    document.body.appendChild(modal);
+    document.body.style.overflow = 'hidden';
+  }
+
   // ── Render payment options ───────────────────────────────────────────────────
   function _renderPaymentOptions(payArea, hasPayPal, hasStripe) {
     // PayPal button (rendered by SDK)
@@ -423,57 +552,17 @@
 
     // Divider + single checkout button
     if (hasStripe) {
-      if (hasPayPal) {
-        var divider = document.createElement('div');
-        divider.className = 'nc-cart-pay-divider';
-        divider.textContent = 'other payment options';
-        payArea.appendChild(divider);
-      }
-
       var btn = document.createElement('button');
       btn.className = 'nc-cart-checkout-btn';
-      btn.textContent = 'Checkout Securely';
-      btn.addEventListener('click', function () {
-        // null = no method restriction; Stripe shows all enabled methods
-        _startStripeCheckout(['card', 'klarna', 'afterpay_clearpay'], btn, 'Checkout Securely');
-      });
+      btn.textContent = 'More Ways to Pay';
+      btn.addEventListener('click', _openPaymentPickerModal);
       payArea.appendChild(btn);
 
       // Payment brand icons
-      var badges = document.createElement('div');
+      var badges = document.createElement('img');
+      badges.src = 'Payments.png';
+      badges.alt = 'Accepted payment methods: Google Pay, Apple Pay, Stripe, Klarna, Visa, Mastercard, Discover, Amex';
       badges.className = 'nc-cart-pay-badges';
-      badges.innerHTML =
-        // Visa
-        '<svg width="38" height="24" viewBox="0 0 38 24" xmlns="http://www.w3.org/2000/svg" aria-label="Visa">' +
-          '<rect width="38" height="24" rx="3" fill="#1a1f71"/>' +
-          '<text x="19" y="17" text-anchor="middle" fill="#fff" font-family="Arial,sans-serif" font-size="11" font-weight="bold" font-style="italic">VISA</text>' +
-        '</svg>' +
-        // Mastercard
-        '<svg width="38" height="24" viewBox="0 0 38 24" xmlns="http://www.w3.org/2000/svg" aria-label="Mastercard">' +
-          '<rect width="38" height="24" rx="3" fill="#f2f2f2"/>' +
-          '<circle cx="15" cy="12" r="7" fill="#eb001b"/>' +
-          '<circle cx="23" cy="12" r="7" fill="#f79e1b"/>' +
-          '<path d="M19 6.8a7 7 0 0 1 0 10.4A7 7 0 0 1 19 6.8z" fill="#ff5f00"/>' +
-        '</svg>' +
-        // Amex
-        '<svg width="38" height="24" viewBox="0 0 38 24" xmlns="http://www.w3.org/2000/svg" aria-label="American Express">' +
-          '<rect width="38" height="24" rx="3" fill="#016fcf"/>' +
-          '<text x="19" y="16" text-anchor="middle" fill="#fff" font-family="Arial,sans-serif" font-size="8" font-weight="bold" letter-spacing="0.5">AMEX</text>' +
-        '</svg>' +
-        // Klarna
-        '<svg width="38" height="24" viewBox="0 0 38 24" xmlns="http://www.w3.org/2000/svg" aria-label="Klarna">' +
-          '<rect width="38" height="24" rx="3" fill="#ffb3c7"/>' +
-          '<text x="19" y="17" text-anchor="middle" fill="#000" font-family="Arial,sans-serif" font-size="12" font-weight="bold">K</text>' +
-        '</svg>' +
-        // Google Pay (multicolor G)
-        '<svg width="38" height="24" viewBox="0 0 38 24" xmlns="http://www.w3.org/2000/svg" aria-label="Google Pay">' +
-          '<rect width="38" height="24" rx="3" fill="#fff" stroke="#dadce0" stroke-width="0.8"/>' +
-          '<path d="M22.8 9.2 A5.5 5.5 0 0 0 12.5 12" stroke="#4285F4" stroke-width="2.2" fill="none" stroke-linecap="butt"/>' +
-          '<path d="M12.5 12 A5.5 5.5 0 0 0 15.2 16.8" stroke="#EA4335" stroke-width="2.2" fill="none" stroke-linecap="butt"/>' +
-          '<path d="M15.2 16.8 A5.5 5.5 0 0 0 20.8 16.8" stroke="#FBBC05" stroke-width="2.2" fill="none" stroke-linecap="butt"/>' +
-          '<path d="M20.8 16.8 A5.5 5.5 0 0 0 22.8 14.8" stroke="#34A853" stroke-width="2.2" fill="none" stroke-linecap="butt"/>' +
-          '<path d="M18 12 H23.5" stroke="#34A853" stroke-width="2.2" fill="none" stroke-linecap="round"/>' +
-        '</svg>';
       payArea.appendChild(badges);
     }
 
