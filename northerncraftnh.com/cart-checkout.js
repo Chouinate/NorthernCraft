@@ -555,7 +555,9 @@
       var btn = document.createElement('button');
       btn.className = 'nc-cart-checkout-btn';
       btn.textContent = 'More Ways to Pay';
-      btn.addEventListener('click', _openPaymentPickerModal);
+      btn.addEventListener('click', function () {
+        _startStripeCheckout(null, btn, 'More Ways to Pay');
+      });
       payArea.appendChild(btn);
 
       // Payment brand icons
