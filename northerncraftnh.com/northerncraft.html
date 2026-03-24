@@ -412,6 +412,7 @@
       grid-template-columns: 1fr 1fr;
       gap: 80px;
       align-items: center;
+      padding-top: 40px;
     }
     .about-img {
       background: none;
@@ -532,7 +533,7 @@
       }
       .hero-right { height: 380px; max-height: 380px; }
       .hero-left { padding: 120px 28px 40px; }
-      #about { grid-template-columns: 1fr; gap: 40px; padding: 60px 28px; }
+      #about { grid-template-columns: 1fr; gap: 40px; padding: 30px 28px 60px; }
       #bundles { padding-left: 0 !important; padding-right: 0 !important; }
       #bundles .section-label, #bundles .section-title { padding-left: 28px; }
       .bundles-grid {
@@ -572,9 +573,7 @@
   <script>window.PAYPAL_CLIENT_ID = 'AeU-5PTMsM0nZfclnRt3H7c8tEDwNpVo64w9u9C8zV8P-gdXVhYYx4YiRpBBbivfhKoM_6tldp5tXm_m';</script>
   <script>window.STRIPE_SERVER_URL = 'https://northerncraftnh.vercel.app/api';</script>
   <script src="cart.js" defer></script>
-  <script src="https://js.stripe.com/v3/" async></script>
-  <script src="stripe-checkout.js" defer></script>
-  <script src="paypal-checkout.js" defer></script>
+  <script src="cart-checkout.js" defer></script>
   <script src="product-cards.js" defer></script>
 </head>
 <body>
@@ -853,11 +852,6 @@
         </div>
       </div>
     </div>
-  </section>
-  <!-- CHECKOUT — Stripe embedded form mounts here when user clicks More Ways to Pay in the cart -->
-  <section id="checkout">
-    <div id="checkout-buttons"></div>
-    <div id="stripe-checkout-container"></div>
   </section>
   <!-- ABOUT -->
   <section id="about">
