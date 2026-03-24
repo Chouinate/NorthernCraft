@@ -535,9 +535,7 @@
           });
         },
 
-        onCancel: function () {
-          _showCartError('Payment cancelled \u2014 your cart is saved.');
-        },
+        onCancel: function () {},
 
         onError: function (err) {
           console.error('[cart-checkout/paypal]', err);
