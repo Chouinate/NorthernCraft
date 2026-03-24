@@ -107,7 +107,7 @@
     /* ── Modal overlay ── */
     '.nc-stripe-modal {',
     '  position: fixed; inset: 0; z-index: 9999;',
-    '  background: rgba(30,24,22,0.65);',
+    '  background: rgba(30,24,22,0.85);',
     '  display: flex; align-items: center; justify-content: center;',
     '  padding: 20px;',
     '}',
@@ -219,9 +219,7 @@
     inner.appendChild(container);
     modal.appendChild(inner);
 
-    modal.addEventListener('click', function (e) {
-      if (e.target === modal) _closeCheckoutModal();
-    });
+
 
     document.body.appendChild(modal);
     document.body.style.overflow = 'hidden';
@@ -350,7 +348,6 @@
         return stripe.initEmbeddedCheckout({ clientSecret: data.clientSecret })
           .then(function (checkout) {
             _openCheckoutModal();
-            if (typeof window.closeCart === 'function') window.closeCart();
 
             var container = document.getElementById('stripe-checkout-container');
             if (!container) throw new Error('#stripe-checkout-container not found.');
