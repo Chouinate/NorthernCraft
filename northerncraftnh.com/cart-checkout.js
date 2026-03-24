@@ -393,16 +393,6 @@
     inner.appendChild(closeBtn);
     inner.appendChild(title);
 
-    var APPLE_PAY_SVG =
-      '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 280 52" role="img" aria-label="Apple Pay">' +
-        '<rect width="280" height="52" rx="4" fill="#000"/>' +
-        // Apple logo
-        '<path d="M118.8 16.4c1-1.2 1.7-2.9 1.5-4.6-1.5.1-3.2 1-4.2 2.2-.9 1.1-1.7 2.8-1.5 4.4 1.6.1 3.2-.7 4.2-2z" fill="#fff"/>' +
-        '<path d="M120.3 18.9c-2.3-.1-4.3 1.3-5.4 1.3s-2.7-1.2-4.5-1.2c-2.3.1-4.4 1.3-5.6 3.4-2.4 4.1-.6 10.2 1.7 13.6 1.1 1.6 2.5 3.4 4.2 3.4 1.7-.1 2.3-1.1 4.4-1.1s2.6 1.1 4.4 1.1c1.8 0 2.9-1.7 4-3.3.8-1.2 1.4-2.4 1.8-3.7-2.2-.9-3.6-3-3.6-5.3 0-2.1 1.2-4 3.1-5-.9-1.7-2.7-3-4.5-3.2z" fill="#fff"/>' +
-        // "Pay" text
-        '<text x="148" y="34" font-family="-apple-system,BlinkMacSystemFont,\'Helvetica Neue\',sans-serif" font-size="22" font-weight="500" fill="#fff">Pay</text>' +
-      '</svg>';
-
     var GOOGLE_PAY_SVG =
       '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 280 52" role="img" aria-label="Google Pay">' +
         '<rect width="280" height="52" rx="4" fill="#fff" stroke="#dadce0" stroke-width="1"/>' +
@@ -422,22 +412,10 @@
         '<text x="140" y="35" font-family="\'Helvetica Neue\',Arial,sans-serif" font-size="26" font-weight="700" fill="#000" text-anchor="middle" letter-spacing="-0.5">klarna</text>' +
       '</svg>';
 
-    var AFTERPAY_SVG =
-      '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 280 52" role="img" aria-label="Afterpay">' +
-        '<rect width="280" height="52" rx="4" fill="#000"/>' +
-        // Afterpay mint logomark (simplified mint circle with "A")
-        '<circle cx="104" cy="26" r="12" fill="#B2FCE4"/>' +
-        '<text x="104" y="31" font-family="\'Helvetica Neue\',Arial,sans-serif" font-size="14" font-weight="800" fill="#000" text-anchor="middle">A</text>' +
-        // Afterpay wordmark
-        '<text x="154" y="33" font-family="\'Helvetica Neue\',Arial,sans-serif" font-size="20" font-weight="700" fill="#fff" text-anchor="middle" letter-spacing="-0.3">Afterpay</text>' +
-      '</svg>';
-
     var methods = [
       { label: 'Credit / Debit Card',  sub: 'Visa, Mastercard, Amex & more', types: ['card'] },
-      { label: 'Apple Pay',  brandSvg: APPLE_PAY_SVG,  types: ['card'] },
       { label: 'Google Pay', brandSvg: GOOGLE_PAY_SVG, types: ['card'] },
       { label: 'Klarna',   brandSvg: KLARNA_SVG,   types: ['klarna'] },
-      { label: 'Afterpay', brandSvg: AFTERPAY_SVG, types: ['afterpay_clearpay'] },
     ];
 
     methods.forEach(function (m) {

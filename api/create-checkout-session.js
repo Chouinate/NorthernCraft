@@ -32,11 +32,12 @@ module.exports = async (req, res) => {
     }));
 
     const sessionParams = {
-      ui_mode:                    'embedded',
-      mode:                       'payment',
+      ui_mode:                      'embedded',
+      mode:                         'payment',
       line_items,
       return_url,
-      billing_address_collection: 'required',
+      billing_address_collection:   'required',
+      shipping_address_collection:  { allowed_countries: ['US'] },
     };
     if (Array.isArray(payment_method_types) && payment_method_types.length > 0) {
       sessionParams.payment_method_types = payment_method_types;
