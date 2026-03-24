@@ -180,7 +180,10 @@
             '<p class="nc-pay-success-sub">Confirmation will be sent to ' + email + '</p>';
 
           var checkoutEl = document.getElementById('checkout');
-          if (checkoutEl) checkoutEl.scrollIntoView({ behavior: 'smooth' });
+          if (checkoutEl) {
+            checkoutEl.style.display = '';
+            checkoutEl.scrollIntoView({ behavior: 'smooth' });
+          }
 
         } else if (data.status === 'open') {
           // User returned without paying — nothing to show; cart is still intact
@@ -240,6 +243,7 @@
         if (typeof window.closeCart === 'function') window.closeCart();
         var checkoutEl = document.getElementById('checkout');
         if (checkoutEl) {
+          checkoutEl.style.display = '';
           checkoutEl.style.padding = '80px 56px';
           checkoutEl.scrollIntoView({ behavior: 'smooth' });
         }
