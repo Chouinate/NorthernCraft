@@ -104,6 +104,44 @@
     '  margin-top: 12px;',
     '}',
 
+    /* ── Modal overlay ── */
+    '.nc-stripe-modal {',
+    '  position: fixed; inset: 0; z-index: 9999;',
+    '  background: rgba(30,24,22,0.65);',
+    '  display: flex; align-items: center; justify-content: center;',
+    '  padding: 20px;',
+    '}',
+    '.nc-stripe-modal-inner {',
+    '  background: #fff;',
+    '  width: 100%; max-width: 540px; max-height: 92vh;',
+    '  overflow-y: auto; position: relative;',
+    '  padding: 52px 20px 28px; border-radius: 2px;',
+    '}',
+    '.nc-stripe-modal-close {',
+    '  position: absolute; top: 14px; right: 14px;',
+    '  background: none; border: none; cursor: pointer;',
+    '  font-size: 18px; line-height: 1; padding: 4px 8px;',
+    '  color: #9e9098;',
+    '}',
+    '.nc-stripe-modal-close:hover { color: #2a2523; }',
+
+    /* ── Single checkout button ── */
+    '.nc-cart-checkout-btn {',
+    '  display: block; width: 100%;',
+    '  background: #2a2523; color: #fff; border: none; cursor: pointer;',
+    '  font-family: "Montserrat", sans-serif; font-size: 10px; font-weight: 600;',
+    '  letter-spacing: 0.22em; text-transform: uppercase;',
+    '  padding: 15px 20px; transition: background 0.2s;',
+    '}',
+    '.nc-cart-checkout-btn:hover:not(:disabled) { background: #5c3545; }',
+    '.nc-cart-checkout-btn:disabled { opacity: 0.55; cursor: default; }',
+
+    /* ── Payment brand icons row ── */
+    '.nc-cart-pay-badges {',
+    '  display: flex; flex-wrap: wrap; gap: 5px;',
+    '  margin-top: 10px; justify-content: center; align-items: center;',
+    '}',
+
   ].join('\n');
 
   // ── Helpers ─────────────────────────────────────────────────────────────────
@@ -131,6 +169,49 @@
     return base + prefix + 'session_id={CHECKOUT_SESSION_ID}';
   }
 
+  // ── Checkout modal ───────────────────────────────────────────────────────────
+  function _openCheckoutModal() {
+    var existing = document.getElementById('nc-stripe-modal');
+    if (existing) existing.remove();
+
+    var modal = document.createElement('div');
+    modal.id = 'nc-stripe-modal';
+    modal.className = 'nc-stripe-modal';
+
+    var inner = document.createElement('div');
+    inner.className = 'nc-stripe-modal-inner';
+
+    var closeBtn = document.createElement('button');
+    closeBtn.className = 'nc-stripe-modal-close';
+    closeBtn.setAttribute('aria-label', 'Close checkout');
+    closeBtn.innerHTML = '&#x2715;';
+    closeBtn.addEventListener('click', _closeCheckoutModal);
+
+    var container = document.createElement('div');
+    container.id = 'stripe-checkout-container';
+
+    inner.appendChild(closeBtn);
+    inner.appendChild(container);
+    modal.appendChild(inner);
+
+    modal.addEventListener('click', function (e) {
+      if (e.target === modal) _closeCheckoutModal();
+    });
+
+    document.body.appendChild(modal);
+    document.body.style.overflow = 'hidden';
+  }
+
+  function _closeCheckoutModal() {
+    if (_activeCheckout) {
+      _activeCheckout.destroy();
+      _activeCheckout = null;
+    }
+    var modal = document.getElementById('nc-stripe-modal');
+    if (modal) modal.remove();
+    document.body.style.overflow = '';
+  }
+
   // ── SDK loaders ─────────────────────────────────────────────────────────────
   function _loadStripe() {
     return new Promise(function (resolve, reject) {
@@ -149,7 +230,8 @@
       var s = document.createElement('script');
       s.src = 'https://www.paypal.com/sdk/js'
             + '?client-id=' + encodeURIComponent(clientId)
-            + '&currency=USD&intent=capture';
+            + '&currency=USD&intent=capture'
+            + '&disable-funding=paylater,card,credit';
       s.onload  = resolve;
       s.onerror = function () { reject(new Error('PayPal SDK failed to load.')); };
       document.head.appendChild(s);
@@ -180,7 +262,10 @@
             '<p class="nc-pay-success-sub">Confirmation will be sent to ' + email + '</p>';
 
           var checkoutEl = document.getElementById('checkout');
-          if (checkoutEl) checkoutEl.scrollIntoView({ behavior: 'smooth' });
+          if (checkoutEl) {
+            checkoutEl.style.display = '';
+            checkoutEl.scrollIntoView({ behavior: 'smooth' });
+          }
 
         } else if (data.status === 'open') {
           // User returned without paying — nothing to show; cart is still intact
@@ -202,6 +287,8 @@
   }
 
   // ── Stripe checkout flow ─────────────────────────────────────────────────────
+  var _activeCheckout = null;
+
   function _startStripeCheckout(methodTypes, btnEl, btnLabel) {
     _clearCartError();
 
@@ -233,27 +320,24 @@
       .then(function (data) {
         if (data.error) throw new Error(data.error);
 
-        var container = document.getElementById('stripe-checkout-container');
-        if (!container) throw new Error('#stripe-checkout-container not found.');
-
-        // Close cart and scroll to the embedded checkout
-        if (typeof window.closeCart === 'function') window.closeCart();
-        var checkoutEl = document.getElementById('checkout');
-        if (checkoutEl) {
-          checkoutEl.style.padding = '80px 56px';
-          checkoutEl.scrollIntoView({ behavior: 'smooth' });
-        }
-
+        // Init Stripe first — only open the modal once the form is ready
         var stripe = Stripe(STRIPE_PK);
         return stripe.initEmbeddedCheckout({ clientSecret: data.clientSecret })
           .then(function (checkout) {
-            container.innerHTML = '';
+            _openCheckoutModal();
+            if (typeof window.closeCart === 'function') window.closeCart();
+
+            var container = document.getElementById('stripe-checkout-container');
+            if (!container) throw new Error('#stripe-checkout-container not found.');
+
+            _activeCheckout = checkout;
             checkout.mount('#stripe-checkout-container');
             if (btnEl) { btnEl.disabled = false; btnEl.textContent = btnLabel; }
           });
       })
       .catch(function (err) {
         console.error('[cart-checkout/stripe]', err.message);
+        _closeCheckoutModal();
         if (btnEl) { btnEl.disabled = false; btnEl.textContent = btnLabel; }
         _showCartError(err.message || 'Something went wrong. Please try again.');
       });
@@ -337,35 +421,60 @@
       }).render('#nc-cart-paypal-btn');
     }
 
-    // Divider + Stripe buttons
+    // Divider + single checkout button
     if (hasStripe) {
       if (hasPayPal) {
         var divider = document.createElement('div');
         divider.className = 'nc-cart-pay-divider';
-        divider.textContent = 'or pay with';
+        divider.textContent = 'other payment options';
         payArea.appendChild(divider);
       }
 
-      var row = document.createElement('div');
-      row.className = 'nc-cart-method-row';
-
-      // Klarna and Afterpay require those methods to be enabled in the Stripe
-      // dashboard. If a session fails, an error is shown in the cart.
-      [
-        { label: 'Klarna',   types: ['klarna'] },
-        { label: 'Afterpay', types: ['afterpay_clearpay'] },
-        { label: 'Card',     types: ['card'] },
-      ].forEach(function (m) {
-        var btn = document.createElement('button');
-        btn.className = 'nc-cart-method-btn';
-        btn.textContent = m.label;
-        btn.addEventListener('click', function () {
-          _startStripeCheckout(m.types, btn, m.label);
-        });
-        row.appendChild(btn);
+      var btn = document.createElement('button');
+      btn.className = 'nc-cart-checkout-btn';
+      btn.textContent = 'Checkout Securely';
+      btn.addEventListener('click', function () {
+        // null = no method restriction; Stripe shows all enabled methods
+        _startStripeCheckout(['card', 'klarna', 'afterpay_clearpay'], btn, 'Checkout Securely');
       });
+      payArea.appendChild(btn);
 
-      payArea.appendChild(row);
+      // Payment brand icons
+      var badges = document.createElement('div');
+      badges.className = 'nc-cart-pay-badges';
+      badges.innerHTML =
+        // Visa
+        '<svg width="38" height="24" viewBox="0 0 38 24" xmlns="http://www.w3.org/2000/svg" aria-label="Visa">' +
+          '<rect width="38" height="24" rx="3" fill="#1a1f71"/>' +
+          '<text x="19" y="17" text-anchor="middle" fill="#fff" font-family="Arial,sans-serif" font-size="11" font-weight="bold" font-style="italic">VISA</text>' +
+        '</svg>' +
+        // Mastercard
+        '<svg width="38" height="24" viewBox="0 0 38 24" xmlns="http://www.w3.org/2000/svg" aria-label="Mastercard">' +
+          '<rect width="38" height="24" rx="3" fill="#f2f2f2"/>' +
+          '<circle cx="15" cy="12" r="7" fill="#eb001b"/>' +
+          '<circle cx="23" cy="12" r="7" fill="#f79e1b"/>' +
+          '<path d="M19 6.8a7 7 0 0 1 0 10.4A7 7 0 0 1 19 6.8z" fill="#ff5f00"/>' +
+        '</svg>' +
+        // Amex
+        '<svg width="38" height="24" viewBox="0 0 38 24" xmlns="http://www.w3.org/2000/svg" aria-label="American Express">' +
+          '<rect width="38" height="24" rx="3" fill="#016fcf"/>' +
+          '<text x="19" y="16" text-anchor="middle" fill="#fff" font-family="Arial,sans-serif" font-size="8" font-weight="bold" letter-spacing="0.5">AMEX</text>' +
+        '</svg>' +
+        // Klarna
+        '<svg width="38" height="24" viewBox="0 0 38 24" xmlns="http://www.w3.org/2000/svg" aria-label="Klarna">' +
+          '<rect width="38" height="24" rx="3" fill="#ffb3c7"/>' +
+          '<text x="19" y="17" text-anchor="middle" fill="#000" font-family="Arial,sans-serif" font-size="12" font-weight="bold">K</text>' +
+        '</svg>' +
+        // Google Pay (multicolor G)
+        '<svg width="38" height="24" viewBox="0 0 38 24" xmlns="http://www.w3.org/2000/svg" aria-label="Google Pay">' +
+          '<rect width="38" height="24" rx="3" fill="#fff" stroke="#dadce0" stroke-width="0.8"/>' +
+          '<path d="M22.8 9.2 A5.5 5.5 0 0 0 12.5 12" stroke="#4285F4" stroke-width="2.2" fill="none" stroke-linecap="butt"/>' +
+          '<path d="M12.5 12 A5.5 5.5 0 0 0 15.2 16.8" stroke="#EA4335" stroke-width="2.2" fill="none" stroke-linecap="butt"/>' +
+          '<path d="M15.2 16.8 A5.5 5.5 0 0 0 20.8 16.8" stroke="#FBBC05" stroke-width="2.2" fill="none" stroke-linecap="butt"/>' +
+          '<path d="M20.8 16.8 A5.5 5.5 0 0 0 22.8 14.8" stroke="#34A853" stroke-width="2.2" fill="none" stroke-linecap="butt"/>' +
+          '<path d="M18 12 H23.5" stroke="#34A853" stroke-width="2.2" fill="none" stroke-linecap="round"/>' +
+        '</svg>';
+      payArea.appendChild(badges);
     }
 
   }
