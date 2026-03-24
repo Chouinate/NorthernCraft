@@ -574,8 +574,16 @@
         scroll-snap-align: start;
       }
     }
-    @media (pointer: fine) and (max-width: 900px) {
-      .bundles-grid { grid-template-columns: repeat(2, 1fr) !important; }
+    @media (pointer: fine) and (max-width: 1050px) {
+      #bundles {
+        overflow-x: auto;
+        scrollbar-width: thin;
+        scrollbar-color: rgba(92,53,69,0.3) transparent;
+      }
+      #bundles::-webkit-scrollbar { height: 3px; }
+      #bundles::-webkit-scrollbar-track { background: transparent; }
+      #bundles::-webkit-scrollbar-thumb { background: rgba(92,53,69,0.3); border-radius: 2px; }
+      .bundles-grid { grid-template-columns: repeat(4, 220px) !important; }
     }
     @media (max-width: 640px) {
       .specs-bar { flex-wrap: wrap; gap: 8px 0; }
