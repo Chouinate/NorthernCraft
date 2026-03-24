@@ -271,6 +271,16 @@
     .nc-cart-remove:hover { color: #7b4f5c; }
 
     /* ── Footer ── */
+    .nc-cart-checkout-error {
+      font-family: 'Montserrat', sans-serif;
+      font-size: 9px;
+      letter-spacing: 0.12em;
+      color: #f5f0eb;
+      background: #8b2e2e;
+      padding: 8px 12px;
+      margin-bottom: 14px;
+      text-align: center;
+    }
     .nc-cart-footer {
       padding: 20px 28px 28px;
       border-top: 1px solid #d9d4cc;
@@ -379,6 +389,7 @@
       '</div>',
       '<div class="nc-cart-items" role="list"></div>',
       '<div class="nc-cart-footer">',
+      '  <div class="nc-cart-checkout-error" style="display:none"></div>',
       '  <div class="nc-cart-total-row">',
       '    <span class="nc-cart-total-label">Total</span>',
       '    <span class="nc-cart-total-amount"></span>',

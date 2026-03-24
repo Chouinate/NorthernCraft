@@ -76,16 +76,6 @@
     '}',
     '.nc-cart-method-btn:disabled { opacity: 0.55; cursor: default; }',
 
-    /* Error message */
-    '.nc-cart-checkout-error {',
-    '  font-family: "Montserrat", sans-serif;',
-    '  font-size: 9px;',
-    '  letter-spacing: 0.12em;',
-    '  color: #8f6070;',
-    '  margin-top: 10px;',
-    '  text-align: center;',
-    '}',
-
     /* Stripe container — hidden until needed */
     '#stripe-checkout-container:empty { display: none; }',
 
@@ -124,16 +114,12 @@
   }
 
   function _showCartError(msg) {
-    var area = document.querySelector('.nc-cart-pay-area');
-    if (!area) return;
-    var el = area.querySelector('.nc-cart-checkout-error');
+    var el = document.querySelector('.nc-cart-footer .nc-cart-checkout-error');
     if (el) { el.textContent = msg; el.style.display = ''; }
   }
 
   function _clearCartError() {
-    var area = document.querySelector('.nc-cart-pay-area');
-    if (!area) return;
-    var el = area.querySelector('.nc-cart-checkout-error');
+    var el = document.querySelector('.nc-cart-footer .nc-cart-checkout-error');
     if (el) el.style.display = 'none';
   }
 
@@ -382,11 +368,6 @@
       payArea.appendChild(row);
     }
 
-    // Error message element (hidden by default)
-    var errEl = document.createElement('p');
-    errEl.className = 'nc-cart-checkout-error';
-    errEl.style.display = 'none';
-    payArea.appendChild(errEl);
   }
 
   // ── Boot ────────────────────────────────────────────────────────────────────
