@@ -542,8 +542,6 @@
       .hero-right { height: 380px; max-height: 380px; }
       .hero-left { padding: clamp(60px, 13vw, 120px) 28px 40px; }
       #about { grid-template-columns: 1fr; gap: 40px; padding: 30px 28px 60px; }
-      #bundles { padding-left: 0 !important; padding-right: 0 !important; }
-      #bundles .section-label, #bundles .section-title { padding-left: 28px; }
       .product-grid { grid-template-columns: 1fr 1fr; }
       .process-steps { grid-template-columns: 1fr 1fr; }
       footer {
@@ -555,7 +553,9 @@
       .footer-links { flex-wrap: wrap; justify-content: center; }
       .specs-bar { flex-wrap: wrap; gap: 8px 0; }
     }
-    @media (max-width: 768px) {
+    @media (pointer: coarse) and (max-width: 900px) {
+      #bundles { padding-left: 0 !important; padding-right: 0 !important; }
+      #bundles .section-label, #bundles .section-title { padding-left: 28px; }
       .bundles-grid {
         grid-template-columns: unset !important;
         grid-template-rows: unset !important;
@@ -573,6 +573,9 @@
         flex: 0 0 calc(70vw - 24px);
         scroll-snap-align: start;
       }
+    }
+    @media (pointer: fine) and (max-width: 900px) {
+      .bundles-grid { grid-template-columns: repeat(2, 1fr) !important; }
     }
     @media (max-width: 640px) {
       .specs-bar { flex-wrap: wrap; gap: 8px 0; }
@@ -1009,7 +1012,7 @@
         if (entries[0].isIntersecting) {
           hintObserver.disconnect();
           // Only run on mobile
-          if (window.innerWidth > 900) return;
+          if (!window.matchMedia('(pointer: coarse)').matches) return;
           const thirdCard = bundlesGrid.children[2];
           const peekAmount = thirdCard ? Math.max(0, thirdCard.offsetLeft - Math.round(bundlesGrid.offsetWidth * 0.35)) : 80;
           setTimeout(() => {
