@@ -230,7 +230,8 @@
       var s = document.createElement('script');
       s.src = 'https://www.paypal.com/sdk/js'
             + '?client-id=' + encodeURIComponent(clientId)
-            + '&currency=USD&intent=capture';
+            + '&currency=USD&intent=capture'
+            + '&disable-funding=paylater,card,credit';
       s.onload  = resolve;
       s.onerror = function () { reject(new Error('PayPal SDK failed to load.')); };
       document.head.appendChild(s);
