@@ -571,6 +571,7 @@
   <script src="cart.js" defer></script>
   <script src="stripe-checkout.js" defer></script>
   <script src="paypal-checkout.js" defer></script>
+  <script src="product-cards.js" defer></script>
 </head>
 <body>
   <!-- NAV -->
@@ -586,7 +587,16 @@
       <li><a href="#bundles">Bundles</a></li>
       <li><a href="#about">About</a></li>
       <li><a href="#process">Process</a></li>
-      <li><a href="#" class="nav-tiktok">TikTok Shop ↗</a></li>
+      <li>
+        <button id="cart-icon" class="nav-cart-icon" aria-label="Open cart">
+          <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+               stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"/>
+            <line x1="3" y1="6" x2="21" y2="6"/>
+            <path d="M16 10a4 4 0 01-8 0"/>
+          </svg>
+        </button>
+      </li>
     </ul>
     <button class="nav-hamburger" aria-label="Menu">
       <span></span><span></span><span></span>
@@ -634,7 +644,7 @@
       </div>
     </div>
     <div class="product-grid">
-      <div class="product-card">
+      <div class="product-card" data-id="solstice" data-name="Solstice" data-price="29" data-image="Products/Solstice.jpg">
         <div class="product-card-img">
           <img src="Products/Solstice.jpg" alt="Solstice">
           <p class="product-card-name">Solstice</p>
@@ -642,7 +652,7 @@
         <div class="product-card-info">
         </div>
       </div>
-      <div class="product-card">
+      <div class="product-card" data-id="bloom" data-name="Bloom" data-price="29" data-image="Products/Bloom.jpg">
         <div class="product-card-img">
           <img src="Products/Bloom.jpg" alt="Bloom">
           <p class="product-card-name">Bloom</p>
@@ -650,7 +660,7 @@
         <div class="product-card-info">
         </div>
       </div>
-      <div class="product-card">
+      <div class="product-card" data-id="petal" data-name="Petal" data-price="29" data-image="Products/Petal.jpg">
         <div class="product-card-img">
           <img src="Products/Petal.jpg" alt="Petal">
           <p class="product-card-name">Petal</p>
@@ -658,7 +668,7 @@
         <div class="product-card-info">
         </div>
       </div>
-      <div class="product-card">
+      <div class="product-card" data-id="quarry" data-name="Quarry" data-price="29" data-image="Products/Quarry.jpg">
         <div class="product-card-img">
           <img src="Products/Quarry.jpg" alt="Quarry">
           <p class="product-card-name">Quarry</p>
@@ -666,7 +676,7 @@
         <div class="product-card-info">
         </div>
       </div>
-      <div class="product-card">
+      <div class="product-card" data-id="meadow" data-name="Meadow" data-price="29" data-image="Products/Meadow.jpg">
         <div class="product-card-img">
           <img src="Products/Meadow.jpg" alt="Meadow">
           <p class="product-card-name">Meadow</p>
@@ -674,7 +684,7 @@
         <div class="product-card-info">
         </div>
       </div>
-      <div class="product-card">
+      <div class="product-card" data-id="summit" data-name="Summit" data-price="29" data-image="Products/Summit.jpg">
         <div class="product-card-img">
           <img src="Products/Summit.jpg" alt="Summit">
           <p class="product-card-name">Summit</p>
@@ -682,7 +692,7 @@
         <div class="product-card-info">
         </div>
       </div>
-      <div class="product-card">
+      <div class="product-card" data-id="grove" data-name="Grove" data-price="29" data-image="Products/Grove.jpg">
         <div class="product-card-img">
           <img src="Products/Grove.jpg" alt="Grove">
           <p class="product-card-name">Grove</p>
@@ -690,7 +700,7 @@
         <div class="product-card-info">
         </div>
       </div>
-      <div class="product-card">
+      <div class="product-card" data-id="flora" data-name="Flora" data-price="29" data-image="Products/Flora.jpg">
         <div class="product-card-img">
           <img src="Products/Flora.jpg" alt="Flora">
           <p class="product-card-name">Flora</p>
@@ -698,7 +708,7 @@
         <div class="product-card-info">
         </div>
       </div>
-      <div class="product-card">
+      <div class="product-card" data-id="north" data-name="North" data-price="29" data-image="Products/North.jpg">
         <div class="product-card-img">
           <img src="Products/North.jpg" alt="North">
           <p class="product-card-name">North</p>
@@ -706,7 +716,7 @@
         <div class="product-card-info">
         </div>
       </div>
-      <div class="product-card">
+      <div class="product-card" data-id="blossom" data-name="Blossom" data-price="29" data-image="Products/Blossom.jpg">
         <div class="product-card-img">
           <img src="Products/Blossom.jpg" alt="Blossom">
           <p class="product-card-name">Blossom</p>
@@ -714,7 +724,7 @@
         <div class="product-card-info">
         </div>
       </div>
-      <div class="product-card">
+      <div class="product-card" data-id="rosette" data-name="Rosette" data-price="29" data-image="Products/Rosette.jpg">
         <div class="product-card-img">
           <img src="Products/Rosette.jpg" alt="Rosette">
           <p class="product-card-name">Rosette</p>
@@ -722,7 +732,7 @@
         <div class="product-card-info">
         </div>
       </div>
-      <div class="product-card">
+      <div class="product-card" data-id="flare" data-name="Flare" data-price="29" data-image="Products/Flare.jpg">
         <div class="product-card-img">
           <img src="Products/Flare.jpg" alt="Flare">
           <p class="product-card-name">Flare</p>
