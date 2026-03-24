@@ -426,7 +426,7 @@
       if (hasPayPal) {
         var divider = document.createElement('div');
         divider.className = 'nc-cart-pay-divider';
-        divider.textContent = 'or pay another way';
+        divider.textContent = 'other payment options';
         payArea.appendChild(divider);
       }
 
