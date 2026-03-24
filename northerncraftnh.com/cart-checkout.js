@@ -386,17 +386,24 @@
     // Load Stripe and PayPal in parallel; degrade gracefully if either fails
     var stripeReady  = _loadStripe().then(function () { return true; })
                                     .catch(function () { return false; });
-    var paypalReady  = fetch(SERVER + '/paypal-client-id')
-      .then(function (r) { return r.json(); })
-      .then(function (d) {
-        if (!d.clientId) throw new Error('No PayPal client ID');
-        return _loadPayPal(d.clientId);
-      })
-      .then(function () { return true; })
-      .catch(function (e) {
-        console.warn('[cart-checkout/paypal]', e.message);
-        return false;
-      });
+    var paypalReady  = (function () {
+      if (window.PAYPAL_CLIENT_ID) {
+        return _loadPayPal(window.PAYPAL_CLIENT_ID)
+          .then(function () { return true; })
+          .catch(function (e) { console.warn('[cart-checkout/paypal]', e.message); return false; });
+      }
+      return fetch(SERVER + '/paypal-client-id')
+        .then(function (r) { return r.json(); })
+        .then(function (d) {
+          if (!d.clientId) throw new Error('No PayPal client ID');
+          return _loadPayPal(d.clientId);
+        })
+        .then(function () { return true; })
+        .catch(function (e) {
+          console.warn('[cart-checkout/paypal]', e.message);
+          return false;
+        });
+    }());
 
     Promise.all([stripeReady, paypalReady]).then(function (results) {
       var hasStripe = results[0];
