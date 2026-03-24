@@ -283,7 +283,8 @@
     }
     .specs-bar {
       display: grid;
-      grid-template-columns: repeat(3, 1fr);
+      grid-template-columns: repeat(3, auto);
+      justify-content: end;
       grid-column: 2;
       grid-row: 2;
       font-size: 12px;
@@ -299,7 +300,7 @@
     .spec-col:not(:last-child) {
       border-right: 1px solid #e6e0e3;
     }
-    .spec-item { color: var(--mauve-dark); white-space: nowrap; }
+    .spec-item { color: var(--mauve-dark); }
     .spec-sub { color: #9e9098; font-style: italic; font-size: 11px; }
     .spec-email { color: var(--mauve-dark); text-decoration: underline; text-underline-offset: 3px; }
     .product-grid {
@@ -573,7 +574,7 @@
       #collection .section-label { grid-row: 1; grid-column: 1; }
       #collection .section-title { grid-row: 2; grid-column: 1; }
       .collection-header { align-items: center; }
-      .specs-bar { grid-row: 1 / span 2; grid-column: 2; align-self: center; }
+      .specs-bar { grid-row: 1 / span 2; grid-column: 2; align-self: center; justify-content: center; }
       footer {
         flex-direction: column;
         gap: 28px;
@@ -581,6 +582,24 @@
         padding: 40px 28px;
       }
       .footer-links { flex-wrap: wrap; justify-content: center; }
+    }
+    @media (max-width: 640px) {
+      .collection-header {
+        grid-template-columns: 1fr;
+        row-gap: 16px;
+      }
+      #collection .section-label { grid-row: 1; grid-column: 1; }
+      #collection .section-title { grid-row: 2; grid-column: 1; }
+      .specs-bar {
+        grid-column: 1;
+        grid-row: 3;
+        grid-template-columns: repeat(3, 1fr);
+        justify-content: stretch;
+        border-top: 1px solid #e6e0e3;
+        padding-top: 4px;
+      }
+      .spec-col { padding: 10px 8px 0; }
+      .spec-sub { font-size: 10px; }
     }
   </style>
   <!-- Set your PayPal client ID here (get it from developer.paypal.com → Apps & Credentials) -->
