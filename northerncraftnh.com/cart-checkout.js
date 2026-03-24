@@ -165,6 +165,8 @@
     '  font-family: "Montserrat", sans-serif; font-size: 9px;',
     '  letter-spacing: 0.10em; color: #9e9098; margin-top: 3px;',
     '}',
+    '.nc-picker-option-brand { padding: 0; border-color: transparent; }',
+    '.nc-picker-option-brand svg { display: block; width: 100%; height: auto; border-radius: 2px; }',
 
   ].join('\n');
 
@@ -395,20 +397,48 @@
     inner.appendChild(closeBtn);
     inner.appendChild(title);
 
+    var APPLE_PAY_SVG =
+      '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 280 52" role="img" aria-label="Apple Pay">' +
+        '<rect width="280" height="52" rx="4" fill="#000"/>' +
+        // Apple logo
+        '<path d="M118.8 16.4c1-1.2 1.7-2.9 1.5-4.6-1.5.1-3.2 1-4.2 2.2-.9 1.1-1.7 2.8-1.5 4.4 1.6.1 3.2-.7 4.2-2z" fill="#fff"/>' +
+        '<path d="M120.3 18.9c-2.3-.1-4.3 1.3-5.4 1.3s-2.7-1.2-4.5-1.2c-2.3.1-4.4 1.3-5.6 3.4-2.4 4.1-.6 10.2 1.7 13.6 1.1 1.6 2.5 3.4 4.2 3.4 1.7-.1 2.3-1.1 4.4-1.1s2.6 1.1 4.4 1.1c1.8 0 2.9-1.7 4-3.3.8-1.2 1.4-2.4 1.8-3.7-2.2-.9-3.6-3-3.6-5.3 0-2.1 1.2-4 3.1-5-.9-1.7-2.7-3-4.5-3.2z" fill="#fff"/>' +
+        // "Pay" text
+        '<text x="148" y="34" font-family="-apple-system,BlinkMacSystemFont,\'Helvetica Neue\',sans-serif" font-size="22" font-weight="500" fill="#fff">Pay</text>' +
+      '</svg>';
+
+    var GOOGLE_PAY_SVG =
+      '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 280 52" role="img" aria-label="Google Pay">' +
+        '<rect width="280" height="52" rx="4" fill="#fff" stroke="#dadce0" stroke-width="1"/>' +
+        // Google G
+        '<path d="M122.5 26c0-1-.1-1.9-.3-2.8H112v5.3h5.9c-.3 1.4-1 2.6-2.2 3.4v2.8h3.5c2.1-1.9 3.3-4.8 3.3-8.7z" fill="#4285F4"/>' +
+        '<path d="M112 35.5c3 0 5.5-1 7.3-2.7l-3.5-2.8c-1 .7-2.3 1.1-3.8 1.1-2.9 0-5.4-2-6.3-4.6h-3.6v2.9c1.8 3.6 5.5 6.1 9.9 6.1z" fill="#34A853"/>' +
+        '<path d="M105.7 26.5c-.2-.7-.4-1.5-.4-2.3s.1-1.6.4-2.3v-2.9h-3.6c-.8 1.6-1.2 3.3-1.2 5.2s.4 3.6 1.2 5.2l3.6-2.9z" fill="#FBBC04"/>' +
+        '<path d="M112 19.6c1.6 0 3.1.6 4.2 1.7l3.2-3.2c-1.9-1.8-4.5-2.9-7.4-2.9-4.4 0-8.1 2.5-9.9 6.1l3.6 2.9c.9-2.7 3.4-4.6 6.3-4.6z" fill="#EA4335"/>' +
+        // "Pay" text
+        '<text x="126" y="33" font-family="\'Roboto\',Arial,sans-serif" font-size="22" font-weight="500" fill="#3c4043">Pay</text>' +
+      '</svg>';
+
     var methods = [
       { label: 'Credit / Debit Card',  sub: 'Visa, Mastercard, Amex & more', types: ['card'] },
-      { label: 'Apple Pay',            sub: 'Pay with Touch ID or Face ID',   types: ['card'] },
-      { label: 'Google Pay',           sub: 'Fast checkout with Google',      types: ['card'] },
+      { label: 'Apple Pay',  brandSvg: APPLE_PAY_SVG,  types: ['card'] },
+      { label: 'Google Pay', brandSvg: GOOGLE_PAY_SVG, types: ['card'] },
       { label: 'Klarna',               sub: 'Buy now, pay later',             types: ['klarna'] },
       { label: 'Afterpay',             sub: '4 interest-free payments',       types: ['afterpay_clearpay'] },
     ];
 
     methods.forEach(function (m) {
       var btn = document.createElement('button');
-      btn.className = 'nc-picker-option';
-      btn.innerHTML =
-        '<span class="nc-picker-option-label">' + m.label + '</span>' +
-        '<span class="nc-picker-option-sub">' + m.sub + '</span>';
+      if (m.brandSvg) {
+        btn.className = 'nc-picker-option nc-picker-option-brand';
+        btn.setAttribute('aria-label', m.label);
+        btn.innerHTML = m.brandSvg;
+      } else {
+        btn.className = 'nc-picker-option';
+        btn.innerHTML =
+          '<span class="nc-picker-option-label">' + m.label + '</span>' +
+          '<span class="nc-picker-option-sub">' + m.sub + '</span>';
+      }
       btn.addEventListener('click', function () {
         modal.remove();
         document.body.style.overflow = '';
