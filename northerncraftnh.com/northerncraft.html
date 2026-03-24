@@ -569,7 +569,7 @@
     }
   </style>
   <script src="cart.js" defer></script>
-  <script src="paypal-checkout.js" defer></script>
+  <script src="cart-checkout.js" defer></script>
   <script src="product-cards.js" defer></script>
 </head>
 <body>
@@ -849,8 +849,8 @@
       </div>
     </div>
   </section>
-  <!-- CHECKOUT -->
-  <section id="checkout">
+  <!-- CHECKOUT — padding starts at 0; cart-checkout.js sets it when content appears -->
+  <section id="checkout" style="padding: 0;">
     <div id="checkout-buttons"></div>
     <div id="stripe-checkout-container"></div>
   </section>

@@ -383,7 +383,7 @@
       '    <span class="nc-cart-total-label">Total</span>',
       '    <span class="nc-cart-total-amount"></span>',
       '  </div>',
-      '  <button class="nc-cart-checkout">Proceed to Checkout</button>',
+      '  <div class="nc-cart-pay-area"></div>',
       '</div>'
     ].join('');
 
@@ -514,6 +514,10 @@
     if (totalEl) totalEl.textContent = _fmt(window.getCartTotal());
     _updateBadge();
   }
+
+  // ─── Public drawer controls (used by cart-checkout.js) ──────────────────────
+  window.openCart  = _open;
+  window.closeCart = _close;
 
   // ─── Boot ────────────────────────────────────────────────────────────────────
   if (document.readyState === 'loading') {

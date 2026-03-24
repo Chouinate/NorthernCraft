@@ -34,7 +34,7 @@ app.use(express.json());
 // ── POST /create-checkout-session ────────────────────────────────────────────
 app.post('/create-checkout-session', async (req, res) => {
   try {
-    const { items, return_url } = req.body;
+    const { items, return_url, payment_method_types } = req.body;
 
     if (!Array.isArray(items) || items.length === 0) {
       return res.status(400).json({ error: 'Cart is empty.' });
@@ -55,12 +55,16 @@ app.post('/create-checkout-session', async (req, res) => {
       quantity: Math.max(1, parseInt(item.quantity, 10) || 1),
     }));
 
-    const session = await stripe.checkout.sessions.create({
+    const sessionParams = {
       ui_mode:    'embedded',
       mode:       'payment',
       line_items,
       return_url,
-    });
+    };
+    if (Array.isArray(payment_method_types) && payment_method_types.length > 0) {
+      sessionParams.payment_method_types = payment_method_types;
+    }
+    const session = await stripe.checkout.sessions.create(sessionParams);
 
     res.json({ clientSecret: session.client_secret });
   } catch (err) {
