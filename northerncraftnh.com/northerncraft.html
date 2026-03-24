@@ -34,7 +34,6 @@
     nav {
       display: flex;
       align-items: center;
-      justify-content: space-between;
       padding: 10px 56px;
       background: var(--cream);
       position: fixed;
@@ -69,7 +68,20 @@
       display: flex;
       gap: 40px;
       list-style: none;
+      margin-left: auto;
     }
+    .nav-cart-icon {
+      margin-left: 40px;
+      background: none;
+      border: none;
+      cursor: pointer;
+      padding: 0;
+      color: var(--charcoal);
+      display: flex;
+      align-items: center;
+      position: relative;
+    }
+    .nav-cart-icon:hover { color: var(--mauve); }
     .nav-links a {
       font-family: var(--ff-sans);
       font-size: 11px;
@@ -118,10 +130,12 @@
         background: var(--cream);
         border-bottom: 1px solid rgba(0,0,0,0.06);
         padding: 8px 0 16px;
+        margin-left: 0;
       }
       .nav-links.open { display: flex; }
       .nav-links li { width: 100%; }
       .nav-links a { display: block; padding: 12px 28px; }
+      .nav-cart-icon { margin-left: auto; margin-right: 16px; }
     }
     /* ── HERO ── */
     .hero {
@@ -590,17 +604,15 @@
       <li><a href="#bundles">Bundles</a></li>
       <li><a href="#about">About</a></li>
       <li><a href="#process">Process</a></li>
-      <li>
-        <button id="cart-icon" class="nav-cart-icon" aria-label="Open cart">
-          <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-               stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-            <path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"/>
-            <line x1="3" y1="6" x2="21" y2="6"/>
-            <path d="M16 10a4 4 0 01-8 0"/>
-          </svg>
-        </button>
-      </li>
     </ul>
+    <button id="cart-icon" class="nav-cart-icon" aria-label="Open cart">
+      <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+           stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+        <path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"/>
+        <line x1="3" y1="6" x2="21" y2="6"/>
+        <path d="M16 10a4 4 0 01-8 0"/>
+      </svg>
+    </button>
     <button class="nav-hamburger" aria-label="Menu">
       <span></span><span></span><span></span>
     </button>
