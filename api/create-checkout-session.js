@@ -37,9 +37,11 @@ module.exports = async (req, res) => {
       line_items,
       return_url,
     };
-    sessionParams.payment_method_types = (Array.isArray(payment_method_types) && payment_method_types.length > 0)
-      ? payment_method_types
-      : ['card', 'klarna', 'afterpay_clearpay', 'cashapp', 'us_bank_account'];
+    if (Array.isArray(payment_method_types) && payment_method_types.length > 0) {
+      sessionParams.payment_method_types = payment_method_types;
+    } else {
+      sessionParams.automatic_payment_methods = { enabled: true };
+    }
 
     const session = await stripe.checkout.sessions.create(sessionParams);
     res.json({ clientSecret: session.client_secret });
