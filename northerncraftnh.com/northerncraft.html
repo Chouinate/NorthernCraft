@@ -271,38 +271,30 @@
     .section-title em { font-style: italic; color: var(--mauve); }
     /* ── COLLECTION ── */
     #collection { background: var(--cream); }
-    #collection .section-label { grid-column: 1; grid-row: 1; }
-    #collection .section-title { margin-bottom: 0; grid-column: 1; grid-row: 2; }
     .collection-header {
-      display: grid;
-      grid-template-columns: auto 1fr;
-      column-gap: 48px;
-      align-items: end;
       margin-bottom: 20px;
       width: 100%;
     }
     .specs-bar {
-      display: grid;
-      grid-template-columns: repeat(3, auto);
-      justify-content: end;
-      grid-column: 2;
-      grid-row: 2;
+      display: flex;
+      justify-content: center;
       font-size: 12px;
       letter-spacing: 0.09em;
+      margin-top: 20px;
     }
     .spec-col {
       display: flex;
       flex-direction: column;
       align-items: center;
       gap: 5px;
-      padding: 14px 24px 0;
+      padding: 4px 28px 0;
     }
     .spec-col:not(:last-child) {
       border-right: 1px solid #e6e0e3;
     }
-    .spec-item { color: var(--mauve-dark); }
-    .spec-sub { color: #9e9098; font-style: italic; font-size: 11px; }
-    .spec-email { color: var(--mauve-dark); text-decoration: underline; text-underline-offset: 3px; }
+    .spec-item { color: var(--mauve-dark); white-space: nowrap; }
+    .spec-sub { color: #9e9098; font-style: italic; font-size: 11px; white-space: nowrap; }
+    .spec-email { color: var(--mauve-dark); text-decoration: underline; text-underline-offset: 3px; white-space: nowrap; }
     .product-grid {
       display: grid;
       grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
@@ -571,10 +563,6 @@
       .bundle-card:nth-child(odd) { scroll-snap-align: start; }
       .product-grid { grid-template-columns: 1fr 1fr; }
       .process-steps { grid-template-columns: 1fr 1fr; }
-      #collection .section-label { grid-row: 1; grid-column: 1; }
-      #collection .section-title { grid-row: 2; grid-column: 1; }
-      .collection-header { align-items: center; }
-      .specs-bar { grid-row: 1 / span 2; grid-column: 2; align-self: center; justify-content: center; }
       footer {
         flex-direction: column;
         gap: 28px;
@@ -584,21 +572,9 @@
       .footer-links { flex-wrap: wrap; justify-content: center; }
     }
     @media (max-width: 640px) {
-      .collection-header {
-        grid-template-columns: 1fr;
-        row-gap: 16px;
-      }
-      #collection .section-label { grid-row: 1; grid-column: 1; }
-      #collection .section-title { grid-row: 2; grid-column: 1; }
-      .specs-bar {
-        grid-column: 1;
-        grid-row: 3;
-        grid-template-columns: repeat(3, 1fr);
-        justify-content: stretch;
-        border-top: 1px solid #e6e0e3;
-        padding-top: 4px;
-      }
-      .spec-col { padding: 10px 8px 0; }
+      .specs-bar { flex-wrap: wrap; gap: 8px 0; }
+      .spec-col { padding: 4px 16px 0; }
+      .spec-item { font-size: 11px; }
       .spec-sub { font-size: 10px; }
     }
   </style>
