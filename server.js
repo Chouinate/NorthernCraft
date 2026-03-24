@@ -88,6 +88,17 @@ app.get('/session-status', async (req, res) => {
   }
 });
 
+// ── GET /paypal-client-id ────────────────────────────────────────────────────
+// Returns the PayPal publishable client ID to the frontend so it is never
+// embedded in static source files.
+app.get('/paypal-client-id', (req, res) => {
+  const clientId = process.env.PAYPAL_CLIENT_ID;
+  if (!clientId) {
+    return res.status(500).json({ error: 'PAYPAL_CLIENT_ID is not set on the server.' });
+  }
+  res.json({ clientId });
+});
+
 // ── Listen ───────────────────────────────────────────────────────────────────
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
