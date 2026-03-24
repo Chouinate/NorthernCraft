@@ -435,7 +435,7 @@
       btn.textContent = 'Checkout Securely';
       btn.addEventListener('click', function () {
         // null = no method restriction; Stripe shows all enabled methods
-        _startStripeCheckout(null, btn, 'Checkout Securely');
+        _startStripeCheckout(['card', 'klarna', 'afterpay_clearpay'], btn, 'Checkout Securely');
       });
       payArea.appendChild(btn);
 
