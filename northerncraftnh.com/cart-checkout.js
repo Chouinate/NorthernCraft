@@ -419,12 +419,29 @@
         '<text x="126" y="33" font-family="\'Roboto\',Arial,sans-serif" font-size="22" font-weight="500" fill="#3c4043">Pay</text>' +
       '</svg>';
 
+    var KLARNA_SVG =
+      '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 280 52" role="img" aria-label="Klarna">' +
+        '<rect width="280" height="52" rx="4" fill="#FFB3C7"/>' +
+        // Klarna wordmark — lowercase, bold, black
+        '<text x="140" y="35" font-family="\'Helvetica Neue\',Arial,sans-serif" font-size="26" font-weight="700" fill="#000" text-anchor="middle" letter-spacing="-0.5">klarna</text>' +
+      '</svg>';
+
+    var AFTERPAY_SVG =
+      '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 280 52" role="img" aria-label="Afterpay">' +
+        '<rect width="280" height="52" rx="4" fill="#000"/>' +
+        // Afterpay mint logomark (simplified mint circle with "A")
+        '<circle cx="104" cy="26" r="12" fill="#B2FCE4"/>' +
+        '<text x="104" y="31" font-family="\'Helvetica Neue\',Arial,sans-serif" font-size="14" font-weight="800" fill="#000" text-anchor="middle">A</text>' +
+        // Afterpay wordmark
+        '<text x="154" y="33" font-family="\'Helvetica Neue\',Arial,sans-serif" font-size="20" font-weight="700" fill="#fff" text-anchor="middle" letter-spacing="-0.3">Afterpay</text>' +
+      '</svg>';
+
     var methods = [
       { label: 'Credit / Debit Card',  sub: 'Visa, Mastercard, Amex & more', types: ['card'] },
       { label: 'Apple Pay',  brandSvg: APPLE_PAY_SVG,  types: ['card'] },
       { label: 'Google Pay', brandSvg: GOOGLE_PAY_SVG, types: ['card'] },
-      { label: 'Klarna',               sub: 'Buy now, pay later',             types: ['klarna'] },
-      { label: 'Afterpay',             sub: '4 interest-free payments',       types: ['afterpay_clearpay'] },
+      { label: 'Klarna',   brandSvg: KLARNA_SVG,   types: ['klarna'] },
+      { label: 'Afterpay', brandSvg: AFTERPAY_SVG, types: ['afterpay_clearpay'] },
     ];
 
     methods.forEach(function (m) {
