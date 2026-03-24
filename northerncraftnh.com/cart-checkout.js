@@ -320,16 +320,16 @@
       .then(function (data) {
         if (data.error) throw new Error(data.error);
 
-        // Open modal and close the cart drawer
-        _openCheckoutModal();
-        if (typeof window.closeCart === 'function') window.closeCart();
-
-        var container = document.getElementById('stripe-checkout-container');
-        if (!container) throw new Error('#stripe-checkout-container not found.');
-
+        // Init Stripe first — only open the modal once the form is ready
         var stripe = Stripe(STRIPE_PK);
         return stripe.initEmbeddedCheckout({ clientSecret: data.clientSecret })
           .then(function (checkout) {
+            _openCheckoutModal();
+            if (typeof window.closeCart === 'function') window.closeCart();
+
+            var container = document.getElementById('stripe-checkout-container');
+            if (!container) throw new Error('#stripe-checkout-container not found.');
+
             _activeCheckout = checkout;
             checkout.mount('#stripe-checkout-container');
             if (btnEl) { btnEl.disabled = false; btnEl.textContent = btnLabel; }
@@ -337,6 +337,7 @@
       })
       .catch(function (err) {
         console.error('[cart-checkout/stripe]', err.message);
+        _closeCheckoutModal();
         if (btnEl) { btnEl.disabled = false; btnEl.textContent = btnLabel; }
         _showCartError(err.message || 'Something went wrong. Please try again.');
       });
