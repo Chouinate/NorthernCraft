@@ -568,6 +568,9 @@
       .footer-links { flex-wrap: wrap; justify-content: center; }
     }
   </style>
+  <script src="cart.js" defer></script>
+  <script src="stripe-checkout.js" defer></script>
+  <script src="paypal-checkout.js" defer></script>
 </head>
 <body>
   <!-- NAV -->
@@ -836,6 +839,11 @@
         </div>
       </div>
     </div>
+  </section>
+  <!-- CHECKOUT -->
+  <section id="checkout">
+    <div id="checkout-buttons"></div>
+    <div id="stripe-checkout-container"></div>
   </section>
   <!-- ABOUT -->
   <section id="about">
