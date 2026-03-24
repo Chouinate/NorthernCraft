@@ -383,17 +383,13 @@
       '    <span class="nc-cart-total-label">Total</span>',
       '    <span class="nc-cart-total-amount"></span>',
       '  </div>',
-      '  <button class="nc-cart-checkout">Proceed to Checkout</button>',
+      '  <div class="nc-cart-pay-area">',
+      '    <div id="nc-paypal-mount"></div>',
+      '  </div>',
       '</div>'
     ].join('');
 
     drawer.querySelector('.nc-cart-close').addEventListener('click', _close);
-
-    drawer.querySelector('.nc-cart-checkout').addEventListener('click', function () {
-      _close();
-      var checkout = document.getElementById('checkout');
-      if (checkout) checkout.scrollIntoView({ behavior: 'smooth' });
-    });
 
     itemsList = drawer.querySelector('.nc-cart-items');
     totalEl   = drawer.querySelector('.nc-cart-total-amount');

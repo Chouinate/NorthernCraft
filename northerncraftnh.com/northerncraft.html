@@ -568,6 +568,8 @@
       .footer-links { flex-wrap: wrap; justify-content: center; }
     }
   </style>
+  <!-- Set your PayPal client ID here (get it from developer.paypal.com → Apps & Credentials) -->
+  <!-- <script>window.PAYPAL_CLIENT_ID = 'YOUR_CLIENT_ID_HERE';</script> -->
   <script src="cart.js" defer></script>
   <script src="https://js.stripe.com/v3/" async></script>
   <script src="stripe-checkout.js" defer></script>
@@ -851,11 +853,9 @@
       </div>
     </div>
   </section>
-  <!-- CHECKOUT -->
+  <!-- CHECKOUT — Stripe embedded form mounts here when user clicks More Ways to Pay in the cart -->
   <section id="checkout">
-    <div id="checkout-buttons">
-      <div id="nc-paypal-mount"></div>
-    </div>
+    <div id="checkout-buttons"></div>
     <div id="stripe-checkout-container"></div>
   </section>
   <!-- ABOUT -->

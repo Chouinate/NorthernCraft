@@ -91,8 +91,13 @@
       .replace(/"/g, '&quot;');
   }
 
+  function _getContainer() {
+    return document.querySelector('.nc-cart-pay-area') ||
+           document.getElementById('checkout-buttons');
+  }
+
   function _showMsg(text, isCancelStyle) {
-    var container = document.getElementById('checkout-buttons');
+    var container = _getContainer();
     if (!container) return;
     var el = container.querySelector('.nc-paypal-msg');
     if (!el) {
@@ -104,14 +109,14 @@
   }
 
   function _clearMsg() {
-    var container = document.getElementById('checkout-buttons');
+    var container = _getContainer();
     if (!container) return;
     var el = container.querySelector('.nc-paypal-msg');
     if (el) el.remove();
   }
 
   function _showThankYou(email) {
-    var container = document.getElementById('checkout-buttons');
+    var container = _getContainer();
     if (!container) return;
     var safeEmail = email ? _esc(email) : 'your email';
     container.innerHTML =
@@ -137,7 +142,7 @@
 
   // ── Render PayPal button ─────────────────────────────────────────────────────
   function _renderButton() {
-    var container = document.getElementById('checkout-buttons');
+    var container = _getContainer();
     if (!container) return;
 
     if (typeof paypal === 'undefined') {
@@ -234,6 +239,18 @@
   _injectStyles();
 
   function _boot() {
+    // window.PAYPAL_CLIENT_ID can be set in the page to bypass the server fetch:
+    //   <script>window.PAYPAL_CLIENT_ID = 'YOUR_CLIENT_ID_HERE';</script>
+    if (window.PAYPAL_CLIENT_ID) {
+      _loadPayPalSDK(window.PAYPAL_CLIENT_ID)
+        .then(_renderButton)
+        .catch(function (err) {
+          console.warn('[PayPal] SDK load failed:', err.message);
+        });
+      return;
+    }
+
+    // Fall back to fetching the client ID from the server.
     fetch(SERVER + '/paypal-client-id')
       .then(function (res) { return res.json(); })
       .then(function (data) {
