@@ -205,6 +205,8 @@
   }
 
   // ── Stripe checkout flow ─────────────────────────────────────────────────────
+  var _activeCheckout = null;
+
   function _startStripeCheckout(methodTypes, btnEl, btnLabel) {
     _clearCartError();
 
@@ -248,9 +250,15 @@
           checkoutEl.scrollIntoView({ behavior: 'smooth' });
         }
 
+        if (_activeCheckout) {
+          _activeCheckout.destroy();
+          _activeCheckout = null;
+        }
+
         var stripe = Stripe(STRIPE_PK);
         return stripe.initEmbeddedCheckout({ clientSecret: data.clientSecret })
           .then(function (checkout) {
+            _activeCheckout = checkout;
             container.innerHTML = '';
             checkout.mount('#stripe-checkout-container');
             if (btnEl) { btnEl.disabled = false; btnEl.textContent = btnLabel; }
