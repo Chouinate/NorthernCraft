@@ -129,6 +129,7 @@
     '.bundle-mode-active .product-select-circle {',
     '  opacity: 1; pointer-events: auto;',
     '}',
+    '.bundle-mode-active .product-card { cursor: pointer; }',
     '.product-card.pc-selected .product-select-circle {',
     '  background: #5c3545; border-color: #5c3545;',
     '}',
@@ -316,14 +317,18 @@
         });
       }
 
-      // Card body click → single piece modal at $35
+      // Card body click → toggle bundle selection or open single-piece modal
       card.addEventListener('click', function () {
-        _open({
-          id:    card.dataset.id,
-          name:  card.dataset.name,
-          price: Number(card.dataset.price),
-          image: card.dataset.image,
-        });
+        if (bundleLimit > 0) {
+          _toggleBundleSelect(card);
+        } else {
+          _open({
+            id:    card.dataset.id,
+            name:  card.dataset.name,
+            price: Number(card.dataset.price),
+            image: card.dataset.image,
+          });
+        }
       });
     });
   }
