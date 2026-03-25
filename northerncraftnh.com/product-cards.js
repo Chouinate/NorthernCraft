@@ -102,10 +102,6 @@
     '  background: transparent; color: #5c3545; border: 1px solid #5c3545;',
     '}',
     '.nc-prod-btn-cart:hover { background: #e8e2db; }',
-    '.nc-prod-btn-buy {',
-    '  background: #5c3545; color: #fff; border: 1px solid #5c3545;',
-    '}',
-    '.nc-prod-btn-buy:hover { background: #7b4f5c; border-color: #7b4f5c; }',
 
     /* ── Modal mobile ── */
     '@media (max-width: 560px) {',
@@ -266,7 +262,6 @@
       '    <p class="nc-prod-price"></p>',
       '    <div class="nc-prod-actions">',
       '      <button class="nc-prod-btn nc-prod-btn-cart">Add to Cart</button>',
-      '      <button class="nc-prod-btn nc-prod-btn-buy">Buy Now</button>',
       '    </div>',
       '  </div>',
       '</div>',
@@ -280,7 +275,6 @@
     overlay.addEventListener('click', function (e) { if (e.target === overlay) _close(); });
     overlay.querySelector('.nc-prod-close').addEventListener('click', _close);
     overlay.querySelector('.nc-prod-btn-cart').addEventListener('click', _handleAddToCart);
-    overlay.querySelector('.nc-prod-btn-buy').addEventListener('click', _handleBuyNow);
     document.addEventListener('keydown', function (e) {
       if (e.key === 'Escape' && overlay.classList.contains('nc-open')) _close();
     });
@@ -498,14 +492,6 @@
     _close();
     var cartIcon = document.getElementById('cart-icon');
     if (cartIcon) cartIcon.click();
-  }
-
-  function _handleBuyNow() {
-    if (!currentProduct || typeof window.addToCart !== 'function') return;
-    window.addToCart(currentProduct.id, currentProduct.name, currentProduct.price, currentProduct.image);
-    _close();
-    var checkout = document.getElementById('checkout');
-    if (checkout) checkout.scrollIntoView({ behavior: 'smooth' });
   }
 
   // ── Boot ────────────────────────────────────────────────────────────────────

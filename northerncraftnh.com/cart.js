@@ -287,6 +287,25 @@
       background: #ece8e1;
       flex-shrink: 0;
     }
+    .nc-cart-shipping-notice {
+      font-family: 'Montserrat', sans-serif;
+      font-size: 10px;
+      font-weight: 500;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      text-align: center;
+      padding: 8px 12px;
+      margin-bottom: 14px;
+      border-radius: 3px;
+    }
+    .nc-cart-shipping-notice.earned {
+      background: #e8f0e8;
+      color: #3a6b3a;
+    }
+    .nc-cart-shipping-notice.promo {
+      background: transparent;
+      color: #7a6f68;
+    }
     .nc-cart-total-row {
       display: flex;
       justify-content: space-between;
@@ -357,7 +376,7 @@
   `;
 
   // ─── DOM Elements ────────────────────────────────────────────────────────────
-  let overlay, drawer, itemsList, totalEl, badge;
+  let overlay, drawer, itemsList, totalEl, shippingNoticeEl, badge;
 
   function _init() {
     const styleEl = document.createElement('style');
@@ -390,6 +409,7 @@
       '<div class="nc-cart-items" role="list"></div>',
       '<div class="nc-cart-footer">',
       '  <div class="nc-cart-checkout-error" style="display:none"></div>',
+      '  <div class="nc-cart-shipping-notice" style="display:none"></div>',
       '  <div class="nc-cart-total-row">',
       '    <span class="nc-cart-total-label">Total</span>',
       '    <span class="nc-cart-total-amount"></span>',
@@ -402,8 +422,9 @@
 
     drawer.querySelector('.nc-cart-close').addEventListener('click', _close);
 
-    itemsList = drawer.querySelector('.nc-cart-items');
-    totalEl   = drawer.querySelector('.nc-cart-total-amount');
+    itemsList        = drawer.querySelector('.nc-cart-items');
+    totalEl          = drawer.querySelector('.nc-cart-total-amount');
+    shippingNoticeEl = drawer.querySelector('.nc-cart-shipping-notice');
 
     document.body.appendChild(overlay);
     document.body.appendChild(drawer);
@@ -522,9 +543,26 @@
     badge.dataset.hidden = count === 0 ? 'true' : 'false';
   }
 
+  function _updateShippingNotice() {
+    if (!shippingNoticeEl) return;
+    const totalQty = cart.reduce(function (s, i) { return s + i.quantity; }, 0);
+    if (totalQty === 0) {
+      shippingNoticeEl.style.display = 'none';
+    } else if (totalQty >= 2) {
+      shippingNoticeEl.style.display = '';
+      shippingNoticeEl.className = 'nc-cart-shipping-notice earned';
+      shippingNoticeEl.textContent = '\u2713 Free shipping applied';
+    } else {
+      shippingNoticeEl.style.display = '';
+      shippingNoticeEl.className = 'nc-cart-shipping-notice promo';
+      shippingNoticeEl.textContent = 'Free shipping when you buy 2 or more';
+    }
+  }
+
   function _update() {
     _renderItems();
     if (totalEl) totalEl.textContent = _fmt(window.getCartTotal());
+    _updateShippingNotice();
     _updateBadge();
   }
 
