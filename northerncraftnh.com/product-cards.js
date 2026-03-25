@@ -434,7 +434,7 @@
 
     // CTA button text + state
     if (count >= bundleLimit) {
-      bbAdd.textContent = 'Add to Cart \u2014 $' + price;
+      bbAdd.textContent = 'Add to Cart \u00b7 $' + price;
       bbAdd.disabled = false;
     } else {
       bbAdd.textContent = 'Select ' + (bundleLimit - count) + ' more';
@@ -448,10 +448,10 @@
     }
     if (nextTier && nextTier.price < price) {
       var diff = nextTier.limit - count;
-      bbHint.textContent = 'Add ' + diff + ' more for ' + nextTier.name + ' pricing \u2014 $' + nextTier.price;
+      bbHint.textContent = 'Add ' + diff + ' more for ' + nextTier.name + ' pricing \u00b7 $' + nextTier.price;
     } else if (nextTier && count >= bundleLimit) {
       var diff2 = nextTier.limit - count;
-      bbHint.textContent = 'Add ' + diff2 + ' more for ' + nextTier.name + ' \u2014 $' + nextTier.price;
+      bbHint.textContent = 'Add ' + diff2 + ' more for ' + nextTier.name + ' \u00b7 $' + nextTier.price;
     } else {
       bbHint.textContent = '';
     }
@@ -464,7 +464,7 @@
     var names     = selectedCards.map(function (c) { return c.dataset.name; }).join(', ');
     var firstImg  = selectedCards[0].dataset.image || '';
     var bundleId  = 'bundle-' + count + '-' + Date.now();
-    var displayName = bundleTitle + ' \u2014 ' + names;
+    var displayName = bundleTitle + ', ' + names;
     window.addToCart(bundleId, displayName, price, firstImg);
     _deactivateBundle();
     var cartIcon = document.getElementById('cart-icon');
