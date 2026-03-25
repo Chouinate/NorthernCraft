@@ -142,7 +142,7 @@
     '  background: #ece8e1;',
     '  border-top: 1px solid rgba(92,53,69,0.1);',
     '  padding: 14px 56px;',
-    '  display: flex; align-items: center; gap: 20px;',
+    '  display: flex; align-items: center; gap: 20px; flex-wrap: wrap;',
     '  z-index: 95;',
     '  transform: translateY(100%);',
     '  transition: transform 0.3s cubic-bezier(0.4,0,0.2,1);',
@@ -186,7 +186,13 @@
     '}',
     '#bb-add[disabled] { opacity: 0.35; cursor: not-allowed; }',
     '#bb-add:not([disabled]):hover { background: #7b4f5c; }',
-    'body.bundle-mode-active { padding-bottom: 65px; }',
+    '#bb-hint {',
+    '  width: 100%; text-align: center; margin-top: 6px;',
+    '  font-family: \'Montserrat\', sans-serif;',
+    '  font-size: 9px; letter-spacing: 0.14em; text-transform: uppercase;',
+    '  color: #9e9098;',
+    '}',
+    'body.bundle-mode-active { padding-bottom: 80px; }',
     '#bb-scroll {',
     '  background: none; border: none; padding: 4px 6px;',
     '  cursor: pointer; color: #7a6f68;',
@@ -208,12 +214,13 @@
   var bundlePrice = 0;
   var bundleTitle = '';
   var selectedCards = [];
-  var bundleBar, bbTitle, bbDots, bbCount, bbAdd;
+  var bundleBar, bbTitle, bbDots, bbCount, bbAdd, bbHint;
 
   var BUNDLE_TIERS = [
-    { limit: 2, price: 55 },
-    { limit: 4, price: 89 },
-    { limit: 6, price: 119 },
+    { limit: 2,  price: 55,  name: 'Pair' },
+    { limit: 4,  price: 89,  name: 'Set of 4' },
+    { limit: 6,  price: 119, name: 'Set of 6' },
+    { limit: 12, price: 199, name: 'Full Wall' },
   ];
   var SINGLE_PRICE = 35;
 
@@ -302,6 +309,7 @@
       '  <span>Back to grid</span>',
       '</button>',
       '<button id="bb-add" disabled type="button"></button>',
+      '<span id="bb-hint"></span>',
     ].join('');
     document.body.appendChild(bundleBar);
 
@@ -309,6 +317,7 @@
     bbDots  = document.getElementById('bb-dots');
     bbCount = document.getElementById('bb-count');
     bbAdd   = document.getElementById('bb-add');
+    bbHint  = document.getElementById('bb-hint');
 
     document.getElementById('bb-cancel').addEventListener('click', _deactivateBundle);
     document.getElementById('bb-scroll').addEventListener('click', function () {
@@ -326,14 +335,6 @@
         _activateBundle(limit, price, name);
       });
     });
-
-    // Full Wall — inquiry only, no bundle selection
-    var inquireCard = document.querySelector('.bundle-card[data-bundle-inquire]');
-    if (inquireCard) {
-      inquireCard.addEventListener('click', function () {
-        window.location.href = 'mailto:northerncraftnh@gmail.com?subject=Full%20Wall%20Inquiry';
-      });
-    }
 
     // Wire product cards — add circles, handle single vs. bundle clicks
     document.querySelectorAll('.product-card[data-id]').forEach(function (card) {
@@ -438,6 +439,21 @@
     } else {
       bbAdd.textContent = 'Select ' + (bundleLimit - count) + ' more';
       bbAdd.disabled = true;
+    }
+
+    // Next-tier hint
+    var nextTier = null;
+    for (var j = 0; j < BUNDLE_TIERS.length; j++) {
+      if (BUNDLE_TIERS[j].limit > count) { nextTier = BUNDLE_TIERS[j]; break; }
+    }
+    if (nextTier && nextTier.price < price) {
+      var diff = nextTier.limit - count;
+      bbHint.textContent = 'Add ' + diff + ' more for ' + nextTier.name + ' pricing \u2014 $' + nextTier.price;
+    } else if (nextTier && count >= bundleLimit) {
+      var diff2 = nextTier.limit - count;
+      bbHint.textContent = 'Add ' + diff2 + ' more for ' + nextTier.name + ' \u2014 $' + nextTier.price;
+    } else {
+      bbHint.textContent = '';
     }
   }
 
