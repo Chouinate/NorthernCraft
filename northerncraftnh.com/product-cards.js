@@ -99,9 +99,9 @@
     '  transition: background 0.2s, color 0.2s, border-color 0.2s;',
     '}',
     '.nc-prod-btn-cart {',
-    '  background: transparent; color: #5c3545; border: 1px solid #5c3545;',
+    '  background: #5c3545; color: #fff; border: none;',
     '}',
-    '.nc-prod-btn-cart:hover { background: #e8e2db; }',
+    '.nc-prod-btn-cart:hover { background: #7b4f5c; }',
 
     /* ── Modal mobile ── */
     '@media (max-width: 560px) {',
