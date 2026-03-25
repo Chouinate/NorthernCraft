@@ -210,6 +210,25 @@
   var selectedCards = [];
   var bundleBar, bbTitle, bbDots, bbCount, bbAdd;
 
+  var BUNDLE_TIERS = [
+    { limit: 2, price: 55 },
+    { limit: 4, price: 89 },
+    { limit: 6, price: 119 },
+  ];
+  var SINGLE_PRICE = 35;
+
+  function _calcPrice(count) {
+    var extra = Math.max(0, count - bundleLimit);
+    return bundlePrice + extra * SINGLE_PRICE;
+  }
+
+  function _dotsLimit(count) {
+    for (var i = 0; i < BUNDLE_TIERS.length; i++) {
+      if (BUNDLE_TIERS[i].limit >= count) return BUNDLE_TIERS[i].limit;
+    }
+    return count;
+  }
+
   // ── Modal state ──────────────────────────────────────────────────────────────
   var overlay, imgEl, nameEl, priceEl;
   var currentProduct = null;
@@ -366,7 +385,7 @@
     bundleTitle = title;
 
     document.body.classList.add('bundle-mode-active');
-    bbTitle.textContent = title + ' \u2014 $' + price;
+    bbTitle.textContent = title;
     _updateBundleBar();
     bundleBar.setAttribute('aria-hidden', 'false');
     bundleBar.classList.add('bb-visible');
@@ -389,7 +408,7 @@
     if (idx >= 0) {
       selectedCards.splice(idx, 1);
       card.classList.remove('pc-selected');
-    } else if (selectedCards.length < bundleLimit) {
+    } else {
       selectedCards.push(card);
       card.classList.add('pc-selected');
     }
@@ -398,32 +417,39 @@
 
   function _updateBundleBar() {
     var count = selectedCards.length;
+    var price = _calcPrice(count);
+    var dotsTotal = _dotsLimit(count);
 
     // Progress dots
     bbDots.innerHTML = '';
-    for (var i = 0; i < bundleLimit; i++) {
+    for (var i = 0; i < dotsTotal; i++) {
       var dot = document.createElement('span');
       dot.className = 'bb-dot' + (i < count ? ' bb-dot--filled' : '');
       bbDots.appendChild(dot);
     }
 
     // Count label
-    bbCount.textContent = count + ' of ' + bundleLimit + ' selected';
+    bbCount.textContent = count + ' of ' + dotsTotal + ' selected';
 
     // CTA button text + state
-    bbAdd.textContent = count >= bundleLimit
-      ? 'Add to Cart \u2014 $' + bundlePrice
-      : 'Select ' + (bundleLimit - count) + ' more';
-    bbAdd.disabled = count < bundleLimit;
+    if (count >= bundleLimit) {
+      bbAdd.textContent = 'Add to Cart \u2014 $' + price;
+      bbAdd.disabled = false;
+    } else {
+      bbAdd.textContent = 'Select ' + (bundleLimit - count) + ' more';
+      bbAdd.disabled = true;
+    }
   }
 
   function _handleBundleAddToCart() {
     if (selectedCards.length < bundleLimit || typeof window.addToCart !== 'function') return;
+    var count     = selectedCards.length;
+    var price     = _calcPrice(count);
     var names     = selectedCards.map(function (c) { return c.dataset.name; }).join(', ');
     var firstImg  = selectedCards[0].dataset.image || '';
-    var bundleId  = 'bundle-' + bundleLimit + '-' + Date.now();
+    var bundleId  = 'bundle-' + count + '-' + Date.now();
     var displayName = bundleTitle + ' \u2014 ' + names;
-    window.addToCart(bundleId, displayName, bundlePrice, firstImg);
+    window.addToCart(bundleId, displayName, price, firstImg);
     _deactivateBundle();
     var cartIcon = document.getElementById('cart-icon');
     if (cartIcon) cartIcon.click();
