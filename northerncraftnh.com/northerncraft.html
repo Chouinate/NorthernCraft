@@ -341,6 +341,29 @@
     .product-card:hover .product-card-name {
       opacity: 1;
     }
+    /* ── BUNDLE SELECTION MODE ── */
+    body.bundle-mode .product-card { cursor: pointer; }
+    body.bundle-mode .product-card.bundle-selected .product-card-img { opacity: 0.75; }
+    body.bundle-mode .product-card .bundle-check {
+      position: absolute;
+      top: 10px; right: 10px;
+      width: 24px; height: 24px;
+      border-radius: 50%;
+      border: 2px solid rgba(255,255,255,0.9);
+      background: rgba(255,255,255,0.15);
+      z-index: 3;
+      pointer-events: none;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: background 0.15s, border-color 0.15s;
+    }
+    body.bundle-mode .product-card .bundle-check svg { display: none; }
+    body.bundle-mode .product-card.bundle-selected .bundle-check {
+      background: var(--mauve-dark);
+      border-color: var(--mauve-dark);
+    }
+    body.bundle-mode .product-card.bundle-selected .bundle-check svg { display: block; }
     /* ── BUNDLES ── */
     #bundles { background: var(--cream-dark); }
     .bundles-grid {
@@ -1153,6 +1176,17 @@
         bar.querySelector('.bundle-bar-add').addEventListener('click', addToCart);
       }
 
+      // Inject checkbox overlay into every product card once
+      document.querySelectorAll('.product-card[data-id]').forEach(card => {
+        const img = card.querySelector('.product-card-img');
+        if (img && !card.querySelector('.bundle-check')) {
+          const chk = document.createElement('div');
+          chk.className = 'bundle-check';
+          chk.innerHTML = '<svg width="12" height="12" viewBox="0 0 12 12" fill="none"><polyline points="2,6 5,9 10,3" stroke="#fff" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+          img.appendChild(chk);
+        }
+      });
+
       function updateBar() {
         if (!bar || !activeTier) return;
         const count = selectedItems.length;
@@ -1169,9 +1203,7 @@
         bar.querySelector('.bundle-bar-count').textContent = count + ' of ' + activeTier.count + ' selected';
         bar.querySelector('.bundle-bar-price').textContent = '$' + activeTier.price;
         document.querySelectorAll('.product-card[data-id]').forEach(card => {
-          const sel = selectedItems.includes(card.dataset.id);
-          card.style.outline = sel ? '2px solid var(--mauve-dark)' : '';
-          card.style.outlineOffset = sel ? '-2px' : '';
+          card.classList.toggle('bundle-selected', selectedItems.includes(card.dataset.id));
         });
       }
 
@@ -1179,6 +1211,7 @@
         activeTier = TIERS.find(t => t.key === tierKey) || TIERS[0];
         selectedItems = [];
         if (!bar) buildBar();
+        document.body.classList.add('bundle-mode');
         updateBar();
         bar.classList.add('active');
         document.getElementById('collection').scrollIntoView({ behavior: 'smooth' });
@@ -1195,10 +1228,11 @@
 
       function close() {
         if (bar) bar.classList.remove('active');
+        document.body.classList.remove('bundle-mode');
         activeTier = null; selectedItems = [];
         document.querySelectorAll('.product-card[data-id]').forEach(card => {
           if (card._bundleClick) { card.removeEventListener('click', card._bundleClick, true); delete card._bundleClick; }
-          card.style.outline = ''; card.style.outlineOffset = '';
+          card.classList.remove('bundle-selected');
         });
       }
 
