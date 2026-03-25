@@ -574,6 +574,11 @@
         scroll-snap-align: start;
       }
     }
+    /* ── BUNDLE INTERACTION ── */
+    .bundle-card { cursor: pointer; transition: box-shadow 0.2s; }
+    .bundle-card:hover { box-shadow: inset 0 0 0 1.5px rgba(92,53,69,0.28), 0 4px 16px rgba(92,53,69,0.12); }
+    .bundle-card-save { font-style: normal; font-size: 9px; letter-spacing: 0.1em; opacity: 0.75; }
+    .bundle-card-link--inquire { color: var(--mauve) !important; }
     @media (pointer: fine) and (max-width: 1050px) {
       #bundles {
         overflow-x: auto;
@@ -668,7 +673,7 @@
       </div>
     </div>
     <div class="product-grid">
-      <div class="product-card" data-id="solstice" data-name="Solstice" data-price="29" data-image="Products/Solstice.jpg">
+      <div class="product-card" data-id="solstice" data-name="Solstice" data-price="35" data-image="Products/Solstice.jpg">
         <div class="product-card-img">
           <img src="Products/Solstice.jpg" alt="Solstice">
           <p class="product-card-name">Solstice</p>
@@ -676,7 +681,7 @@
         <div class="product-card-info">
         </div>
       </div>
-      <div class="product-card" data-id="bloom" data-name="Bloom" data-price="29" data-image="Products/Bloom.jpg">
+      <div class="product-card" data-id="bloom" data-name="Bloom" data-price="35" data-image="Products/Bloom.jpg">
         <div class="product-card-img">
           <img src="Products/Bloom.jpg" alt="Bloom">
           <p class="product-card-name">Bloom</p>
@@ -684,7 +689,7 @@
         <div class="product-card-info">
         </div>
       </div>
-      <div class="product-card" data-id="petal" data-name="Petal" data-price="29" data-image="Products/Petal.jpg">
+      <div class="product-card" data-id="petal" data-name="Petal" data-price="35" data-image="Products/Petal.jpg">
         <div class="product-card-img">
           <img src="Products/Petal.jpg" alt="Petal">
           <p class="product-card-name">Petal</p>
@@ -692,7 +697,7 @@
         <div class="product-card-info">
         </div>
       </div>
-      <div class="product-card" data-id="quarry" data-name="Quarry" data-price="29" data-image="Products/Quarry.jpg">
+      <div class="product-card" data-id="quarry" data-name="Quarry" data-price="35" data-image="Products/Quarry.jpg">
         <div class="product-card-img">
           <img src="Products/Quarry.jpg" alt="Quarry">
           <p class="product-card-name">Quarry</p>
@@ -700,7 +705,7 @@
         <div class="product-card-info">
         </div>
       </div>
-      <div class="product-card" data-id="meadow" data-name="Meadow" data-price="29" data-image="Products/Meadow.jpg">
+      <div class="product-card" data-id="meadow" data-name="Meadow" data-price="35" data-image="Products/Meadow.jpg">
         <div class="product-card-img">
           <img src="Products/Meadow.jpg" alt="Meadow">
           <p class="product-card-name">Meadow</p>
@@ -708,7 +713,7 @@
         <div class="product-card-info">
         </div>
       </div>
-      <div class="product-card" data-id="summit" data-name="Summit" data-price="29" data-image="Products/Summit.jpg">
+      <div class="product-card" data-id="summit" data-name="Summit" data-price="35" data-image="Products/Summit.jpg">
         <div class="product-card-img">
           <img src="Products/Summit.jpg" alt="Summit">
           <p class="product-card-name">Summit</p>
@@ -716,7 +721,7 @@
         <div class="product-card-info">
         </div>
       </div>
-      <div class="product-card" data-id="grove" data-name="Grove" data-price="29" data-image="Products/Grove.jpg">
+      <div class="product-card" data-id="grove" data-name="Grove" data-price="35" data-image="Products/Grove.jpg">
         <div class="product-card-img">
           <img src="Products/Grove.jpg" alt="Grove">
           <p class="product-card-name">Grove</p>
@@ -724,7 +729,7 @@
         <div class="product-card-info">
         </div>
       </div>
-      <div class="product-card" data-id="flora" data-name="Flora" data-price="29" data-image="Products/Flora.jpg">
+      <div class="product-card" data-id="flora" data-name="Flora" data-price="35" data-image="Products/Flora.jpg">
         <div class="product-card-img">
           <img src="Products/Flora.jpg" alt="Flora">
           <p class="product-card-name">Flora</p>
@@ -732,7 +737,7 @@
         <div class="product-card-info">
         </div>
       </div>
-      <div class="product-card" data-id="north" data-name="North" data-price="29" data-image="Products/North.jpg">
+      <div class="product-card" data-id="north" data-name="North" data-price="35" data-image="Products/North.jpg">
         <div class="product-card-img">
           <img src="Products/North.jpg" alt="North">
           <p class="product-card-name">North</p>
@@ -740,7 +745,7 @@
         <div class="product-card-info">
         </div>
       </div>
-      <div class="product-card" data-id="blossom" data-name="Blossom" data-price="29" data-image="Products/Blossom.jpg">
+      <div class="product-card" data-id="blossom" data-name="Blossom" data-price="35" data-image="Products/Blossom.jpg">
         <div class="product-card-img">
           <img src="Products/Blossom.jpg" alt="Blossom">
           <p class="product-card-name">Blossom</p>
@@ -748,7 +753,7 @@
         <div class="product-card-info">
         </div>
       </div>
-      <div class="product-card" data-id="rosette" data-name="Rosette" data-price="29" data-image="Products/Rosette.jpg">
+      <div class="product-card" data-id="rosette" data-name="Rosette" data-price="35" data-image="Products/Rosette.jpg">
         <div class="product-card-img">
           <img src="Products/Rosette.jpg" alt="Rosette">
           <p class="product-card-name">Rosette</p>
@@ -756,7 +761,7 @@
         <div class="product-card-info">
         </div>
       </div>
-      <div class="product-card" data-id="flare" data-name="Flare" data-price="29" data-image="Products/Flare.jpg">
+      <div class="product-card" data-id="flare" data-name="Flare" data-price="35" data-image="Products/Flare.jpg">
         <div class="product-card-img">
           <img src="Products/Flare.jpg" alt="Flare">
           <p class="product-card-name">Flare</p>
@@ -772,7 +777,7 @@
     <p class="section-label">Sets</p>
     <h2 class="section-title">Build a <em>Set</em></h2>
     <div class="bundles-grid" style="grid-template-columns: repeat(4, 1fr);">
-      <div class="bundle-card">
+      <div class="bundle-card" data-bundle-limit="2" data-bundle-price="55">
         <!-- Pair: 2 pieces side by side (viewBox 22×10) -->
         <div class="bundle-card-visual">
           <svg class="bundle-card-icon" viewBox="0 0 44 44" fill="none" stroke="none" xmlns="http://www.w3.org/2000/svg">
@@ -786,10 +791,10 @@
         <div class="bundle-card-footer">
           <p class="bundle-card-name">Pair</p>
           <p class="bundle-card-desc">A simple starting point.</p>
-          <a href="#" class="bundle-card-link">Shop</a>
+          <span class="bundle-card-link">$55 — <em class="bundle-card-save">21% off</em></span>
         </div>
       </div>
-      <div class="bundle-card">
+      <div class="bundle-card" data-bundle-limit="4" data-bundle-price="89">
         <!-- Set of 4: 2×2 grid (viewBox 22×22) -->
         <div class="bundle-card-visual">
           <svg class="bundle-card-icon" viewBox="0 0 44 44" fill="none" stroke="none" xmlns="http://www.w3.org/2000/svg">
@@ -807,10 +812,10 @@
         <div class="bundle-card-footer">
           <p class="bundle-card-name">Set of 4</p>
           <p class="bundle-card-desc">Four pieces that work just about anywhere.</p>
-          <a href="#" class="bundle-card-link">Shop</a>
+          <span class="bundle-card-link">$89 — <em class="bundle-card-save">36% off</em></span>
         </div>
       </div>
-      <div class="bundle-card">
+      <div class="bundle-card" data-bundle-limit="6" data-bundle-price="119">
         <!-- Set of 6: 3×2 grid (viewBox 34×22) -->
         <div class="bundle-card-visual">
           <svg class="bundle-card-icon" viewBox="0 0 44 44" fill="none" stroke="none" xmlns="http://www.w3.org/2000/svg">
@@ -832,10 +837,10 @@
         <div class="bundle-card-footer">
           <p class="bundle-card-name">Set of 6</p>
           <p class="bundle-card-desc">The most popular choice. Enough to make a real statement.</p>
-          <a href="#" class="bundle-card-link">Shop</a>
+          <span class="bundle-card-link">$119 — <em class="bundle-card-save">43% off</em></span>
         </div>
       </div>
-      <div class="bundle-card bundle-card--full-wall">
+      <div class="bundle-card bundle-card--full-wall" data-bundle-inquire="true">
         <!-- Full Wall: 4×3 grid (viewBox 46×34) -->
         <div class="bundle-card-visual">
           <svg class="bundle-card-icon" viewBox="0 0 44 44" fill="none" stroke="none" xmlns="http://www.w3.org/2000/svg">
@@ -869,7 +874,7 @@
         <div class="bundle-card-footer">
           <p class="bundle-card-name">Full Wall</p>
           <p class="bundle-card-desc">Twelve pieces. The whole collection on one wall.</p>
-          <a href="#" class="bundle-card-link">Shop</a>
+          <span class="bundle-card-link bundle-card-link--inquire">Let's Talk →</span>
         </div>
       </div>
     </div>
