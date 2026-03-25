@@ -32,14 +32,18 @@ module.exports = async (req, res) => {
     }));
 
     const sessionParams = {
-      ui_mode:   'embedded',
-      mode:      'payment',
+      ui_mode:                      'embedded',
+      mode:                         'payment',
       line_items,
       return_url,
+      billing_address_collection:   'required',
+      shipping_address_collection:  { allowed_countries: ['US'] },
     };
-    sessionParams.payment_method_types = (Array.isArray(payment_method_types) && payment_method_types.length > 0)
-      ? payment_method_types
-      : ['card', 'klarna', 'afterpay_clearpay', 'cashapp', 'us_bank_account'];
+    if (Array.isArray(payment_method_types) && payment_method_types.length > 0) {
+      sessionParams.payment_method_types = payment_method_types;
+    } else {
+      sessionParams.automatic_payment_methods = { enabled: true };
+    }
 
     const session = await stripe.checkout.sessions.create(sessionParams);
     res.json({ clientSecret: session.client_secret });

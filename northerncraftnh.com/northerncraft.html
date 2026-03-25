@@ -34,7 +34,6 @@
     nav {
       display: flex;
       align-items: center;
-      justify-content: space-between;
       padding: 10px 56px;
       background: var(--cream);
       position: fixed;
@@ -69,7 +68,20 @@
       display: flex;
       gap: 40px;
       list-style: none;
+      margin-left: auto;
     }
+    .nav-cart-icon {
+      margin-left: 40px;
+      background: none;
+      border: none;
+      cursor: pointer;
+      padding: 0;
+      color: var(--charcoal);
+      display: flex;
+      align-items: center;
+      position: relative;
+    }
+    .nav-cart-icon:hover { color: var(--mauve); }
     .nav-links a {
       font-family: var(--ff-sans);
       font-size: 11px;
@@ -118,10 +130,12 @@
         background: var(--cream);
         border-bottom: 1px solid rgba(0,0,0,0.06);
         padding: 8px 0 16px;
+        margin-left: 0;
       }
       .nav-links.open { display: flex; }
       .nav-links li { width: 100%; }
       .nav-links a { display: block; padding: 12px 28px; }
+      .nav-cart-icon { margin-left: auto; margin-right: 16px; }
     }
     /* ── HERO ── */
     .hero {
@@ -131,7 +145,7 @@
       padding: 0;
     }
     .hero-left {
-      padding: 52px 56px 52px;
+      padding: clamp(28px, 4vw, 52px) 56px;
       display: flex;
       flex-direction: column;
       justify-content: center;
@@ -257,37 +271,31 @@
     .section-title em { font-style: italic; color: var(--mauve); }
     /* ── COLLECTION ── */
     #collection { background: var(--cream); }
-    #collection .section-label { grid-column: 1; grid-row: 1; }
-    #collection .section-title { margin-bottom: 0; grid-column: 1; grid-row: 2; }
     .collection-header {
-      display: grid;
-      grid-template-columns: auto 1fr;
-      column-gap: 48px;
-      align-items: end;
       margin-bottom: 20px;
       width: 100%;
     }
     .specs-bar {
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      grid-column: 2;
-      grid-row: 2;
+      display: flex;
+      justify-content: center;
       font-size: 12px;
       letter-spacing: 0.09em;
+      margin-top: 10px;
     }
     .spec-col {
       display: flex;
       flex-direction: column;
       align-items: center;
       gap: 5px;
-      padding: 14px 24px 0;
+      padding: 4px 28px 0;
+      margin-bottom: 24px;
     }
     .spec-col:not(:last-child) {
       border-right: 1px solid #e6e0e3;
     }
     .spec-item { color: var(--mauve-dark); white-space: nowrap; }
-    .spec-sub { color: #9e9098; font-style: italic; font-size: 11px; }
-    .spec-email { color: var(--mauve-dark); text-decoration: underline; text-underline-offset: 3px; }
+    .spec-sub { color: #9e9098; font-style: italic; font-size: 11px; white-space: nowrap; }
+    .spec-email { color: var(--mauve-dark); text-decoration: underline; text-underline-offset: 3px; white-space: nowrap; }
     .product-grid {
       display: grid;
       grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
@@ -532,10 +540,22 @@
         overflow: hidden;
       }
       .hero-right { height: 380px; max-height: 380px; }
-      .hero-left { padding: 120px 28px 40px; }
+      .hero-left { padding: clamp(60px, 13vw, 120px) 28px 40px; }
       #about { grid-template-columns: 1fr; gap: 40px; padding: 30px 28px 60px; }
+      .product-grid { grid-template-columns: 1fr 1fr; }
+      .process-steps { grid-template-columns: 1fr 1fr; }
+      footer {
+        flex-direction: column;
+        gap: 28px;
+        text-align: center;
+        padding: 40px 28px;
+      }
+      .footer-links { flex-wrap: wrap; justify-content: center; }
+      .specs-bar { flex-wrap: wrap; gap: 8px 0; }
+    }
+    @media (pointer: coarse) and (max-width: 900px) {
       #bundles { padding-left: 0 !important; padding-right: 0 !important; }
-      #bundles .section-label, #bundles .section-title { padding-left: 28px; }
+      #bundles .section-label, #bundles .section-title, #bundles .section-shipping { padding-left: 28px; }
       .bundles-grid {
         grid-template-columns: unset !important;
         grid-template-rows: unset !important;
@@ -551,22 +571,30 @@
       .bundles-grid::-webkit-scrollbar { display: none; }
       .bundle-card {
         flex: 0 0 calc(70vw - 24px);
-        scroll-snap-align: none;
+        scroll-snap-align: start;
       }
-      .bundle-card:nth-child(odd) { scroll-snap-align: start; }
-      .product-grid { grid-template-columns: 1fr 1fr; }
-      .process-steps { grid-template-columns: 1fr 1fr; }
-      #collection .section-label { grid-row: 1; grid-column: 1; }
-      #collection .section-title { grid-row: 2; grid-column: 1; }
-      .collection-header { align-items: center; }
-      .specs-bar { grid-row: 1 / span 2; grid-column: 2; align-self: center; }
-      footer {
-        flex-direction: column;
-        gap: 28px;
-        text-align: center;
-        padding: 40px 28px;
+    }
+    /* ── BUNDLE INTERACTION ── */
+    .bundle-card { cursor: pointer; transition: box-shadow 0.2s; }
+    .bundle-card:hover { box-shadow: inset 0 0 0 1.5px rgba(92,53,69,0.28), 0 4px 16px rgba(92,53,69,0.12); }
+    .bundle-card-save { font-style: normal; font-size: 9px; letter-spacing: 0.1em; opacity: 0.75; }
+    .bundle-card-link--inquire { color: var(--mauve) !important; }
+    @media (pointer: fine) and (max-width: 1050px) {
+      #bundles {
+        overflow-x: auto;
+        scrollbar-width: thin;
+        scrollbar-color: rgba(92,53,69,0.3) transparent;
       }
-      .footer-links { flex-wrap: wrap; justify-content: center; }
+      #bundles::-webkit-scrollbar { height: 3px; }
+      #bundles::-webkit-scrollbar-track { background: transparent; }
+      #bundles::-webkit-scrollbar-thumb { background: rgba(92,53,69,0.3); border-radius: 2px; }
+      .bundles-grid { grid-template-columns: repeat(4, 220px) !important; }
+    }
+    @media (max-width: 640px) {
+      .specs-bar { flex-wrap: wrap; gap: 8px 0; }
+      .spec-col { padding: 4px 16px 0; }
+      .spec-item { font-size: 11px; }
+      .spec-sub { font-size: 10px; }
     }
   </style>
   <!-- Set your PayPal client ID here (get it from developer.paypal.com → Apps & Credentials) -->
@@ -590,17 +618,15 @@
       <li><a href="#bundles">Bundles</a></li>
       <li><a href="#about">About</a></li>
       <li><a href="#process">Process</a></li>
-      <li>
-        <button id="cart-icon" class="nav-cart-icon" aria-label="Open cart">
-          <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-               stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-            <path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"/>
-            <line x1="3" y1="6" x2="21" y2="6"/>
-            <path d="M16 10a4 4 0 01-8 0"/>
-          </svg>
-        </button>
-      </li>
     </ul>
+    <button id="cart-icon" class="nav-cart-icon" aria-label="Open cart">
+      <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+           stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+        <path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"/>
+        <line x1="3" y1="6" x2="21" y2="6"/>
+        <path d="M16 10a4 4 0 01-8 0"/>
+      </svg>
+    </button>
     <button class="nav-hamburger" aria-label="Menu">
       <span></span><span></span><span></span>
     </button>
@@ -647,7 +673,7 @@
       </div>
     </div>
     <div class="product-grid">
-      <div class="product-card" data-id="solstice" data-name="Solstice" data-price="29" data-image="Products/Solstice.jpg">
+      <div class="product-card" data-id="solstice" data-name="Solstice" data-price="35" data-image="Products/Solstice.jpg">
         <div class="product-card-img">
           <img src="Products/Solstice.jpg" alt="Solstice">
           <p class="product-card-name">Solstice</p>
@@ -655,7 +681,7 @@
         <div class="product-card-info">
         </div>
       </div>
-      <div class="product-card" data-id="bloom" data-name="Bloom" data-price="29" data-image="Products/Bloom.jpg">
+      <div class="product-card" data-id="bloom" data-name="Bloom" data-price="35" data-image="Products/Bloom.jpg">
         <div class="product-card-img">
           <img src="Products/Bloom.jpg" alt="Bloom">
           <p class="product-card-name">Bloom</p>
@@ -663,7 +689,7 @@
         <div class="product-card-info">
         </div>
       </div>
-      <div class="product-card" data-id="petal" data-name="Petal" data-price="29" data-image="Products/Petal.jpg">
+      <div class="product-card" data-id="petal" data-name="Petal" data-price="35" data-image="Products/Petal.jpg">
         <div class="product-card-img">
           <img src="Products/Petal.jpg" alt="Petal">
           <p class="product-card-name">Petal</p>
@@ -671,7 +697,7 @@
         <div class="product-card-info">
         </div>
       </div>
-      <div class="product-card" data-id="quarry" data-name="Quarry" data-price="29" data-image="Products/Quarry.jpg">
+      <div class="product-card" data-id="quarry" data-name="Quarry" data-price="35" data-image="Products/Quarry.jpg">
         <div class="product-card-img">
           <img src="Products/Quarry.jpg" alt="Quarry">
           <p class="product-card-name">Quarry</p>
@@ -679,7 +705,7 @@
         <div class="product-card-info">
         </div>
       </div>
-      <div class="product-card" data-id="meadow" data-name="Meadow" data-price="29" data-image="Products/Meadow.jpg">
+      <div class="product-card" data-id="meadow" data-name="Meadow" data-price="35" data-image="Products/Meadow.jpg">
         <div class="product-card-img">
           <img src="Products/Meadow.jpg" alt="Meadow">
           <p class="product-card-name">Meadow</p>
@@ -687,7 +713,7 @@
         <div class="product-card-info">
         </div>
       </div>
-      <div class="product-card" data-id="summit" data-name="Summit" data-price="29" data-image="Products/Summit.jpg">
+      <div class="product-card" data-id="summit" data-name="Summit" data-price="35" data-image="Products/Summit.jpg">
         <div class="product-card-img">
           <img src="Products/Summit.jpg" alt="Summit">
           <p class="product-card-name">Summit</p>
@@ -695,7 +721,7 @@
         <div class="product-card-info">
         </div>
       </div>
-      <div class="product-card" data-id="grove" data-name="Grove" data-price="29" data-image="Products/Grove.jpg">
+      <div class="product-card" data-id="grove" data-name="Grove" data-price="35" data-image="Products/Grove.jpg">
         <div class="product-card-img">
           <img src="Products/Grove.jpg" alt="Grove">
           <p class="product-card-name">Grove</p>
@@ -703,7 +729,7 @@
         <div class="product-card-info">
         </div>
       </div>
-      <div class="product-card" data-id="flora" data-name="Flora" data-price="29" data-image="Products/Flora.jpg">
+      <div class="product-card" data-id="flora" data-name="Flora" data-price="35" data-image="Products/Flora.jpg">
         <div class="product-card-img">
           <img src="Products/Flora.jpg" alt="Flora">
           <p class="product-card-name">Flora</p>
@@ -711,7 +737,7 @@
         <div class="product-card-info">
         </div>
       </div>
-      <div class="product-card" data-id="north" data-name="North" data-price="29" data-image="Products/North.jpg">
+      <div class="product-card" data-id="north" data-name="North" data-price="35" data-image="Products/North.jpg">
         <div class="product-card-img">
           <img src="Products/North.jpg" alt="North">
           <p class="product-card-name">North</p>
@@ -719,7 +745,7 @@
         <div class="product-card-info">
         </div>
       </div>
-      <div class="product-card" data-id="blossom" data-name="Blossom" data-price="29" data-image="Products/Blossom.jpg">
+      <div class="product-card" data-id="blossom" data-name="Blossom" data-price="35" data-image="Products/Blossom.jpg">
         <div class="product-card-img">
           <img src="Products/Blossom.jpg" alt="Blossom">
           <p class="product-card-name">Blossom</p>
@@ -727,7 +753,7 @@
         <div class="product-card-info">
         </div>
       </div>
-      <div class="product-card" data-id="rosette" data-name="Rosette" data-price="29" data-image="Products/Rosette.jpg">
+      <div class="product-card" data-id="rosette" data-name="Rosette" data-price="35" data-image="Products/Rosette.jpg">
         <div class="product-card-img">
           <img src="Products/Rosette.jpg" alt="Rosette">
           <p class="product-card-name">Rosette</p>
@@ -735,7 +761,7 @@
         <div class="product-card-info">
         </div>
       </div>
-      <div class="product-card" data-id="flare" data-name="Flare" data-price="29" data-image="Products/Flare.jpg">
+      <div class="product-card" data-id="flare" data-name="Flare" data-price="35" data-image="Products/Flare.jpg">
         <div class="product-card-img">
           <img src="Products/Flare.jpg" alt="Flare">
           <p class="product-card-name">Flare</p>
@@ -749,9 +775,10 @@
  <!-- BUNDLES -->
   <section id="bundles" style="padding:80px 56px;">
     <p class="section-label">Sets</p>
-    <h2 class="section-title">Build a <em>Set</em></h2>
+    <h2 class="section-title" style="margin-bottom: 12px;">Build a <em>Set</em></h2>
+    <p class="section-shipping" style="font-size: 11px; letter-spacing: 0.18em; text-transform: uppercase; color: var(--text-muted); margin-bottom: 40px;">Free shipping on every set</p>
     <div class="bundles-grid" style="grid-template-columns: repeat(4, 1fr);">
-      <div class="bundle-card">
+      <div class="bundle-card" data-bundle-limit="2" data-bundle-price="55">
         <!-- Pair: 2 pieces side by side (viewBox 22×10) -->
         <div class="bundle-card-visual">
           <svg class="bundle-card-icon" viewBox="0 0 44 44" fill="none" stroke="none" xmlns="http://www.w3.org/2000/svg">
@@ -765,10 +792,10 @@
         <div class="bundle-card-footer">
           <p class="bundle-card-name">Pair</p>
           <p class="bundle-card-desc">A simple starting point.</p>
-          <a href="#" class="bundle-card-link">Shop</a>
+          <span class="bundle-card-link">$55</span>
         </div>
       </div>
-      <div class="bundle-card">
+      <div class="bundle-card" data-bundle-limit="4" data-bundle-price="89">
         <!-- Set of 4: 2×2 grid (viewBox 22×22) -->
         <div class="bundle-card-visual">
           <svg class="bundle-card-icon" viewBox="0 0 44 44" fill="none" stroke="none" xmlns="http://www.w3.org/2000/svg">
@@ -786,10 +813,10 @@
         <div class="bundle-card-footer">
           <p class="bundle-card-name">Set of 4</p>
           <p class="bundle-card-desc">Four pieces that work just about anywhere.</p>
-          <a href="#" class="bundle-card-link">Shop</a>
+          <span class="bundle-card-link">$89</span>
         </div>
       </div>
-      <div class="bundle-card">
+      <div class="bundle-card" data-bundle-limit="6" data-bundle-price="119">
         <!-- Set of 6: 3×2 grid (viewBox 34×22) -->
         <div class="bundle-card-visual">
           <svg class="bundle-card-icon" viewBox="0 0 44 44" fill="none" stroke="none" xmlns="http://www.w3.org/2000/svg">
@@ -811,10 +838,10 @@
         <div class="bundle-card-footer">
           <p class="bundle-card-name">Set of 6</p>
           <p class="bundle-card-desc">The most popular choice. Enough to make a real statement.</p>
-          <a href="#" class="bundle-card-link">Shop</a>
+          <span class="bundle-card-link">$119</span>
         </div>
       </div>
-      <div class="bundle-card bundle-card--full-wall">
+      <div class="bundle-card" data-bundle-limit="12" data-bundle-price="199">
         <!-- Full Wall: 4×3 grid (viewBox 46×34) -->
         <div class="bundle-card-visual">
           <svg class="bundle-card-icon" viewBox="0 0 44 44" fill="none" stroke="none" xmlns="http://www.w3.org/2000/svg">
@@ -848,9 +875,14 @@
         <div class="bundle-card-footer">
           <p class="bundle-card-name">Full Wall</p>
           <p class="bundle-card-desc">Twelve pieces. The whole collection on one wall.</p>
-          <a href="#" class="bundle-card-link">Shop</a>
+          <span class="bundle-card-link">$199</span>
         </div>
       </div>
+    </div>
+    <div style="text-align: center; max-width: 720px; margin: 64px auto 0;">
+      <p style="font-family: var(--ff-serif); font-size: clamp(18px, 2vw, 24px); font-weight: 300; color: var(--charcoal); line-height: 1.55; margin-bottom: 20px;">Have something specific in mind?<br>Custom sizes, colors, or something entirely yours.</p>
+      <p style="font-family: var(--ff-serif); font-size: clamp(18px, 2vw, 24px); font-weight: 300; color: var(--charcoal); line-height: 1.55; margin-bottom: 16px;">Send me a sketch and I'll bring it to life as a true one of one<br>(unless you want more).</p>
+      <a href="mailto:northerncraftnh@gmail.com" style="font-family: var(--ff-sans); font-size: 10px; letter-spacing: 0.22em; text-transform: uppercase; color: var(--mauve); text-decoration: none; border-bottom: 1px solid currentColor; padding-bottom: 2px;">Let's talk</a>
     </div>
   </section>
   <!-- ABOUT -->
@@ -999,7 +1031,7 @@
         if (entries[0].isIntersecting) {
           hintObserver.disconnect();
           // Only run on mobile
-          if (window.innerWidth > 900) return;
+          if (!window.matchMedia('(pointer: coarse)').matches) return;
           const thirdCard = bundlesGrid.children[2];
           const peekAmount = thirdCard ? Math.max(0, thirdCard.offsetLeft - Math.round(bundlesGrid.offsetWidth * 0.35)) : 80;
           setTimeout(() => {
