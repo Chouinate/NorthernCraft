@@ -186,8 +186,19 @@
     '}',
     '#bb-add[disabled] { opacity: 0.35; cursor: not-allowed; }',
     '#bb-add:not([disabled]):hover { background: #7b4f5c; }',
+    'body.bundle-mode-active { padding-bottom: 65px; }',
+    '#bb-scroll {',
+    '  background: none; border: none; padding: 4px 6px;',
+    '  cursor: pointer; color: #7a6f68;',
+    '  font-family: \'Montserrat\', sans-serif;',
+    '  font-size: 9px; letter-spacing: 0.18em; text-transform: uppercase;',
+    '  display: flex; align-items: center; gap: 5px; flex-shrink: 0;',
+    '  transition: color 0.2s; white-space: nowrap;',
+    '}',
+    '#bb-scroll:hover { color: #5c3545; }',
     '@media (max-width: 768px) {',
     '  #bundle-bar { padding: 12px 20px; gap: 12px; }',
+    '  #bb-scroll span { display: none; }',
     '}',
 
   ].join('\n');
@@ -264,6 +275,13 @@
       '<span class="bb-sep" aria-hidden="true">\u00b7</span>',
       '<span id="bb-dots" aria-hidden="true"></span>',
       '<span id="bb-count"></span>',
+      '<button id="bb-scroll" aria-label="Scroll to grid">',
+      '  <svg width="12" height="12" viewBox="0 0 12 12" fill="none"',
+      '       stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">',
+      '    <polyline points="2,8 6,4 10,8"/>',
+      '  </svg>',
+      '  <span>Back to grid</span>',
+      '</button>',
       '<button id="bb-add" disabled type="button"></button>',
     ].join('');
     document.body.appendChild(bundleBar);
@@ -274,6 +292,10 @@
     bbAdd   = document.getElementById('bb-add');
 
     document.getElementById('bb-cancel').addEventListener('click', _deactivateBundle);
+    document.getElementById('bb-scroll').addEventListener('click', function () {
+      var coll = document.getElementById('collection');
+      if (coll) coll.scrollIntoView({ behavior: 'smooth' });
+    });
     bbAdd.addEventListener('click', _handleBundleAddToCart);
 
     // Wire bundle cards (Pair / Set of 4 / Set of 6)
