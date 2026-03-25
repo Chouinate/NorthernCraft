@@ -555,7 +555,7 @@
     }
     @media (pointer: coarse) and (max-width: 900px) {
       #bundles { padding-left: 0 !important; padding-right: 0 !important; }
-      #bundles .section-label, #bundles .section-title { padding-left: 28px; }
+      #bundles .section-label, #bundles .section-title, #bundles .section-shipping { padding-left: 28px; }
       .bundles-grid {
         grid-template-columns: unset !important;
         grid-template-rows: unset !important;
@@ -775,7 +775,8 @@
  <!-- BUNDLES -->
   <section id="bundles" style="padding:80px 56px;">
     <p class="section-label">Sets</p>
-    <h2 class="section-title">Build a <em>Set</em></h2>
+    <h2 class="section-title" style="margin-bottom: 12px;">Build a <em>Set</em></h2>
+    <p class="section-shipping" style="font-size: 11px; letter-spacing: 0.18em; text-transform: uppercase; color: var(--text-muted); margin-bottom: 40px;">Free shipping on every set</p>
     <div class="bundles-grid" style="grid-template-columns: repeat(4, 1fr);">
       <div class="bundle-card" data-bundle-limit="2" data-bundle-price="55">
         <!-- Pair: 2 pieces side by side (viewBox 22×10) -->
@@ -791,7 +792,7 @@
         <div class="bundle-card-footer">
           <p class="bundle-card-name">Pair</p>
           <p class="bundle-card-desc">A simple starting point.</p>
-          <span class="bundle-card-link">$55 — <em class="bundle-card-save">21% off</em></span>
+          <span class="bundle-card-link">$55</span>
         </div>
       </div>
       <div class="bundle-card" data-bundle-limit="4" data-bundle-price="89">
@@ -812,7 +813,7 @@
         <div class="bundle-card-footer">
           <p class="bundle-card-name">Set of 4</p>
           <p class="bundle-card-desc">Four pieces that work just about anywhere.</p>
-          <span class="bundle-card-link">$89 — <em class="bundle-card-save">36% off</em></span>
+          <span class="bundle-card-link">$89</span>
         </div>
       </div>
       <div class="bundle-card" data-bundle-limit="6" data-bundle-price="119">
@@ -837,7 +838,7 @@
         <div class="bundle-card-footer">
           <p class="bundle-card-name">Set of 6</p>
           <p class="bundle-card-desc">The most popular choice. Enough to make a real statement.</p>
-          <span class="bundle-card-link">$119 — <em class="bundle-card-save">43% off</em></span>
+          <span class="bundle-card-link">$119</span>
         </div>
       </div>
       <div class="bundle-card bundle-card--full-wall" data-bundle-inquire="true">
