@@ -516,7 +516,7 @@
       var metaLine = '';
       if (item.meta && item.meta.bundleCount) {
         var metaParts = [];
-        if (item.meta.discountPct > 0) metaParts.push(item.meta.discountPct + '% saved');
+        if (item.meta.discountPct > 0) metaParts.push('Saving ' + item.meta.discountPct + '%');
         if (item.meta.nextHint)        metaParts.push(item.meta.nextHint);
         if (metaParts.length) {
           metaLine = '<p class="nc-cart-item-meta">' + _esc(metaParts.join(' \u00b7 ')) + '</p>';

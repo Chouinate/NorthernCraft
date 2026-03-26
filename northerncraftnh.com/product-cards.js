@@ -470,7 +470,7 @@
     // Next-tier hint: always show when there's a next tier
     if (next) {
       var nextDisc = _discountPct(next.limit);
-      bbHint.textContent = (next.limit - count) + ' more for ' + next.name + ' \u00b7 ' + nextDisc + '% off';
+      bbHint.textContent = 'Add ' + (next.limit - count) + ' more to save ' + nextDisc + '%';
     } else {
       bbHint.textContent = '';
     }
@@ -511,7 +511,7 @@
     var bundleId = 'bundle-' + count + '-' + Date.now();
     var tierName = tier ? tier.name : bundleTitle;
     var nextHint = next
-      ? ((next.limit - count) + ' more for ' + next.name + ' \u00b7 ' + _discountPct(next.limit) + '% off')
+      ? ('Add ' + (next.limit - count) + ' more to save ' + _discountPct(next.limit) + '%')
       : '';
     window.addToCart(bundleId, tierName + ': ' + mergedNames.join(', '), price, mergedImg, {
       bundleCount: count,
