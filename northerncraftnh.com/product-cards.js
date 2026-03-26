@@ -43,7 +43,7 @@
     '.nc-prod-modal {',
     '  background: var(--cream);',
     '  display: flex; gap: 0;',
-    '  width: 100%; max-width: 520px;',
+    '  width: 100%; max-width: 460px;',
     '  position: relative;',
     '  transform: translateY(10px); opacity: 0;',
     '  transition: transform 0.25s ease, opacity 0.25s ease;',
@@ -62,7 +62,7 @@
 
     /* ── Image column ── */
     '.nc-prod-img-wrap {',
-    '  width: 220px; flex-shrink: 0;',
+    '  width: 200px; flex-shrink: 0;',
     '  aspect-ratio: 1/1; background: var(--panel); overflow: hidden;',
     '}',
     '.nc-prod-img-wrap img { width: 100%; height: 100%; object-fit: cover; display: block; }',
@@ -75,19 +75,12 @@
     '.nc-prod-name {',
     '  font-family: var(--ff-serif);',
     '  font-size: 30px; font-weight: 400;',
-    '  color: var(--charcoal); letter-spacing: 0.03em; margin: 0 0 10px;',
+    '  color: var(--charcoal); letter-spacing: 0.03em; margin: 0 0 8px;',
     '}',
     '.nc-prod-price {',
     '  font-family: var(--ff-sans);',
-    '  font-size: 13px; font-weight: 400;',
-    '  letter-spacing: 0.1em; color: var(--mauve-dark); margin: 0 0 8px;',
-    '}',
-
-    /* ── Specs line ── */
-    '.nc-prod-specs {',
-    '  font-family: var(--ff-sans);',
-    '  font-size: 9px; letter-spacing: 0.18em; text-transform: uppercase;',
-    '  color: var(--text-muted); margin: 0 0 20px;',
+    '  font-size: 11px; font-weight: 400;',
+    '  letter-spacing: 0.08em; color: var(--mauve-dark); margin: 0 0 20px;',
     '}',
 
     /* ── Action buttons ── */
@@ -105,6 +98,17 @@
     '  background: var(--mauve-dark); color: #fff; border: none;',
     '}',
     '.nc-prod-btn-cart:hover { background: var(--mauve); }',
+
+    /* ── Upsell link ── */
+    '.nc-prod-upsell {',
+    '  background: none; border: none; cursor: pointer; padding: 0;',
+    '  font-family: var(--ff-sans);',
+    '  font-size: 9px; letter-spacing: 0.16em;',
+    '  color: var(--text-muted); text-align: center;',
+    '  text-decoration: underline; text-underline-offset: 3px;',
+    '  transition: color 0.2s;',
+    '}',
+    '.nc-prod-upsell:hover { color: var(--mauve-dark); }',
 
     /* ── Modal mobile ── */
     '@media (max-width: 560px) {',
@@ -280,9 +284,9 @@
       '  <div class="nc-prod-details">',
       '    <h3 class="nc-prod-name"></h3>',
       '    <p class="nc-prod-price"></p>',
-      '    <p class="nc-prod-specs">~8\u2033 square \u00b7 Beige &amp; Metallic Rose</p>',
       '    <div class="nc-prod-actions">',
       '      <button class="nc-prod-btn nc-prod-btn-cart">Add to Cart</button>',
+      '      <button class="nc-prod-upsell" type="button">Make it a pair for $55</button>',
       '    </div>',
       '  </div>',
       '</div>',
@@ -296,6 +300,10 @@
     overlay.addEventListener('click', function (e) { if (e.target === overlay) _close(); });
     overlay.querySelector('.nc-prod-close').addEventListener('click', _close);
     overlay.querySelector('.nc-prod-btn-cart').addEventListener('click', _handleAddToCart);
+    overlay.querySelector('.nc-prod-upsell').addEventListener('click', function () {
+      _close();
+      _activateBundle(2, 55, 'Pair');
+    });
     document.addEventListener('keydown', function (e) {
       if (e.key === 'Escape' && overlay.classList.contains('nc-open')) _close();
     });
@@ -529,7 +537,8 @@
     imgEl.src = product.image;
     imgEl.alt = product.name;
     nameEl.textContent = product.name;
-    priceEl.textContent = '$' + (Number.isInteger(product.price) ? product.price : product.price.toFixed(2));
+    priceEl.textContent = '$' + (Number.isInteger(product.price) ? product.price : product.price.toFixed(2))
+      + ' \u00b7 ~8\u2033 square \u00b7 Beige & Metallic Rose';
     overlay.classList.add('nc-open');
     overlay.setAttribute('aria-hidden', 'false');
     document.body.style.overflow = 'hidden';
