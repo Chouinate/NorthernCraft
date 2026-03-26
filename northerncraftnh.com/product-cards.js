@@ -498,9 +498,9 @@
 
     existingCart.forEach(function (item) {
       if (item.meta && item.meta.bundleCount) {
-        // Strip "Tier: " prefix and split back into individual piece names
-        var stripped = item.name.replace(/^[^:]+:\s*/, '');
-        mergedNames  = mergedNames.concat(stripped.split(', '));
+        // Strip "Tier · " prefix and split back into individual piece names
+        var stripped = item.name.replace(/^[^\u00b7]+\u00b7\s*/, '');
+        mergedNames  = mergedNames.concat(stripped.split(' \u00b7 '));
         mergedCount += item.meta.bundleCount * item.quantity;
         if (!mergedImg && item.image) mergedImg = item.image;
         window.removeFromCart(item.id);
@@ -521,7 +521,7 @@
     var nextHint = next
       ? ('Add ' + (next.limit - count) + ' more to save ' + _discountPct(next.limit) + '%')
       : '';
-    window.addToCart(bundleId, tierName + ': ' + mergedNames.join(', '), price, mergedImg, {
+    window.addToCart(bundleId, tierName + ' \u00b7 ' + mergedNames.join(' \u00b7 '), price, mergedImg, {
       bundleCount: count,
       discountPct: disc,
       nextHint: nextHint,
