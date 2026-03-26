@@ -301,8 +301,13 @@
     overlay.querySelector('.nc-prod-close').addEventListener('click', _close);
     overlay.querySelector('.nc-prod-btn-cart').addEventListener('click', _handleAddToCart);
     overlay.querySelector('.nc-prod-upsell').addEventListener('click', function () {
+      var sourceId = currentProduct && currentProduct.id;
       _close();
       _activateBundle(2, 55, 'Pair');
+      if (sourceId) {
+        var card = document.querySelector('.product-card[data-id="' + sourceId + '"]');
+        if (card) _toggleBundleSelect(card);
+      }
     });
     document.addEventListener('keydown', function (e) {
       if (e.key === 'Escape' && overlay.classList.contains('nc-open')) _close();
