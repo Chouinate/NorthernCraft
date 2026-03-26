@@ -30,13 +30,15 @@
   }
 
   // ─── Public API ─────────────────────────────────────────────────────────────
-  window.addToCart = function (id, name, price, image) {
+  window.addToCart = function (id, name, price, image, meta) {
     id = String(id);
     const existing = cart.find(function (i) { return i.id === id; });
     if (existing) {
       existing.quantity += 1;
     } else {
-      cart.push({ id: id, name: name, price: Number(price), quantity: 1, image: image || '' });
+      const item = { id: id, name: name, price: Number(price), quantity: 1, image: image || '' };
+      if (meta && typeof meta === 'object') item.meta = meta;
+      cart.push(item);
     }
     persist();
     _update();
@@ -253,6 +255,16 @@
       color: #2a2523;
       letter-spacing: 0.05em;
       user-select: none;
+    }
+
+    /* ── Bundle meta line ── */
+    .nc-cart-item-meta {
+      font-family: 'Montserrat', sans-serif;
+      font-size: 9px;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      color: #9e9098;
+      margin: 3px 0 0;
     }
 
     /* ── Remove link ── */
@@ -500,6 +512,16 @@
       const imgInner = item.image
         ? '<img src="' + _esc(item.image) + '" alt="' + _esc(item.name) + '" loading="lazy">'
         : '';
+      // Build meta line for bundle items (% saved + next tier hint)
+      var metaLine = '';
+      if (item.meta && item.meta.bundleCount) {
+        var metaParts = [];
+        if (item.meta.discountPct > 0) metaParts.push(item.meta.discountPct + '% saved');
+        if (item.meta.nextHint)        metaParts.push(item.meta.nextHint);
+        if (metaParts.length) {
+          metaLine = '<p class="nc-cart-item-meta">' + _esc(metaParts.join(' \u00b7 ')) + '</p>';
+        }
+      }
       return [
         '<div class="nc-cart-item" data-id="' + _esc(item.id) + '" role="listitem">',
         '  <div class="nc-cart-item-img-wrap">' + imgInner + '</div>',
@@ -507,6 +529,7 @@
         '    <p class="nc-cart-item-name">' + _esc(item.name) + '</p>',
         '    <span class="nc-cart-item-price">' + _fmt(item.price * item.quantity) + '</span>',
         '  </div>',
+        metaLine,
         '  <div class="nc-cart-item-bottom">',
         '    <div class="nc-qty" role="group" aria-label="Quantity">',
         '      <button class="nc-qty-dec" aria-label="Decrease quantity">\u2212</button>',
@@ -545,7 +568,10 @@
 
   function _updateShippingNotice() {
     if (!shippingNoticeEl) return;
-    const totalQty = cart.reduce(function (s, i) { return s + i.quantity; }, 0);
+    // For bundle items, use bundleCount (number of pieces) rather than cart quantity
+    const totalQty = cart.reduce(function (s, i) {
+      return s + (i.meta && i.meta.bundleCount ? i.meta.bundleCount * i.quantity : i.quantity);
+    }, 0);
     if (totalQty === 0) {
       shippingNoticeEl.style.display = 'none';
     } else if (totalQty >= 2) {

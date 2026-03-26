@@ -221,6 +221,36 @@
     { limit: 6,  price: 119, name: 'Set of 6' },
     { limit: 12, price: 199, name: 'Full Wall' },
   ];
+  var SINGLE_PRICE = 35;
+
+  // Highest tier the count qualifies for
+  function _bestTier(count) {
+    for (var t = BUNDLE_TIERS.length - 1; t >= 0; t--) {
+      if (count >= BUNDLE_TIERS[t].limit) return BUNDLE_TIERS[t];
+    }
+    return null;
+  }
+
+  // Best bundle rate + $35 per item above that tier's limit
+  function _calcPrice(count) {
+    var tier = _bestTier(count);
+    if (!tier) return count * SINGLE_PRICE;
+    return tier.price + (count - tier.limit) * SINGLE_PRICE;
+  }
+
+  // Savings % vs buying each piece at single price
+  function _discountPct(count) {
+    if (count === 0) return 0;
+    return Math.round((1 - _calcPrice(count) / (count * SINGLE_PRICE)) * 100);
+  }
+
+  // Next tier above the current count
+  function _nextTier(count) {
+    for (var t = 0; t < BUNDLE_TIERS.length; t++) {
+      if (BUNDLE_TIERS[t].limit > count) return BUNDLE_TIERS[t];
+    }
+    return null;
+  }
 
 
   // ── Modal state ──────────────────────────────────────────────────────────────
@@ -403,21 +433,15 @@
 
   function _updateBundleBar() {
     var count = selectedCards.length;
+    var tier  = _bestTier(count);
+    var next  = _nextTier(count);
+    var price = _calcPrice(count);
+    var disc  = _discountPct(count);
 
-    // Auto-upgrade to cheapest tier that fits count, never downgrade
-    for (var t = 0; t < BUNDLE_TIERS.length; t++) {
-      if (BUNDLE_TIERS[t].limit >= count) {
-        if (BUNDLE_TIERS[t].price > bundlePrice) {
-          bundleLimit = BUNDLE_TIERS[t].limit;
-          bundlePrice = BUNDLE_TIERS[t].price;
-          bundleTitle = BUNDLE_TIERS[t].name;
-          bbTitle.textContent = bundleTitle;
-        }
-        break;
-      }
-    }
+    // Title: current best tier name, or initial title if none qualifies yet
+    bbTitle.textContent = tier ? tier.name : bundleTitle;
 
-    // Progress dots
+    // Progress dots up to bundleLimit (initial activation tier)
     bbDots.innerHTML = '';
     for (var i = 0; i < bundleLimit; i++) {
       var dot = document.createElement('span');
@@ -425,25 +449,28 @@
       bbDots.appendChild(dot);
     }
 
-    // Count label
-    bbCount.textContent = count + ' of ' + bundleLimit + ' selected';
+    // Count label with current discount %
+    if (count === 0) {
+      bbCount.textContent = 'Select ' + bundleLimit + ' to start';
+    } else if (disc > 0) {
+      bbCount.textContent = count + ' selected \u00b7 ' + disc + '% off';
+    } else {
+      bbCount.textContent = count + ' selected';
+    }
 
     // CTA button text + state
     if (count >= bundleLimit) {
-      bbAdd.textContent = 'Add to Cart \u00b7 $' + bundlePrice;
+      bbAdd.textContent = 'Add to Cart \u00b7 $' + price;
       bbAdd.disabled = false;
     } else {
       bbAdd.textContent = 'Select ' + (bundleLimit - count) + ' more';
       bbAdd.disabled = true;
     }
 
-    // Next-tier hint
-    var nextTier = null;
-    for (var j = 0; j < BUNDLE_TIERS.length; j++) {
-      if (BUNDLE_TIERS[j].limit > bundleLimit) { nextTier = BUNDLE_TIERS[j]; break; }
-    }
-    if (nextTier && count >= bundleLimit) {
-      bbHint.textContent = 'Add ' + (nextTier.limit - count) + ' more for ' + nextTier.name + ' \u00b7 $' + nextTier.price;
+    // Next-tier hint: show once button is enabled
+    if (next && count >= bundleLimit) {
+      var nextDisc = _discountPct(next.limit);
+      bbHint.textContent = (next.limit - count) + ' more for ' + next.name + ' \u00b7 ' + nextDisc + '% off';
     } else {
       bbHint.textContent = '';
     }
@@ -451,12 +478,23 @@
 
   function _handleBundleAddToCart() {
     if (selectedCards.length < bundleLimit || typeof window.addToCart !== 'function') return;
-    var count       = selectedCards.length;
-    var names       = selectedCards.map(function (c) { return c.dataset.name; }).join(', ');
-    var firstImg    = selectedCards[0].dataset.image || '';
-    var bundleId    = 'bundle-' + count + '-' + Date.now();
-    var displayName = bundleTitle + ', ' + names;
-    window.addToCart(bundleId, displayName, bundlePrice, firstImg);
+    var count    = selectedCards.length;
+    var tier     = _bestTier(count);
+    var price    = _calcPrice(count);
+    var disc     = _discountPct(count);
+    var next     = _nextTier(count);
+    var names    = selectedCards.map(function (c) { return c.dataset.name; }).join(', ');
+    var firstImg = selectedCards[0].dataset.image || '';
+    var bundleId = 'bundle-' + count + '-' + Date.now();
+    var tierName = tier ? tier.name : bundleTitle;
+    var nextHint = next
+      ? ((next.limit - count) + ' more for ' + next.name + ' \u00b7 ' + _discountPct(next.limit) + '% off')
+      : '';
+    window.addToCart(bundleId, tierName + ': ' + names, price, firstImg, {
+      bundleCount: count,
+      discountPct: disc,
+      nextHint: nextHint,
+    });
     _deactivateBundle();
     var cartIcon = document.getElementById('cart-icon');
     if (cartIcon) cartIcon.click();
