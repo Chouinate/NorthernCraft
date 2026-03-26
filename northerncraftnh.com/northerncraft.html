@@ -451,6 +451,94 @@
       color: #623a4a;
       opacity: 0.7;
     }
+    /* ── BUNDLES ── */
+    #bundles { background: var(--cream-dark); }
+    .bundles-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 8px;
+      margin-top: 32px;
+    }
+    .bundle-card {
+      background: var(--cream);
+      position: relative;
+      box-shadow: inset 0 0 0 1px rgba(92, 53, 69, 0.13), 0 2px 10px rgba(92, 53, 69, 0.09);
+      display: grid;
+      grid-template-rows: auto auto;
+      cursor: pointer;
+      transition: box-shadow 0.2s;
+    }
+    .bundle-card:hover {
+      box-shadow: inset 0 0 0 1.5px rgba(92,53,69,0.28), 0 4px 16px rgba(92,53,69,0.12);
+    }
+    .bundle-card-visual {
+      display: flex;
+      align-items: flex-start;
+      justify-content: center;
+      padding-top: 28px;
+      padding-bottom: 24px;
+    }
+    .bundle-card-icon {
+      display: block;
+      height: auto;
+      width: auto;
+      max-width: 90%;
+      pointer-events: none;
+    }
+    .bundle-card-icon .frame { stroke: var(--wood); stroke-width: 1.5px; fill: none; vector-effect: non-scaling-stroke; }
+    .bundle-card-icon .gem   { fill: var(--rose); stroke: none; }
+    .bundle-card-footer {
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      padding: 12px 20px 36px;
+    }
+    .bundle-card-name {
+      font-family: var(--ff-serif);
+      font-size: 20px;
+      font-weight: 400;
+      color: var(--mauve-dark);
+      line-height: 1;
+      font-variant-numeric: lining-nums;
+    }
+    .bundle-card-desc {
+      font-size: 11px;
+      line-height: 1.6;
+      color: var(--mauve-dark);
+      opacity: 0.8;
+      max-width: 58%;
+    }
+    .bundle-card-price {
+      position: absolute;
+      bottom: 14px;
+      right: 20px;
+      font-family: var(--ff-sans);
+      font-size: 14px;
+      font-weight: 400;
+      letter-spacing: 0.08em;
+      color: var(--mauve-dark);
+      line-height: 1;
+    }
+    .bundles-shipping-note {
+      font-family: var(--ff-sans);
+      font-size: 10px;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--text-muted);
+      margin-bottom: 32px;
+    }
+    #bundles .section-title { margin-bottom: 6px; }
+    @media (max-width: 1024px) {
+      .bundles-grid { grid-template-columns: repeat(2, 1fr); }
+    }
+    @media (max-width: 640px) {
+      .bundles-grid { grid-template-columns: 1fr; gap: 8px; }
+    }
+    @media (pointer: coarse) and (max-width: 900px) {
+      #bundles { padding-left: 0 !important; padding-right: 0 !important; }
+      #bundles .section-label, #bundles .section-title, #bundles .bundles-shipping-note { padding-left: 28px; }
+    }
     /* ── CUSTOM CTA ── */
     .custom-cta-section {
       background: var(--cream-dark);
@@ -536,6 +624,7 @@
     </div>
     <ul class="nav-links">
       <li><a href="#collection">Collection</a></li>
+      <li><a href="#bundles">Sets</a></li>
       <li><a href="#about">About</a></li>
       <li><a href="#process">Process</a></li>
     </ul>
@@ -565,7 +654,7 @@
       </p>
       <div class="hero-ctas">
         <a href="#collection" class="btn-primary">Browse Collection</a>
-        <a href="#collection" class="btn-secondary">Build a Set</a>
+        <a href="#bundles" class="btn-secondary">Build a Set</a>
       </div>
     </div>
     <div class="hero-right">
@@ -678,6 +767,111 @@
     </div>
     <p class="collection-transition">Our collection is always growing. Check back often.</p>
   </section>
+  <!-- BUILD A SET -->
+  <section id="bundles">
+    <p class="section-label">Sets</p>
+    <h2 class="section-title">Build a <em>Set</em></h2>
+    <p class="bundles-shipping-note">Free shipping on every set</p>
+    <div class="bundles-grid">
+
+      <div class="bundle-card" data-bundle-limit="2" data-bundle-price="55" data-bundle-name="Pair">
+        <div class="bundle-card-visual">
+          <svg class="bundle-card-icon" viewBox="11 16.5 22 11" width="59" fill="none" stroke="none" xmlns="http://www.w3.org/2000/svg">
+            <rect class="frame" x="12"    y="17.5" width="9" height="9"/>
+            <rect class="gem"   x="12.75" y="18.25" width="7.5" height="7.5"/>
+            <rect class="frame" x="23"    y="17.5" width="9" height="9"/>
+            <rect class="gem"   x="23.75" y="18.25" width="7.5" height="7.5"/>
+          </svg>
+        </div>
+        <div class="bundle-card-footer">
+          <p class="bundle-card-name">Pair</p>
+          <p class="bundle-card-price">$55</p>
+          <p class="bundle-card-desc">A simple starting point. Perfect for a bookcase, desk, or anywhere that needs a little something.</p>
+        </div>
+      </div>
+
+      <div class="bundle-card" data-bundle-limit="4" data-bundle-price="89" data-bundle-name="Set of 4">
+        <div class="bundle-card-visual">
+          <svg class="bundle-card-icon" viewBox="11 11 22 22" width="59" fill="none" stroke="none" xmlns="http://www.w3.org/2000/svg">
+            <rect class="frame" x="12"    y="12"    width="9" height="9"/>
+            <rect class="gem"   x="12.75" y="12.75" width="7.5" height="7.5"/>
+            <rect class="frame" x="23"    y="12"    width="9" height="9"/>
+            <rect class="gem"   x="23.75" y="12.75" width="7.5" height="7.5"/>
+            <rect class="frame" x="12"    y="23"    width="9" height="9"/>
+            <rect class="gem"   x="12.75" y="23.75" width="7.5" height="7.5"/>
+            <rect class="frame" x="23"    y="23"    width="9" height="9"/>
+            <rect class="gem"   x="23.75" y="23.75" width="7.5" height="7.5"/>
+          </svg>
+        </div>
+        <div class="bundle-card-footer">
+          <p class="bundle-card-name">Set of 4</p>
+          <p class="bundle-card-price">$89</p>
+          <p class="bundle-card-desc">Four pieces that work just about anywhere. A balanced set for any room.</p>
+        </div>
+      </div>
+
+      <div class="bundle-card" data-bundle-limit="6" data-bundle-price="119" data-bundle-name="Set of 6">
+        <div class="bundle-card-visual">
+          <svg class="bundle-card-icon" viewBox="5.5 11 33 22" width="88" fill="none" stroke="none" xmlns="http://www.w3.org/2000/svg">
+            <rect class="frame" x="6.5"  y="12"    width="9" height="9"/>
+            <rect class="gem"   x="7.25" y="12.75" width="7.5" height="7.5"/>
+            <rect class="frame" x="17.5" y="12"    width="9" height="9"/>
+            <rect class="gem"   x="18.25" y="12.75" width="7.5" height="7.5"/>
+            <rect class="frame" x="28.5" y="12"    width="9" height="9"/>
+            <rect class="gem"   x="29.25" y="12.75" width="7.5" height="7.5"/>
+            <rect class="frame" x="6.5"  y="23"    width="9" height="9"/>
+            <rect class="gem"   x="7.25" y="23.75" width="7.5" height="7.5"/>
+            <rect class="frame" x="17.5" y="23"    width="9" height="9"/>
+            <rect class="gem"   x="18.25" y="23.75" width="7.5" height="7.5"/>
+            <rect class="frame" x="28.5" y="23"    width="9" height="9"/>
+            <rect class="gem"   x="29.25" y="23.75" width="7.5" height="7.5"/>
+          </svg>
+        </div>
+        <div class="bundle-card-footer">
+          <p class="bundle-card-name">Set of 6</p>
+          <p class="bundle-card-price">$119</p>
+          <p class="bundle-card-desc">The most popular choice. Enough to make a real statement.</p>
+        </div>
+      </div>
+
+      <div class="bundle-card" data-bundle-limit="12" data-bundle-price="199" data-bundle-name="Full Wall">
+        <div class="bundle-card-visual">
+          <svg class="bundle-card-icon" viewBox="0 5.5 44 33" width="117" fill="none" stroke="none" xmlns="http://www.w3.org/2000/svg">
+            <rect class="frame" x="1"     y="6.5"  width="9" height="9"/>
+            <rect class="gem"   x="1.75"  y="7.25" width="7.5" height="7.5"/>
+            <rect class="frame" x="12"    y="6.5"  width="9" height="9"/>
+            <rect class="gem"   x="12.75" y="7.25" width="7.5" height="7.5"/>
+            <rect class="frame" x="23"    y="6.5"  width="9" height="9"/>
+            <rect class="gem"   x="23.75" y="7.25" width="7.5" height="7.5"/>
+            <rect class="frame" x="34"    y="6.5"  width="9" height="9"/>
+            <rect class="gem"   x="34.75" y="7.25" width="7.5" height="7.5"/>
+            <rect class="frame" x="1"     y="17.5" width="9" height="9"/>
+            <rect class="gem"   x="1.75"  y="18.25" width="7.5" height="7.5"/>
+            <rect class="frame" x="12"    y="17.5" width="9" height="9"/>
+            <rect class="gem"   x="12.75" y="18.25" width="7.5" height="7.5"/>
+            <rect class="frame" x="23"    y="17.5" width="9" height="9"/>
+            <rect class="gem"   x="23.75" y="18.25" width="7.5" height="7.5"/>
+            <rect class="frame" x="34"    y="17.5" width="9" height="9"/>
+            <rect class="gem"   x="34.75" y="18.25" width="7.5" height="7.5"/>
+            <rect class="frame" x="1"     y="28.5" width="9" height="9"/>
+            <rect class="gem"   x="1.75"  y="29.25" width="7.5" height="7.5"/>
+            <rect class="frame" x="12"    y="28.5" width="9" height="9"/>
+            <rect class="gem"   x="12.75" y="29.25" width="7.5" height="7.5"/>
+            <rect class="frame" x="23"    y="28.5" width="9" height="9"/>
+            <rect class="gem"   x="23.75" y="29.25" width="7.5" height="7.5"/>
+            <rect class="frame" x="34"    y="28.5" width="9" height="9"/>
+            <rect class="gem"   x="34.75" y="29.25" width="7.5" height="7.5"/>
+          </svg>
+        </div>
+        <div class="bundle-card-footer">
+          <p class="bundle-card-name">Full Wall</p>
+          <p class="bundle-card-price">$199</p>
+          <p class="bundle-card-desc">Twelve pieces. The whole collection on one wall.</p>
+        </div>
+      </div>
+
+    </div>
+  </section>
   <!-- CUSTOM CTA -->
   <section class="custom-cta-section">
     <div class="bundle-cta">
@@ -753,6 +947,7 @@
     </div>
     <ul class="footer-links">
       <li><a href="#collection">Collection</a></li>
+      <li><a href="#bundles">Sets</a></li>
       <li><a href="#about">About</a></li>
       <li><a href="#process">Process</a></li>
     </ul>
