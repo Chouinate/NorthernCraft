@@ -269,7 +269,7 @@
     }
     .section-title em { font-style: italic; color: var(--mauve); }
     /* ── COLLECTION ── */
-    #collection { background: var(--cream); }
+    #collection { background: var(--cream-dark); padding-top: clamp(72px, 9vh, 128px); }
     .collection-header {
       margin-bottom: 20px;
       width: 100%;
@@ -342,56 +342,6 @@
       border-color: var(--mauve-dark);
     }
     body.bundle-mode .product-card.bundle-selected .bundle-check svg { display: block; }
-    /* ── BUNDLE SELECTOR ── */
-    #bundles {
-      background: var(--cream-dark);
-      padding: clamp(28px, 3.5vh, 48px) 56px;
-    }
-    .bundle-selector-header {
-      display: flex;
-      align-items: baseline;
-      gap: 16px;
-      margin-bottom: 20px;
-      flex-wrap: wrap;
-    }
-    .bundle-selector-title {
-      font-family: var(--ff-serif);
-      font-weight: 300;
-      font-size: clamp(22px, 2.5vw, 32px);
-      color: var(--charcoal);
-      margin: 0;
-    }
-    .bundle-selector-title em { font-style: italic; color: var(--mauve); }
-    .bundle-selector-note {
-      font-family: var(--ff-sans);
-      font-size: 9px;
-      letter-spacing: 0.18em;
-      text-transform: uppercase;
-      color: var(--text-muted);
-    }
-    .bundle-selector-pills {
-      display: flex;
-      gap: 8px;
-      flex-wrap: wrap;
-    }
-    .bundle-pill {
-      background: var(--cream);
-      border: 1px solid rgba(92,53,69,0.18);
-      cursor: pointer;
-      font-family: var(--ff-sans);
-      font-size: 11px;
-      letter-spacing: 0.12em;
-      color: var(--charcoal);
-      padding: 11px 22px;
-      transition: border-color 0.2s, box-shadow 0.2s, background 0.2s;
-      white-space: nowrap;
-    }
-    .bundle-pill:hover {
-      border-color: rgba(92,53,69,0.4);
-      box-shadow: 0 2px 8px rgba(92,53,69,0.08);
-      background: #fff;
-    }
-    .bundle-pill .pill-price { color: var(--mauve-dark); }
     .bundle-cta {
       text-align: center;
       max-width: 720px;
@@ -473,7 +423,7 @@
       line-height: 0.75;
     }
 /* ── PROCESS ── */
-    #process { background: var(--panel); }
+    #process { background: var(--cream); }
     .process-steps {
       display: grid;
       grid-template-columns: repeat(4, 1fr);
@@ -484,7 +434,7 @@
       font-family: var(--ff-serif);
       font-size: 48px;
       font-weight: 300;
-      color: var(--cream);
+      color: var(--panel);
       line-height: 1;
       margin-bottom: 12px;
     }
@@ -567,11 +517,6 @@
       }
       .footer-links { flex-wrap: wrap; justify-content: center; }
     }
-    @media (max-width: 900px) {
-      #bundles { padding: 24px 28px; }
-      .bundle-selector-pills { gap: 6px; }
-      .bundle-pill { padding: 9px 16px; font-size: 10px; }
-    }
   </style>
   <!-- Set your PayPal client ID here (get it from developer.paypal.com → Apps & Credentials) -->
   <script>window.PAYPAL_CLIENT_ID = 'AeU-5PTMsM0nZfclnRt3H7c8tEDwNpVo64w9u9C8zV8P-gdXVhYYx4YiRpBBbivfhKoM_6tldp5tXm_m';</script>
@@ -591,7 +536,6 @@
     </div>
     <ul class="nav-links">
       <li><a href="#collection">Collection</a></li>
-      <li><a href="#bundles">Sets</a></li>
       <li><a href="#about">About</a></li>
       <li><a href="#process">Process</a></li>
     </ul>
@@ -621,24 +565,11 @@
       </p>
       <div class="hero-ctas">
         <a href="#collection" class="btn-primary">Browse Collection</a>
-        <a href="#bundles" class="btn-secondary">Build a Set</a>
+        <a href="#collection" class="btn-secondary">Build a Set</a>
       </div>
     </div>
     <div class="hero-right">
       <img src="Hero/HeroImage.jpg" alt="Hero Photo">
-    </div>
-  </section>
-  <!-- BUNDLE SELECTOR -->
-  <section id="bundles">
-    <div class="bundle-selector-header">
-      <h2 class="bundle-selector-title">Build a <em>Set</em></h2>
-      <span class="bundle-selector-note">Free US shipping on every set</span>
-    </div>
-    <div class="bundle-selector-pills">
-      <button class="bundle-pill" data-bundle-limit="2" data-bundle-price="55" data-bundle-name="Pair">Pair <span class="pill-price">&middot; $55</span></button>
-      <button class="bundle-pill" data-bundle-limit="4" data-bundle-price="89" data-bundle-name="Set of 4">Set of 4 <span class="pill-price">&middot; $89</span></button>
-      <button class="bundle-pill" data-bundle-limit="6" data-bundle-price="119" data-bundle-name="Set of 6">Set of 6 <span class="pill-price">&middot; $119</span></button>
-      <button class="bundle-pill" data-bundle-limit="12" data-bundle-price="199" data-bundle-name="Full Wall">Full Wall <span class="pill-price">&middot; $199</span></button>
     </div>
   </section>
   <!-- COLLECTION -->
@@ -822,7 +753,6 @@
     </div>
     <ul class="footer-links">
       <li><a href="#collection">Collection</a></li>
-      <li><a href="#bundles">Sets</a></li>
       <li><a href="#about">About</a></li>
       <li><a href="#process">Process</a></li>
     </ul>
