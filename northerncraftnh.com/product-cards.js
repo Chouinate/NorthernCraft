@@ -2,15 +2,13 @@
  * NorthernCraft Product Cards + Bundle Selection
  *
  * Single piece flow:
- *   Click a .product-card body → opens modal at $35 with Add to Cart / Buy Now.
+ *   Click a .product-card body → product sheet slides up from bottom
+ *   showing product info + tier options. "Just this one" adds at $35.
  *
  * Bundle flow:
- *   Click a .bundle-card[data-bundle-limit] → scrolls to collection, circles appear
- *   on every product card. Click circles to select up to the bundle limit.
- *   Sticky bar shows progress and activates "Add to Cart" once limit is reached.
- *
- * Full Wall:
- *   .bundle-card[data-bundle-inquire] → opens mailto inquiry.
+ *   Click any tier row in the sheet → sheet closes, checkboxes appear
+ *   on product cards, sticky progress bar shows at bottom.
+ *   The clicked product is auto-selected as item #1.
  */
 (function () {
   'use strict';
@@ -27,94 +25,110 @@
     '}',
     '.nav-cart-icon:hover { color: var(--mauve); }',
 
-    /* ── Product overlay ── */
-    '.nc-prod-overlay {',
+    /* ── Product sheet backdrop ── */
+    '#ps-backdrop {',
     '  position: fixed; inset: 0;',
-    '  background: rgba(42,37,35,0.55);',
-    '  z-index: 198;',
-    '  display: flex; align-items: center; justify-content: center;',
-    '  padding: 20px;',
+    '  background: rgba(42,37,35,0.45);',
+    '  z-index: 189;',
     '  opacity: 0; pointer-events: none;',
-    '  transition: opacity 0.22s ease;',
+    '  transition: opacity 0.25s ease;',
     '}',
-    '.nc-prod-overlay.nc-open { opacity: 1; pointer-events: auto; }',
+    '#ps-backdrop.ps-open { opacity: 1; pointer-events: auto; }',
 
-    /* ── Modal panel ── */
-    '.nc-prod-modal {',
+    /* ── Product sheet panel ── */
+    '#product-sheet {',
+    '  position: fixed; bottom: 0; left: 0; right: 0;',
     '  background: var(--cream);',
-    '  display: flex; gap: 0;',
-    '  width: 100%; max-width: 460px;',
-    '  position: relative;',
-    '  transform: translateY(10px); opacity: 0;',
-    '  transition: transform 0.25s ease, opacity 0.25s ease;',
+    '  z-index: 190;',
+    '  max-height: 78vh;',
+    '  overflow-y: auto;',
+    '  -webkit-overflow-scrolling: touch;',
+    '  border-top: 1px solid rgba(92,53,69,0.12);',
+    '  box-shadow: 0 -8px 40px rgba(42,37,35,0.12);',
+    '  transform: translateY(100%);',
+    '  transition: transform 0.3s cubic-bezier(0.4,0,0.2,1);',
+    '  padding-bottom: env(safe-area-inset-bottom, 0);',
     '}',
-    '.nc-prod-overlay.nc-open .nc-prod-modal { transform: translateY(0); opacity: 1; }',
+    '#product-sheet.ps-open { transform: translateY(0); }',
 
-    /* ── Close button ── */
-    '.nc-prod-close {',
-    '  position: absolute; top: 12px; right: 14px;',
-    '  background: none; border: none; cursor: pointer;',
-    '  color: var(--text-muted); padding: 4px;',
-    '  display: flex; align-items: center; justify-content: center;',
-    '  line-height: 0; transition: color 0.2s; z-index: 1;',
+    /* ── Sheet header (product info + close) ── */
+    '#ps-header {',
+    '  display: flex; align-items: center;',
+    '  justify-content: space-between;',
+    '  padding: 24px 56px 20px;',
+    '  border-bottom: 1px solid rgba(92,53,69,0.08);',
+    '  gap: 16px;',
     '}',
-    '.nc-prod-close:hover { color: var(--charcoal); }',
-
-    /* ── Image column ── */
-    '.nc-prod-img-wrap {',
-    '  width: 200px; flex-shrink: 0;',
-    '  aspect-ratio: 1/1; background: var(--panel); overflow: hidden;',
+    '#ps-product { display: flex; align-items: center; gap: 20px; min-width: 0; }',
+    '#ps-img-wrap {',
+    '  width: 64px; height: 64px; flex-shrink: 0;',
+    '  overflow: hidden; background: var(--panel);',
     '}',
-    '.nc-prod-img-wrap img { width: 100%; height: 100%; object-fit: cover; display: block; }',
-
-    /* ── Details column ── */
-    '.nc-prod-details {',
-    '  flex: 1; display: flex; flex-direction: column;',
-    '  justify-content: center; padding: 36px 32px 36px 28px;',
-    '}',
-    '.nc-prod-name {',
+    '#ps-img-wrap img { width: 100%; height: 100%; object-fit: cover; display: block; }',
+    '#ps-name {',
     '  font-family: var(--ff-serif);',
-    '  font-size: 30px; font-weight: 400;',
-    '  color: var(--charcoal); letter-spacing: 0.03em; margin: 0 0 8px;',
+    '  font-size: 22px; font-weight: 400;',
+    '  color: var(--charcoal); margin: 0 0 4px; line-height: 1.1;',
     '}',
-    '.nc-prod-price {',
+    '#ps-specs {',
     '  font-family: var(--ff-sans);',
-    '  font-size: 11px; font-weight: 400;',
-    '  letter-spacing: 0.08em; color: var(--mauve-dark); margin: 0 0 20px;',
+    '  font-size: 10px; letter-spacing: 0.09em;',
+    '  color: var(--mauve-dark); margin: 0;',
     '}',
+    '#ps-close {',
+    '  background: none; border: none; cursor: pointer;',
+    '  color: var(--text-muted); padding: 6px;',
+    '  line-height: 0; transition: color 0.2s; flex-shrink: 0;',
+    '}',
+    '#ps-close:hover { color: var(--charcoal); }',
 
-    /* ── Action buttons ── */
-    '.nc-prod-actions { display: flex; flex-direction: column; gap: 10px; }',
-
-    '.nc-prod-btn {',
-    '  width: 100%; padding: 12px 16px;',
+    /* ── Tier rows ── */
+    '#ps-tiers { padding: 8px 0; }',
+    '.ps-tier {',
+    '  width: 100%; display: flex; align-items: center;',
+    '  padding: 15px 56px;',
+    '  background: none; border: none; cursor: pointer;',
+    '  text-align: left; gap: 14px;',
+    '  transition: background 0.15s;',
+    '}',
+    '.ps-tier:hover { background: rgba(92,53,69,0.045); }',
+    '.ps-tier-dot {',
+    '  width: 15px; height: 15px; border-radius: 50%; flex-shrink: 0;',
+    '  border: 1.5px solid rgba(92,53,69,0.28);',
+    '}',
+    '.ps-tier-name {',
     '  font-family: var(--ff-sans);',
-    '  font-size: 10px; font-weight: 400;',
-    '  letter-spacing: 0.2em; text-transform: uppercase;',
-    '  cursor: pointer;',
-    '  transition: background 0.2s, color 0.2s, border-color 0.2s;',
+    '  font-size: 10px; letter-spacing: 0.18em;',
+    '  text-transform: uppercase;',
+    '  color: var(--charcoal); flex: 1;',
     '}',
-    '.nc-prod-btn-cart {',
-    '  background: var(--mauve-dark); color: #fff; border: none;',
-    '}',
-    '.nc-prod-btn-cart:hover { background: var(--mauve); }',
-
-    /* ── Upsell link ── */
-    '.nc-prod-upsell {',
-    '  background: none; border: none; cursor: pointer; padding: 0;',
+    '.ps-tier-price {',
     '  font-family: var(--ff-sans);',
-    '  font-size: 9px; letter-spacing: 0.16em;',
-    '  color: var(--text-muted); text-align: center;',
-    '  text-decoration: underline; text-underline-offset: 3px;',
-    '  transition: color 0.2s;',
+    '  font-size: 13px; letter-spacing: 0.04em;',
+    '  color: var(--mauve-dark); margin-right: 10px;',
     '}',
-    '.nc-prod-upsell:hover { color: var(--mauve-dark); }',
+    '.ps-tier-save {',
+    '  font-family: var(--ff-sans);',
+    '  font-size: 9px; letter-spacing: 0.14em;',
+    '  text-transform: uppercase; color: var(--text-muted);',
+    '  min-width: 56px; text-align: right;',
+    '}',
+    '.ps-tier-single { border-bottom: 1px solid rgba(92,53,69,0.08); }',
 
-    /* ── Modal mobile ── */
-    '@media (max-width: 560px) {',
-    '  .nc-prod-modal { flex-direction: column; max-width: 360px; }',
-    '  .nc-prod-img-wrap { width: 100%; aspect-ratio: 4/3; }',
-    '  .nc-prod-details { padding: 24px 24px 28px; }',
+    /* ── Shipping note ── */
+    '#ps-footer {',
+    '  text-align: center;',
+    '  font-size: 9px; letter-spacing: 0.18em;',
+    '  text-transform: uppercase; color: var(--text-muted);',
+    '  padding: 16px 56px 28px;',
+    '  border-top: 1px solid rgba(92,53,69,0.08);',
+    '}',
+
+    /* ── Mobile sheet ── */
+    '@media (max-width: 768px) {',
+    '  #ps-header { padding: 18px 20px 16px; gap: 12px; }',
+    '  .ps-tier { padding: 17px 20px; }',
+    '  #ps-footer { padding: 14px 20px 24px; }',
     '}',
 
     /* ── Bundle selection circles ── */
@@ -227,7 +241,6 @@
   ];
   var SINGLE_PRICE = 35;
 
-  // Highest tier the count qualifies for
   function _bestTier(count) {
     for (var t = BUNDLE_TIERS.length - 1; t >= 0; t--) {
       if (count >= BUNDLE_TIERS[t].limit) return BUNDLE_TIERS[t];
@@ -235,20 +248,17 @@
     return null;
   }
 
-  // Best bundle rate + $35 per item above that tier's limit
   function _calcPrice(count) {
     var tier = _bestTier(count);
     if (!tier) return count * SINGLE_PRICE;
     return tier.price + (count - tier.limit) * SINGLE_PRICE;
   }
 
-  // Savings % vs buying each piece at single price
   function _discountPct(count) {
     if (count === 0) return 0;
     return Math.round((1 - _calcPrice(count) / (count * SINGLE_PRICE)) * 100);
   }
 
-  // Next tier above the current count
   function _nextTier(count) {
     for (var t = 0; t < BUNDLE_TIERS.length; t++) {
       if (BUNDLE_TIERS[t].limit > count) return BUNDLE_TIERS[t];
@@ -256,10 +266,9 @@
     return null;
   }
 
-
-  // ── Modal state ──────────────────────────────────────────────────────────────
-  var overlay, imgEl, nameEl, priceEl;
-  var currentProduct = null;
+  // ── Sheet state ───────────────────────────────────────────────────────────
+  var backdrop, sheet, psImg, psName, psSpecs, psTiers;
+  var sheetProduct = null;
 
   // ── Init ────────────────────────────────────────────────────────────────────
   function _init() {
@@ -267,53 +276,49 @@
     style.textContent = CSS;
     document.head.appendChild(style);
 
-    // Build product modal overlay
-    overlay = document.createElement('div');
-    overlay.className = 'nc-prod-overlay';
-    overlay.setAttribute('aria-hidden', 'true');
-    overlay.innerHTML = [
-      '<div class="nc-prod-modal" role="dialog" aria-modal="true" aria-label="Product">',
-      '  <button class="nc-prod-close" aria-label="Close">',
+    // ── Build backdrop ──
+    backdrop = document.createElement('div');
+    backdrop.id = 'ps-backdrop';
+    document.body.appendChild(backdrop);
+    backdrop.addEventListener('click', _closeSheet);
+
+    // ── Build product sheet ──
+    sheet = document.createElement('div');
+    sheet.id = 'product-sheet';
+    sheet.setAttribute('aria-hidden', 'true');
+    sheet.innerHTML = [
+      '<div id="ps-header">',
+      '  <div id="ps-product">',
+      '    <div id="ps-img-wrap"><img id="ps-img" src="" alt=""></div>',
+      '    <div>',
+      '      <p id="ps-name"></p>',
+      '      <p id="ps-specs"></p>',
+      '    </div>',
+      '  </div>',
+      '  <button id="ps-close" aria-label="Close">',
       '    <svg width="18" height="18" viewBox="0 0 20 20" fill="none"',
       '         stroke="currentColor" stroke-width="1.5" stroke-linecap="round">',
       '      <line x1="4" y1="4" x2="16" y2="16"/>',
       '      <line x1="16" y1="4" x2="4" y2="16"/>',
       '    </svg>',
       '  </button>',
-      '  <div class="nc-prod-img-wrap"><img class="nc-prod-img" src="" alt=""></div>',
-      '  <div class="nc-prod-details">',
-      '    <h3 class="nc-prod-name"></h3>',
-      '    <p class="nc-prod-price"></p>',
-      '    <div class="nc-prod-actions">',
-      '      <button class="nc-prod-btn nc-prod-btn-cart">Add to Cart</button>',
-      '      <button class="nc-prod-upsell" type="button">Make it a pair for $55</button>',
-      '    </div>',
-      '  </div>',
       '</div>',
+      '<div id="ps-tiers"></div>',
+      '<p id="ps-footer">Free shipping on every set</p>',
     ].join('');
-    document.body.appendChild(overlay);
+    document.body.appendChild(sheet);
 
-    imgEl   = overlay.querySelector('.nc-prod-img');
-    nameEl  = overlay.querySelector('.nc-prod-name');
-    priceEl = overlay.querySelector('.nc-prod-price');
+    psImg   = sheet.querySelector('#ps-img');
+    psName  = sheet.querySelector('#ps-name');
+    psSpecs = sheet.querySelector('#ps-specs');
+    psTiers = sheet.querySelector('#ps-tiers');
 
-    overlay.addEventListener('click', function (e) { if (e.target === overlay) _close(); });
-    overlay.querySelector('.nc-prod-close').addEventListener('click', _close);
-    overlay.querySelector('.nc-prod-btn-cart').addEventListener('click', _handleAddToCart);
-    overlay.querySelector('.nc-prod-upsell').addEventListener('click', function () {
-      var sourceId = currentProduct && currentProduct.id;
-      _close();
-      _activateBundle(2, 55, 'Pair');
-      if (sourceId) {
-        var card = document.querySelector('.product-card[data-id="' + sourceId + '"]');
-        if (card) _toggleBundleSelect(card);
-      }
-    });
+    sheet.querySelector('#ps-close').addEventListener('click', _closeSheet);
     document.addEventListener('keydown', function (e) {
-      if (e.key === 'Escape' && overlay.classList.contains('nc-open')) _close();
+      if (e.key === 'Escape' && sheet.classList.contains('ps-open')) _closeSheet();
     });
 
-    // Build bundle selection bar
+    // ── Build bundle bar ──
     bundleBar = document.createElement('div');
     bundleBar.id = 'bundle-bar';
     bundleBar.setAttribute('aria-hidden', 'true');
@@ -354,20 +359,8 @@
     });
     bbAdd.addEventListener('click', _handleBundleAddToCart);
 
-    // Wire bundle selector pills
-    document.querySelectorAll('[data-bundle-limit]').forEach(function (pill) {
-      pill.addEventListener('click', function () {
-        var limit = parseInt(pill.dataset.bundleLimit, 10);
-        var price = parseInt(pill.dataset.bundlePrice, 10);
-        var name  = pill.dataset.bundleName
-          || (pill.querySelector('.bundle-card-name') ? pill.querySelector('.bundle-card-name').textContent.trim() : 'Bundle');
-        _activateBundle(limit, price, name);
-      });
-    });
-
-    // Wire product cards — add circles, handle single vs. bundle clicks
+    // ── Wire product cards ──
     document.querySelectorAll('.product-card[data-id]').forEach(function (card) {
-      // Inject select circle into the image wrapper
       var imgWrap = card.querySelector('.product-card-img');
       if (imgWrap) {
         var circle = document.createElement('button');
@@ -383,30 +376,92 @@
         imgWrap.appendChild(circle);
 
         circle.addEventListener('click', function (e) {
-          e.stopPropagation(); // don't open single-product modal
+          e.stopPropagation();
           if (bundleLimit > 0) _toggleBundleSelect(card);
         });
       }
 
-      // Card body click → toggle bundle selection or open single-piece modal
       card.addEventListener('click', function () {
         if (bundleLimit > 0) {
           _toggleBundleSelect(card);
         } else {
-          _open({
+          _openSheet({
             id:    card.dataset.id,
             name:  card.dataset.name,
             price: Number(card.dataset.price),
             image: card.dataset.image,
+            card:  card,
           });
         }
       });
     });
   }
 
+  // ── Product sheet ─────────────────────────────────────────────────────────
+  function _openSheet(product) {
+    sheetProduct = product;
+
+    psImg.src = product.image || '';
+    psImg.alt = product.name;
+    psName.textContent = product.name;
+    psSpecs.textContent = '$' + product.price + ' \u00b7 ~8\u2033 square \u00b7 Beige & Metallic Rose';
+
+    // Build tier rows
+    psTiers.innerHTML = '';
+
+    // Single item row
+    var singleBtn = document.createElement('button');
+    singleBtn.className = 'ps-tier ps-tier-single';
+    singleBtn.setAttribute('type', 'button');
+    singleBtn.innerHTML =
+      '<span class="ps-tier-dot"></span>' +
+      '<span class="ps-tier-name">Just this one</span>' +
+      '<span class="ps-tier-price">$' + SINGLE_PRICE + '</span>' +
+      '<span class="ps-tier-save"></span>';
+    singleBtn.addEventListener('click', function () {
+      if (typeof window.addToCart === 'function') {
+        window.addToCart(product.id, product.name, product.price, product.image);
+      }
+      _closeSheet();
+      var cartIcon = document.getElementById('cart-icon');
+      if (cartIcon) cartIcon.click();
+    });
+    psTiers.appendChild(singleBtn);
+
+    // Bundle tier rows
+    BUNDLE_TIERS.forEach(function (tier) {
+      var disc = _discountPct(tier.limit);
+      var btn = document.createElement('button');
+      btn.className = 'ps-tier';
+      btn.setAttribute('type', 'button');
+      btn.innerHTML =
+        '<span class="ps-tier-dot"></span>' +
+        '<span class="ps-tier-name">' + tier.name + '</span>' +
+        '<span class="ps-tier-price">$' + tier.price + '</span>' +
+        '<span class="ps-tier-save">Save ' + disc + '%</span>';
+      btn.addEventListener('click', function () {
+        var srcCard = product.card;
+        _closeSheet();
+        _activateBundle(tier.limit, tier.price, tier.name);
+        if (srcCard) _toggleBundleSelect(srcCard);
+      });
+      psTiers.appendChild(btn);
+    });
+
+    sheet.classList.add('ps-open');
+    sheet.setAttribute('aria-hidden', 'false');
+    backdrop.classList.add('ps-open');
+  }
+
+  function _closeSheet() {
+    sheet.classList.remove('ps-open');
+    sheet.setAttribute('aria-hidden', 'true');
+    backdrop.classList.remove('ps-open');
+    sheetProduct = null;
+  }
+
   // ── Bundle logic ─────────────────────────────────────────────────────────────
   function _activateBundle(limit, price, title) {
-    // Clear any previous selection
     selectedCards.forEach(function (c) { c.classList.remove('pc-selected'); });
     selectedCards = [];
 
@@ -452,10 +507,8 @@
     var price = _calcPrice(count);
     var disc  = _discountPct(count);
 
-    // Title: current best tier name, or initial title if none qualifies yet
     bbTitle.textContent = tier ? tier.name : bundleTitle;
 
-    // Progress dots up to bundleLimit (initial activation tier)
     bbDots.innerHTML = '';
     for (var i = 0; i < bundleLimit; i++) {
       var dot = document.createElement('span');
@@ -463,7 +516,6 @@
       bbDots.appendChild(dot);
     }
 
-    // Count label with current discount %
     if (count === 0) {
       bbCount.textContent = 'Select ' + bundleLimit + ' to start';
     } else if (disc > 0) {
@@ -472,7 +524,6 @@
       bbCount.textContent = count + ' selected';
     }
 
-    // CTA button text + state
     if (count >= bundleLimit) {
       bbAdd.textContent = 'Add to Cart \u00b7 $' + price;
       bbAdd.disabled = false;
@@ -481,7 +532,6 @@
       bbAdd.disabled = true;
     }
 
-    // Next-tier hint: always show when there's a next tier
     if (next) {
       var nextDisc = _discountPct(next.limit);
       bbHint.textContent = 'Add ' + (next.limit - count) + ' more to save ' + nextDisc + '%';
@@ -496,15 +546,13 @@
     var newNames = selectedCards.map(function (c) { return c.dataset.name; });
     var firstImg = selectedCards[0].dataset.image || '';
 
-    // Merge any existing bundle items in the cart into this one
-    var existingCart  = typeof window.getCart === 'function' ? window.getCart() : [];
-    var mergedNames   = [];
-    var mergedCount   = 0;
-    var mergedImg     = firstImg;
+    var existingCart = typeof window.getCart === 'function' ? window.getCart() : [];
+    var mergedNames  = [];
+    var mergedCount  = 0;
+    var mergedImg    = firstImg;
 
     existingCart.forEach(function (item) {
       if (item.meta && item.meta.bundleCount) {
-        // Strip "Tier · " prefix and split back into individual piece names
         var stripped = item.name.replace(/^[^\u00b7]+\u00b7\s*/, '');
         mergedNames  = mergedNames.concat(stripped.split(' \u00b7 '));
         mergedCount += item.meta.bundleCount * item.quantity;
@@ -513,7 +561,6 @@
       }
     });
 
-    // Append current selection
     mergedNames  = mergedNames.concat(newNames);
     mergedCount += newNames.length;
 
@@ -533,36 +580,6 @@
       nextHint: nextHint,
     });
     _deactivateBundle();
-    var cartIcon = document.getElementById('cart-icon');
-    if (cartIcon) cartIcon.click();
-  }
-
-  // ── Modal open / close ───────────────────────────────────────────────────────
-  function _open(product) {
-    currentProduct = product;
-    imgEl.src = product.image;
-    imgEl.alt = product.name;
-    nameEl.textContent = product.name;
-    priceEl.textContent = '$' + (Number.isInteger(product.price) ? product.price : product.price.toFixed(2))
-      + ' \u00b7 ~8\u2033 square \u00b7 Beige & Metallic Rose';
-    overlay.classList.add('nc-open');
-    overlay.setAttribute('aria-hidden', 'false');
-    document.body.style.overflow = 'hidden';
-    overlay.querySelector('.nc-prod-close').focus();
-  }
-
-  function _close() {
-    overlay.classList.remove('nc-open');
-    overlay.setAttribute('aria-hidden', 'true');
-    document.body.style.overflow = '';
-    currentProduct = null;
-  }
-
-  // ── Single piece actions ─────────────────────────────────────────────────────
-  function _handleAddToCart() {
-    if (!currentProduct || typeof window.addToCart !== 'function') return;
-    window.addToCart(currentProduct.id, currentProduct.name, currentProduct.price, currentProduct.image);
-    _close();
     var cartIcon = document.getElementById('cart-icon');
     if (cartIcon) cartIcon.click();
   }
