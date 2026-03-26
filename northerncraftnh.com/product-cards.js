@@ -80,14 +80,14 @@
     '.nc-prod-price {',
     '  font-family: var(--ff-sans);',
     '  font-size: 13px; font-weight: 400;',
-    '  letter-spacing: 0.1em; color: var(--mauve-dark); margin: 0 0 28px;',
+    '  letter-spacing: 0.1em; color: var(--mauve-dark); margin: 0 0 8px;',
     '}',
 
     /* ── Specs line ── */
     '.nc-prod-specs {',
     '  font-family: var(--ff-sans);',
     '  font-size: 9px; letter-spacing: 0.18em; text-transform: uppercase;',
-    '  color: var(--text-muted); margin: 0 0 16px;',
+    '  color: var(--text-muted); margin: 0 0 20px;',
     '}',
 
     /* ── Action buttons ── */

@@ -320,7 +320,7 @@
     }
     /* ── BUNDLE SELECTION MODE ── */
     body.bundle-mode .product-card.bundle-selected .product-card-img { opacity: 0.75; }
-    body.bundle-mode .product-card .bundle-check {
+    .product-card .bundle-check {
       position: absolute;
       top: 10px; right: 10px;
       width: 24px; height: 24px;
@@ -333,8 +333,10 @@
       align-items: center;
       justify-content: center;
       transition: background 0.15s, border-color 0.15s;
+      opacity: 0;
     }
-    body.bundle-mode .product-card .bundle-check svg { display: none; }
+    .product-card .bundle-check svg { display: none; }
+    body.bundle-mode .product-card .bundle-check { opacity: 1; pointer-events: auto; }
     body.bundle-mode .product-card.bundle-selected .bundle-check {
       background: var(--mauve-dark);
       border-color: var(--mauve-dark);
@@ -375,13 +377,13 @@
       position: relative;
       box-shadow: inset 0 0 0 1px rgba(92, 53, 69, 0.13), 0 2px 10px rgba(92, 53, 69, 0.09);
       display: grid;
-      grid-template-rows: 120px auto;
+      grid-template-rows: 160px auto;
     }
     .bundle-card-visual {
       display: flex;
       align-items: flex-start;
       justify-content: center;
-      padding-top: 16px;
+      padding-top: 28px;
     }
     .bundle-card-icon {
       display: block;
@@ -838,7 +840,7 @@
       <div class="bundle-card" data-tier="pair" data-bundle-limit="2" data-bundle-price="55">
         <!-- Pair: 2 pieces side by side (viewBox 22×10) -->
         <div class="bundle-card-visual">
-          <svg class="bundle-card-icon" viewBox="0 0 44 44" fill="none" stroke="none" xmlns="http://www.w3.org/2000/svg">
+          <svg class="bundle-card-icon" viewBox="11 16.5 22 11" fill="none" stroke="none" xmlns="http://www.w3.org/2000/svg">
             <!-- Pair: 2×1, group 20×9, centered → x=12, y=17.5 -->
             <rect class="frame" x="12"    y="17.5" width="9" height="9"/>
             <rect class="gem"   x="12.75" y="18.25" width="7.5" height="7.5"/>
@@ -855,7 +857,7 @@
       <div class="bundle-card" data-tier="set4" data-bundle-limit="4" data-bundle-price="89">
         <!-- Set of 4: 2×2 grid (viewBox 22×22) -->
         <div class="bundle-card-visual">
-          <svg class="bundle-card-icon" viewBox="0 0 44 44" fill="none" stroke="none" xmlns="http://www.w3.org/2000/svg">
+          <svg class="bundle-card-icon" viewBox="11 11 22 22" fill="none" stroke="none" xmlns="http://www.w3.org/2000/svg">
             <!-- Set of 4: 2×2, group 20×20, centered → x=12, y=12 -->
             <rect class="frame" x="12"    y="12"    width="9" height="9"/>
             <rect class="gem"   x="12.75" y="12.75" width="7.5" height="7.5"/>
@@ -876,7 +878,7 @@
       <div class="bundle-card" data-tier="set6" data-bundle-limit="6" data-bundle-price="119">
         <!-- Set of 6: 3×2 grid (viewBox 34×22) -->
         <div class="bundle-card-visual">
-          <svg class="bundle-card-icon" viewBox="0 0 44 44" fill="none" stroke="none" xmlns="http://www.w3.org/2000/svg">
+          <svg class="bundle-card-icon" viewBox="5.5 11 33 22" fill="none" stroke="none" xmlns="http://www.w3.org/2000/svg">
             <!-- Set of 6: 3×2, group 31×20, centered → x=6.5, y=12 -->
             <rect class="frame" x="6.5"  y="12"    width="9" height="9"/>
             <rect class="gem"   x="7.25" y="12.75" width="7.5" height="7.5"/>
@@ -901,7 +903,7 @@
       <div class="bundle-card" data-tier="fullwall" data-bundle-limit="12" data-bundle-price="199">
         <!-- Full Wall: 4×3 grid (viewBox 46×34) -->
         <div class="bundle-card-visual">
-          <svg class="bundle-card-icon" viewBox="0 0 44 44" fill="none" stroke="none" xmlns="http://www.w3.org/2000/svg">
+          <svg class="bundle-card-icon" viewBox="0 5.5 44 33" fill="none" stroke="none" xmlns="http://www.w3.org/2000/svg">
             <!-- Full Wall: 4×3, group 42×31, centered → x=1, y=6.5 -->
             <rect class="frame" x="1"     y="6.5"  width="9" height="9"/>
             <rect class="gem"   x="1.75"  y="7.25" width="7.5" height="7.5"/>
