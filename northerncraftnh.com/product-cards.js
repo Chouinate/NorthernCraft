@@ -354,12 +354,13 @@
     });
     bbAdd.addEventListener('click', _handleBundleAddToCart);
 
-    // Wire bundle cards (Pair / Set of 4 / Set of 6)
-    document.querySelectorAll('.bundle-card[data-bundle-limit]').forEach(function (card) {
-      card.addEventListener('click', function () {
-        var limit = parseInt(card.dataset.bundleLimit, 10);
-        var price = parseInt(card.dataset.bundlePrice, 10);
-        var name  = card.querySelector('.bundle-card-name').textContent.trim();
+    // Wire bundle selector pills
+    document.querySelectorAll('[data-bundle-limit]').forEach(function (pill) {
+      pill.addEventListener('click', function () {
+        var limit = parseInt(pill.dataset.bundleLimit, 10);
+        var price = parseInt(pill.dataset.bundlePrice, 10);
+        var name  = pill.dataset.bundleName
+          || (pill.querySelector('.bundle-card-name') ? pill.querySelector('.bundle-card-name').textContent.trim() : 'Bundle');
         _activateBundle(limit, price, name);
       });
     });

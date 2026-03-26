@@ -342,12 +342,60 @@
       border-color: var(--mauve-dark);
     }
     body.bundle-mode .product-card.bundle-selected .bundle-check svg { display: block; }
-    /* ── BUNDLES ── */
-    #bundles { background: var(--cream-dark); }
+    /* ── BUNDLE SELECTOR ── */
+    #bundles {
+      background: var(--cream-dark);
+      padding: clamp(28px, 3.5vh, 48px) 56px;
+    }
+    .bundle-selector-header {
+      display: flex;
+      align-items: baseline;
+      gap: 16px;
+      margin-bottom: 20px;
+      flex-wrap: wrap;
+    }
+    .bundle-selector-title {
+      font-family: var(--ff-serif);
+      font-weight: 300;
+      font-size: clamp(22px, 2.5vw, 32px);
+      color: var(--charcoal);
+      margin: 0;
+    }
+    .bundle-selector-title em { font-style: italic; color: var(--mauve); }
+    .bundle-selector-note {
+      font-family: var(--ff-sans);
+      font-size: 9px;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--text-muted);
+    }
+    .bundle-selector-pills {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+    .bundle-pill {
+      background: var(--cream);
+      border: 1px solid rgba(92,53,69,0.18);
+      cursor: pointer;
+      font-family: var(--ff-sans);
+      font-size: 11px;
+      letter-spacing: 0.12em;
+      color: var(--charcoal);
+      padding: 11px 22px;
+      transition: border-color 0.2s, box-shadow 0.2s, background 0.2s;
+      white-space: nowrap;
+    }
+    .bundle-pill:hover {
+      border-color: rgba(92,53,69,0.4);
+      box-shadow: 0 2px 8px rgba(92,53,69,0.08);
+      background: #fff;
+    }
+    .bundle-pill .pill-price { color: var(--mauve-dark); }
     .bundle-cta {
       text-align: center;
       max-width: 720px;
-      margin: 64px auto 0;
+      margin: 0 auto;
     }
     .bundle-cta-body {
       font-family: var(--ff-serif);
@@ -366,70 +414,6 @@
       text-decoration: none;
       border-bottom: 1px solid currentColor;
       padding-bottom: 2px;
-    }
-    .bundles-grid {
-      display: grid;
-      grid-template-columns: repeat(4, 1fr);
-      gap: 8px;
-    }
-    .bundle-card {
-      background: var(--cream);
-      position: relative;
-      box-shadow: inset 0 0 0 1px rgba(92, 53, 69, 0.13), 0 2px 10px rgba(92, 53, 69, 0.09);
-      display: grid;
-      grid-template-rows: auto auto;
-    }
-    .bundle-card-visual {
-      display: flex;
-      align-items: flex-start;
-      justify-content: center;
-      padding-top: 28px;
-      padding-bottom: 24px;
-    }
-    .bundle-card-icon {
-      display: block;
-      height: auto;
-      width: auto;
-      max-width: 90%;
-      pointer-events: none;
-      color: var(--mauve-dark);
-    }
-    .bundle-card-icon .frame { stroke: var(--wood); stroke-width: 1.5px; fill: none; vector-effect: non-scaling-stroke; }
-    .bundle-card-icon .gem   { fill: var(--rose); stroke: none; }
-    .bundle-card-badge {
-      position: absolute;
-      bottom: calc(100% + 3px);
-      left: 20px;
-      font-family: var(--ff-sans);
-      font-size: 9px;
-      font-weight: 300;
-      letter-spacing: 0.2em;
-      text-transform: uppercase;
-      color: var(--mauve);
-      opacity: 0.85;
-    }
-    .bundle-card-footer {
-      position: relative;
-      display: flex;
-      flex-direction: column;
-      gap: 8px;
-      padding: 12px 20px 36px;
-    }
-    .bundle-card-name {
-      font-family: var(--ff-serif);
-      font-size: 20px;
-      font-weight: 400;
-      color: var(--mauve-dark);
-      line-height: 1;
-      font-variant-numeric: lining-nums;
-    }
-    .bundle-card--full-wall .bundle-card-name { color: var(--charcoal); }
-    .bundle-card-desc {
-      font-size: 11px;
-      line-height: 1.6;
-      color: var(--mauve-dark);
-      opacity: 0.8;
-      max-width: 58%;
     }
     /* ── ABOUT ── */
     #about {
@@ -517,52 +501,10 @@
       color: #623a4a;
       opacity: 0.7;
     }
-    .bundle-card-price {
-      position: absolute;
-      bottom: 14px;
-      right: 20px;
-      font-family: var(--ff-sans);
-      font-size: 14px;
-      font-weight: 400;
-      letter-spacing: 0.08em;
-      color: var(--mauve-dark);
-      line-height: 1;
-    }
-    /* ── BUNDLE BUILDER BAR ── */
-    .bundle-bar {
-      position: fixed;
-      bottom: 0; left: 0;
-      width: 100%;
-      background: var(--mauve-dark);
-      color: #fff;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      padding: 14px 56px;
-      z-index: 150;
-      transform: translateY(100%);
-      transition: transform 0.3s ease;
-    }
-    .bundle-bar.active { transform: translateY(0); }
-    .bundle-bar-info { display: flex; align-items: center; gap: 24px; }
-    .bundle-bar-tier { font-family: var(--ff-serif); font-size: 20px; font-weight: 400; }
-    .bundle-bar-count { font-family: var(--ff-sans); font-size: 11px; letter-spacing: 0.15em; text-transform: uppercase; opacity: 0.8; }
-    .bundle-bar-price { font-family: var(--ff-sans); font-size: 14px; letter-spacing: 0.08em; }
-    .bundle-bar-actions { display: flex; align-items: center; gap: 16px; }
-    .bundle-bar-add {
-      background: #fff; color: var(--mauve-dark); border: none;
-      font-family: var(--ff-sans); font-size: 10px; font-weight: 400;
-      letter-spacing: 0.2em; text-transform: uppercase;
-      padding: 10px 24px; cursor: pointer; transition: opacity 0.2s;
-    }
-    .bundle-bar-add:hover { opacity: 0.85; }
-    .bundle-bar-close { background: none; border: none; color: rgba(255,255,255,0.6); cursor: pointer; font-size: 18px; padding: 4px; transition: color 0.2s; }
-    .bundle-bar-close:hover { color: #fff; }
-    .bundle-bar-upgraded { font-family: var(--ff-sans); font-size: 10px; letter-spacing: 0.1em; color: var(--wood); opacity: 0; transition: opacity 0.3s; }
-    .bundle-bar-upgraded.show { opacity: 1; }
-    .bundle-bar-ship { font-family: var(--ff-sans); font-size: 10px; letter-spacing: 0.14em; text-transform: uppercase; color: rgba(255,255,255,0.6); }
-    @media (max-width: 900px) {
-      .bundle-bar { padding: 12px 20px; flex-wrap: wrap; gap: 10px; }
+    /* ── CUSTOM CTA ── */
+    .custom-cta-section {
+      background: var(--cream-dark);
+      padding: clamp(48px, 6vh, 80px) 56px;
     }
     /* ── FOOTER ── */
     footer {
@@ -625,50 +567,10 @@
       }
       .footer-links { flex-wrap: wrap; justify-content: center; }
     }
-    @media (pointer: coarse) and (max-width: 900px) {
-      #bundles { padding-left: 0 !important; padding-right: 0 !important; }
-      #bundles .section-label, #bundles .section-title, #bundles .section-shipping { padding-left: 28px; }
-      .bundles-grid {
-        grid-template-columns: unset !important;
-        grid-template-rows: unset !important;
-        display: flex !important;
-        overflow-x: auto;
-        scroll-snap-type: x mandatory;
-        -webkit-overflow-scrolling: touch;
-        gap: 24px;
-        align-items: stretch;
-        scrollbar-width: none;
-        -ms-overflow-style: none;
-      }
-      .bundles-grid::-webkit-scrollbar { display: none; }
-      .bundle-card {
-        flex: 0 0 calc(70vw - 24px);
-        scroll-snap-align: start;
-      }
-    }
-    /* ── BUNDLE INTERACTION ── */
-    .bundle-card { cursor: pointer; transition: box-shadow 0.2s; }
-    .bundle-card:hover { box-shadow: inset 0 0 0 1.5px rgba(92,53,69,0.28), 0 4px 16px rgba(92,53,69,0.12); }
-    .bundle-card-save { font-style: normal; font-size: 9px; letter-spacing: 0.1em; opacity: 0.75; }
-    .bundles-shipping-note {
-      font-family: var(--ff-sans);
-      font-size: 10px;
-      letter-spacing: 0.18em;
-      text-transform: uppercase;
-      color: var(--text-muted);
-      margin-bottom: 32px;
-    }
-    #bundles .section-title { margin-bottom: 6px; }
-    @media (pointer: fine) and (max-width: 1050px) {
-      #bundles {
-        overflow-x: auto;
-        scrollbar-width: thin;
-        scrollbar-color: rgba(92,53,69,0.3) transparent;
-      }
-      #bundles::-webkit-scrollbar { height: 3px; }
-      #bundles::-webkit-scrollbar-track { background: transparent; }
-      #bundles::-webkit-scrollbar-thumb { background: rgba(92,53,69,0.3); border-radius: 2px; }
-      .bundles-grid { grid-template-columns: repeat(4, 220px) !important; }
+    @media (max-width: 900px) {
+      #bundles { padding: 24px 28px; }
+      .bundle-selector-pills { gap: 6px; }
+      .bundle-pill { padding: 9px 16px; font-size: 10px; }
     }
   </style>
   <!-- Set your PayPal client ID here (get it from developer.paypal.com → Apps & Credentials) -->
@@ -689,7 +591,7 @@
     </div>
     <ul class="nav-links">
       <li><a href="#collection">Collection</a></li>
-      <li><a href="#bundles">Bundles</a></li>
+      <li><a href="#bundles">Sets</a></li>
       <li><a href="#about">About</a></li>
       <li><a href="#process">Process</a></li>
     </ul>
@@ -724,6 +626,19 @@
     </div>
     <div class="hero-right">
       <img src="Hero/HeroImage.jpg" alt="Hero Photo">
+    </div>
+  </section>
+  <!-- BUNDLE SELECTOR -->
+  <section id="bundles">
+    <div class="bundle-selector-header">
+      <h2 class="bundle-selector-title">Build a <em>Set</em></h2>
+      <span class="bundle-selector-note">Free US shipping on every set</span>
+    </div>
+    <div class="bundle-selector-pills">
+      <button class="bundle-pill" data-bundle-limit="2" data-bundle-price="55" data-bundle-name="Pair">Pair <span class="pill-price">&middot; $55</span></button>
+      <button class="bundle-pill" data-bundle-limit="4" data-bundle-price="89" data-bundle-name="Set of 4">Set of 4 <span class="pill-price">&middot; $89</span></button>
+      <button class="bundle-pill" data-bundle-limit="6" data-bundle-price="119" data-bundle-name="Set of 6">Set of 6 <span class="pill-price">&middot; $119</span></button>
+      <button class="bundle-pill" data-bundle-limit="12" data-bundle-price="199" data-bundle-name="Full Wall">Full Wall <span class="pill-price">&middot; $199</span></button>
     </div>
   </section>
   <!-- COLLECTION -->
@@ -830,115 +745,10 @@
         </div>
       </div>
     </div>
-    <p class="collection-transition">Our collection is always growing. Build yours below.</p>
+    <p class="collection-transition">Our collection is always growing. Check back often.</p>
   </section>
- <!-- BUNDLES -->
-  <section id="bundles">
-    <p class="section-label">Sets</p>
-    <h2 class="section-title">Build a <em>Set</em></h2>
-    <p class="bundles-shipping-note">Free shipping on every set</p>
-    <div class="bundles-grid">
-      <div class="bundle-card" data-tier="pair" data-bundle-limit="2" data-bundle-price="55">
-        <!-- Pair: 2 pieces side by side (viewBox 22×10) -->
-        <div class="bundle-card-visual">
-          <svg class="bundle-card-icon" viewBox="11 16.5 22 11" width="59" fill="none" stroke="none" xmlns="http://www.w3.org/2000/svg">
-            <!-- Pair: 2×1, group 20×9, centered → x=12, y=17.5 -->
-            <rect class="frame" x="12"    y="17.5" width="9" height="9"/>
-            <rect class="gem"   x="12.75" y="18.25" width="7.5" height="7.5"/>
-            <rect class="frame" x="23"    y="17.5" width="9" height="9"/>
-            <rect class="gem"   x="23.75" y="18.25" width="7.5" height="7.5"/>
-          </svg>
-        </div>
-        <div class="bundle-card-footer">
-          <p class="bundle-card-name">Pair</p>
-          <p class="bundle-card-price">$55</p>
-          <p class="bundle-card-desc">A simple starting point. Perfect for a bookcase, desk, or anywhere that needs a little something.</p>
-        </div>
-      </div>
-      <div class="bundle-card" data-tier="set4" data-bundle-limit="4" data-bundle-price="89">
-        <!-- Set of 4: 2×2 grid (viewBox 22×22) -->
-        <div class="bundle-card-visual">
-          <svg class="bundle-card-icon" viewBox="11 11 22 22" width="59" fill="none" stroke="none" xmlns="http://www.w3.org/2000/svg">
-            <!-- Set of 4: 2×2, group 20×20, centered → x=12, y=12 -->
-            <rect class="frame" x="12"    y="12"    width="9" height="9"/>
-            <rect class="gem"   x="12.75" y="12.75" width="7.5" height="7.5"/>
-            <rect class="frame" x="23"    y="12"    width="9" height="9"/>
-            <rect class="gem"   x="23.75" y="12.75" width="7.5" height="7.5"/>
-            <rect class="frame" x="12"    y="23"    width="9" height="9"/>
-            <rect class="gem"   x="12.75" y="23.75" width="7.5" height="7.5"/>
-            <rect class="frame" x="23"    y="23"    width="9" height="9"/>
-            <rect class="gem"   x="23.75" y="23.75" width="7.5" height="7.5"/>
-          </svg>
-        </div>
-        <div class="bundle-card-footer">
-          <p class="bundle-card-name">Set of 4</p>
-          <p class="bundle-card-price">$89</p>
-          <p class="bundle-card-desc">Four pieces that work just about anywhere. A balanced set for any room.</p>
-        </div>
-      </div>
-      <div class="bundle-card" data-tier="set6" data-bundle-limit="6" data-bundle-price="119">
-        <!-- Set of 6: 3×2 grid (viewBox 34×22) -->
-        <div class="bundle-card-visual">
-          <svg class="bundle-card-icon" viewBox="5.5 11 33 22" width="88" fill="none" stroke="none" xmlns="http://www.w3.org/2000/svg">
-            <!-- Set of 6: 3×2, group 31×20, centered → x=6.5, y=12 -->
-            <rect class="frame" x="6.5"  y="12"    width="9" height="9"/>
-            <rect class="gem"   x="7.25" y="12.75" width="7.5" height="7.5"/>
-            <rect class="frame" x="17.5" y="12"    width="9" height="9"/>
-            <rect class="gem"   x="18.25" y="12.75" width="7.5" height="7.5"/>
-            <rect class="frame" x="28.5" y="12"    width="9" height="9"/>
-            <rect class="gem"   x="29.25" y="12.75" width="7.5" height="7.5"/>
-            <rect class="frame" x="6.5"  y="23"    width="9" height="9"/>
-            <rect class="gem"   x="7.25" y="23.75" width="7.5" height="7.5"/>
-            <rect class="frame" x="17.5" y="23"    width="9" height="9"/>
-            <rect class="gem"   x="18.25" y="23.75" width="7.5" height="7.5"/>
-            <rect class="frame" x="28.5" y="23"    width="9" height="9"/>
-            <rect class="gem"   x="29.25" y="23.75" width="7.5" height="7.5"/>
-          </svg>
-        </div>
-        <div class="bundle-card-footer">
-          <p class="bundle-card-name">Set of 6</p>
-          <p class="bundle-card-price">$119</p>
-          <p class="bundle-card-desc">The most popular choice. Enough to make a real statement.</p>
-        </div>
-      </div>
-      <div class="bundle-card" data-tier="fullwall" data-bundle-limit="12" data-bundle-price="199">
-        <!-- Full Wall: 4×3 grid (viewBox 46×34) -->
-        <div class="bundle-card-visual">
-          <svg class="bundle-card-icon" viewBox="0 5.5 44 33" width="117" fill="none" stroke="none" xmlns="http://www.w3.org/2000/svg">
-            <!-- Full Wall: 4×3, group 42×31, centered → x=1, y=6.5 -->
-            <rect class="frame" x="1"     y="6.5"  width="9" height="9"/>
-            <rect class="gem"   x="1.75"  y="7.25" width="7.5" height="7.5"/>
-            <rect class="frame" x="12"    y="6.5"  width="9" height="9"/>
-            <rect class="gem"   x="12.75" y="7.25" width="7.5" height="7.5"/>
-            <rect class="frame" x="23"    y="6.5"  width="9" height="9"/>
-            <rect class="gem"   x="23.75" y="7.25" width="7.5" height="7.5"/>
-            <rect class="frame" x="34"    y="6.5"  width="9" height="9"/>
-            <rect class="gem"   x="34.75" y="7.25" width="7.5" height="7.5"/>
-            <rect class="frame" x="1"     y="17.5" width="9" height="9"/>
-            <rect class="gem"   x="1.75"  y="18.25" width="7.5" height="7.5"/>
-            <rect class="frame" x="12"    y="17.5" width="9" height="9"/>
-            <rect class="gem"   x="12.75" y="18.25" width="7.5" height="7.5"/>
-            <rect class="frame" x="23"    y="17.5" width="9" height="9"/>
-            <rect class="gem"   x="23.75" y="18.25" width="7.5" height="7.5"/>
-            <rect class="frame" x="34"    y="17.5" width="9" height="9"/>
-            <rect class="gem"   x="34.75" y="18.25" width="7.5" height="7.5"/>
-            <rect class="frame" x="1"     y="28.5" width="9" height="9"/>
-            <rect class="gem"   x="1.75"  y="29.25" width="7.5" height="7.5"/>
-            <rect class="frame" x="12"    y="28.5" width="9" height="9"/>
-            <rect class="gem"   x="12.75" y="29.25" width="7.5" height="7.5"/>
-            <rect class="frame" x="23"    y="28.5" width="9" height="9"/>
-            <rect class="gem"   x="23.75" y="29.25" width="7.5" height="7.5"/>
-            <rect class="frame" x="34"    y="28.5" width="9" height="9"/>
-            <rect class="gem"   x="34.75" y="29.25" width="7.5" height="7.5"/>
-          </svg>
-        </div>
-        <div class="bundle-card-footer">
-          <p class="bundle-card-name">Full Wall</p>
-          <p class="bundle-card-price">$199</p>
-          <p class="bundle-card-desc">Twelve pieces. The whole collection on one wall.</p>
-        </div>
-      </div>
-    </div>
+  <!-- CUSTOM CTA -->
+  <section class="custom-cta-section">
     <div class="bundle-cta">
       <p class="bundle-cta-body">Have something specific in mind? Custom sizes, colors, or something entirely yours. Send me a sketch and I'll bring it to life as a true one of one (unless you want more).</p>
       <a href="mailto:northerncraftnh@gmail.com" class="bundle-cta-link">Let's talk</a>
@@ -1012,7 +822,7 @@
     </div>
     <ul class="footer-links">
       <li><a href="#collection">Collection</a></li>
-      <li><a href="#bundles">Bundles</a></li>
+      <li><a href="#bundles">Sets</a></li>
       <li><a href="#about">About</a></li>
       <li><a href="#process">Process</a></li>
     </ul>
@@ -1073,166 +883,6 @@
       }, { passive: true });
     }
 
-    // Swipe hint animation for bundle carousel
-    const bundlesGrid = document.querySelector('.bundles-grid');
-    const bundlesSection = document.querySelector('#bundles');
-    if (bundlesGrid && bundlesSection) {
-      function easeInOut(t) { return t < 0.5 ? 2*t*t : -1 + (4 - 2*t)*t; }
-      function animateTo(from, to, duration, onDone) {
-        const start = performance.now();
-        function step(now) {
-          const t = Math.min((now - start) / duration, 1);
-          bundlesGrid.scrollLeft = from + (to - from) * easeInOut(t);
-          if (t < 1) requestAnimationFrame(step);
-          else if (onDone) onDone();
-        }
-        requestAnimationFrame(step);
-      }
-      const hintObserver = new IntersectionObserver((entries) => {
-        if (entries[0].isIntersecting) {
-          hintObserver.disconnect();
-          // Only run on mobile
-          if (!window.matchMedia('(pointer: coarse)').matches) return;
-          const thirdCard = bundlesGrid.children[2];
-          const peekAmount = thirdCard ? Math.max(0, thirdCard.offsetLeft - Math.round(bundlesGrid.offsetWidth * 0.35)) : 80;
-          setTimeout(() => {
-            // Disable snap so the browser doesn't immediately snap back to 0
-            bundlesGrid.style.scrollSnapType = 'none';
-            animateTo(0, peekAmount, 800, () => {
-              setTimeout(() => {
-                animateTo(peekAmount, 0, 650, () => {
-                  bundlesGrid.style.scrollSnapType = '';
-                });
-              }, 700);
-            });
-          }, 500);
-        }
-      }, { threshold: 0.4 });
-      hintObserver.observe(bundlesSection);
-    }
-
-    // ── BUNDLE BUILDER ──────────────────────────────────────────────────────
-    (function () {
-      const TIERS = [
-        { key: 'pair',     name: 'Pair',     count: 2,  price: 55  },
-        { key: 'set4',     name: 'Set of 4', count: 4,  price: 89  },
-        { key: 'set6',     name: 'Set of 6', count: 6,  price: 119 },
-        { key: 'fullwall', name: 'Full Wall', count: 12, price: 199 },
-      ];
-
-      let activeTier = null;
-      let selectedItems = new Set();
-      let bar = null;
-      let barTierEl, barCountEl, barPriceEl, barUpgradedEl, barShipEl;
-      const cardMap = new Map(); // id → card element
-
-      function tierForCount(n) {
-        for (let i = TIERS.length - 1; i >= 0; i--) {
-          if (n >= TIERS[i].count) return TIERS[i];
-        }
-        return TIERS[0];
-      }
-
-      function buildBar() {
-        bar = document.createElement('div');
-        bar.className = 'bundle-bar';
-        bar.innerHTML =
-          '<div class="bundle-bar-info">' +
-            '<span class="bundle-bar-tier"></span>' +
-            '<span class="bundle-bar-count"></span>' +
-            '<span class="bundle-bar-upgraded"></span>' +
-            '<span class="bundle-bar-ship"></span>' +
-          '</div>' +
-          '<div class="bundle-bar-actions">' +
-            '<span class="bundle-bar-price"></span>' +
-            '<button class="bundle-bar-add">Add to Cart</button>' +
-            '<button class="bundle-bar-close" aria-label="Close">✕</button>' +
-          '</div>';
-        document.body.appendChild(bar);
-        barTierEl     = bar.querySelector('.bundle-bar-tier');
-        barCountEl    = bar.querySelector('.bundle-bar-count');
-        barPriceEl    = bar.querySelector('.bundle-bar-price');
-        barUpgradedEl = bar.querySelector('.bundle-bar-upgraded');
-        barShipEl     = bar.querySelector('.bundle-bar-ship');
-        bar.querySelector('.bundle-bar-close').addEventListener('click', close);
-        bar.querySelector('.bundle-bar-add').addEventListener('click', addToCart);
-      }
-
-      // Build card map and inject checkbox overlays once at init
-      document.querySelectorAll('.product-card[data-id]').forEach(card => {
-        cardMap.set(card.dataset.id, card);
-        const img = card.querySelector('.product-card-img');
-        if (img) {
-          const chk = document.createElement('div');
-          chk.className = 'bundle-check';
-          chk.innerHTML = '<svg width="12" height="12" viewBox="0 0 12 12" fill="none"><polyline points="2,6 5,9 10,3" stroke="#fff" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>';
-          img.appendChild(chk);
-        }
-      });
-
-      function updateBar() {
-        if (!bar || !activeTier) return;
-        const count = selectedItems.size;
-        const correct = tierForCount(count);
-        if (count > activeTier.count && correct !== activeTier) {
-          const from = activeTier.name;
-          activeTier = correct;
-          barUpgradedEl.textContent = '↑ Upgraded from ' + from;
-          barUpgradedEl.classList.add('show');
-          setTimeout(() => barUpgradedEl.classList.remove('show'), 2500);
-        }
-        barTierEl.textContent  = activeTier.name;
-        barCountEl.textContent = count + ' of ' + activeTier.count + ' selected';
-        barPriceEl.textContent = '$' + activeTier.price;
-        barShipEl.textContent  = count >= 2 ? 'Free shipping' : '';
-        cardMap.forEach((card, id) => card.classList.toggle('bundle-selected', selectedItems.has(id)));
-      }
-
-      function open(tierKey) {
-        activeTier = TIERS.find(t => t.key === tierKey) || TIERS[0];
-        selectedItems = new Set();
-        if (!bar) buildBar();
-        document.body.classList.add('bundle-mode');
-        updateBar();
-        bar.classList.add('active');
-        document.getElementById('collection').scrollIntoView({ behavior: 'smooth' });
-        cardMap.forEach(card => {
-          card._bundleClick = e => {
-            e.stopPropagation(); e.stopImmediatePropagation();
-            const id = card.dataset.id;
-            if (selectedItems.has(id)) selectedItems.delete(id); else selectedItems.add(id);
-            updateBar();
-          };
-          card.addEventListener('click', card._bundleClick, true);
-        });
-      }
-
-      function close() {
-        if (bar) bar.classList.remove('active');
-        document.body.classList.remove('bundle-mode');
-        activeTier = null;
-        selectedItems = new Set();
-        cardMap.forEach(card => {
-          if (card._bundleClick) { card.removeEventListener('click', card._bundleClick, true); delete card._bundleClick; }
-          card.classList.remove('bundle-selected');
-        });
-      }
-
-      function addToCart() {
-        if (!activeTier || !selectedItems.size || typeof window.addToCart !== 'function') return;
-        const ids = [...selectedItems];
-        const names = ids.map(id => { const c = cardMap.get(id); return c ? c.dataset.name : id; });
-        const firstCard = cardMap.get(ids[0]);
-        window.addToCart('bundle-' + activeTier.key, activeTier.name + ': ' + names.join(', '), activeTier.price, firstCard ? firstCard.dataset.image : '');
-        close();
-        const icon = document.getElementById('cart-icon');
-        if (icon) icon.click();
-      }
-
-      document.querySelectorAll('.bundle-card[data-tier] .bundle-card-link').forEach(link => {
-        link.addEventListener('click', e => { e.preventDefault(); open(link.closest('.bundle-card').dataset.tier); });
-      });
-    })();
 </script>
 </body>
 </html>
