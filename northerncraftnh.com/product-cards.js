@@ -467,8 +467,8 @@
       bbAdd.disabled = true;
     }
 
-    // Next-tier hint: show once button is enabled
-    if (next && count >= bundleLimit) {
+    // Next-tier hint: always show when there's a next tier
+    if (next) {
       var nextDisc = _discountPct(next.limit);
       bbHint.textContent = (next.limit - count) + ' more for ' + next.name + ' \u00b7 ' + nextDisc + '% off';
     } else {
@@ -478,19 +478,42 @@
 
   function _handleBundleAddToCart() {
     if (selectedCards.length < bundleLimit || typeof window.addToCart !== 'function') return;
-    var count    = selectedCards.length;
+
+    var newNames = selectedCards.map(function (c) { return c.dataset.name; });
+    var firstImg = selectedCards[0].dataset.image || '';
+
+    // Merge any existing bundle items in the cart into this one
+    var existingCart  = typeof window.getCart === 'function' ? window.getCart() : [];
+    var mergedNames   = [];
+    var mergedCount   = 0;
+    var mergedImg     = firstImg;
+
+    existingCart.forEach(function (item) {
+      if (item.meta && item.meta.bundleCount) {
+        // Strip "Tier: " prefix and split back into individual piece names
+        var stripped = item.name.replace(/^[^:]+:\s*/, '');
+        mergedNames  = mergedNames.concat(stripped.split(', '));
+        mergedCount += item.meta.bundleCount * item.quantity;
+        if (!mergedImg && item.image) mergedImg = item.image;
+        window.removeFromCart(item.id);
+      }
+    });
+
+    // Append current selection
+    mergedNames  = mergedNames.concat(newNames);
+    mergedCount += newNames.length;
+
+    var count    = mergedCount;
     var tier     = _bestTier(count);
     var price    = _calcPrice(count);
     var disc     = _discountPct(count);
     var next     = _nextTier(count);
-    var names    = selectedCards.map(function (c) { return c.dataset.name; }).join(', ');
-    var firstImg = selectedCards[0].dataset.image || '';
     var bundleId = 'bundle-' + count + '-' + Date.now();
     var tierName = tier ? tier.name : bundleTitle;
     var nextHint = next
       ? ((next.limit - count) + ' more for ' + next.name + ' \u00b7 ' + _discountPct(next.limit) + '% off')
       : '';
-    window.addToCart(bundleId, tierName + ': ' + names, price, firstImg, {
+    window.addToCart(bundleId, tierName + ': ' + mergedNames.join(', '), price, mergedImg, {
       bundleCount: count,
       discountPct: disc,
       nextHint: nextHint,
