@@ -94,7 +94,6 @@
       align-items: center;
     }
     .nav-links a:hover { color: var(--mauve); }
-    .nav-tiktok { color: var(--mauve) !important; }
     /* ── HAMBURGER ── */
     .nav-hamburger {
       display: none;
@@ -428,21 +427,6 @@
       opacity: 0.8;
       max-width: 58%;
     }
-    .bundle-card-link {
-      position: absolute;
-      bottom: 22px;
-      right: 20px;
-      font-family: var(--ff-sans);
-      font-size: 11px;
-      font-weight: 300;
-      letter-spacing: 0.22em;
-      text-transform: uppercase;
-      color: var(--mauve);
-      text-decoration: none;
-      white-space: nowrap;
-      transition: opacity 0.2s;
-    }
-    .bundle-card-link:hover { opacity: 0.7; }
     /* ── ABOUT ── */
     #about {
       background: var(--cream);
@@ -537,15 +521,6 @@
       color: var(--mauve-dark);
       line-height: 1;
     }
-    .bundle-card-shipping {
-      font-family: var(--ff-sans);
-      font-size: 10px;
-      font-weight: 300;
-      letter-spacing: 0.14em;
-      text-transform: uppercase;
-      color: var(--text-muted);
-      line-height: 1;
-    }
     /* ── BUNDLE BUILDER BAR ── */
     .bundle-bar {
       position: fixed;
@@ -578,6 +553,7 @@
     .bundle-bar-close:hover { color: #fff; }
     .bundle-bar-upgraded { font-family: var(--ff-sans); font-size: 10px; letter-spacing: 0.1em; color: var(--wood); opacity: 0; transition: opacity 0.3s; }
     .bundle-bar-upgraded.show { opacity: 1; }
+    .bundle-bar-ship { font-family: var(--ff-sans); font-size: 10px; letter-spacing: 0.14em; text-transform: uppercase; color: rgba(255,255,255,0.6); }
     @media (max-width: 900px) {
       .bundle-bar { padding: 12px 20px; flex-wrap: wrap; gap: 10px; }
     }
@@ -667,7 +643,14 @@
     .bundle-card { cursor: pointer; transition: box-shadow 0.2s; }
     .bundle-card:hover { box-shadow: inset 0 0 0 1.5px rgba(92,53,69,0.28), 0 4px 16px rgba(92,53,69,0.12); }
     .bundle-card-save { font-style: normal; font-size: 9px; letter-spacing: 0.1em; opacity: 0.75; }
-    .bundle-card-link--inquire { color: var(--mauve) !important; }
+    .bundles-shipping-note {
+      font-family: var(--ff-sans);
+      font-size: 10px;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--text-muted);
+      margin-top: 6px;
+    }
     @media (pointer: fine) and (max-width: 1050px) {
       #bundles {
         overflow-x: auto;
@@ -845,6 +828,7 @@
   <section id="bundles">
     <p class="section-label">Sets</p>
     <h2 class="section-title">Build a <em>Set</em></h2>
+    <p class="bundles-shipping-note">Free shipping on every set</p>
     <div class="bundles-grid">
       <div class="bundle-card" data-tier="pair" data-bundle-limit="2" data-bundle-price="55">
         <!-- Pair: 2 pieces side by side (viewBox 22×10) -->
@@ -860,9 +844,7 @@
         <div class="bundle-card-footer">
           <p class="bundle-card-name">Pair</p>
           <p class="bundle-card-price">$55</p>
-          <p class="bundle-card-shipping">Free shipping</p>
           <p class="bundle-card-desc">A simple starting point. Perfect for a bookcase, desk, or anywhere that needs a little something.</p>
-          <a href="#" class="bundle-card-link">Shop</a>
         </div>
       </div>
       <div class="bundle-card" data-tier="set4" data-bundle-limit="4" data-bundle-price="89">
@@ -883,9 +865,7 @@
         <div class="bundle-card-footer">
           <p class="bundle-card-name">Set of 4</p>
           <p class="bundle-card-price">$89</p>
-          <p class="bundle-card-shipping">Free shipping</p>
           <p class="bundle-card-desc">Four pieces that work just about anywhere. A balanced set for any room.</p>
-          <a href="#" class="bundle-card-link">Shop</a>
         </div>
       </div>
       <div class="bundle-card" data-tier="set6" data-bundle-limit="6" data-bundle-price="119">
@@ -910,9 +890,7 @@
         <div class="bundle-card-footer">
           <p class="bundle-card-name">Set of 6</p>
           <p class="bundle-card-price">$119</p>
-          <p class="bundle-card-shipping">Free shipping</p>
           <p class="bundle-card-desc">The most popular choice. Enough to make a real statement.</p>
-          <a href="#" class="bundle-card-link">Shop</a>
         </div>
       </div>
       <div class="bundle-card" data-tier="fullwall" data-bundle-limit="12" data-bundle-price="199">
@@ -949,15 +927,12 @@
         <div class="bundle-card-footer">
           <p class="bundle-card-name">Full Wall</p>
           <p class="bundle-card-price">$199</p>
-          <p class="bundle-card-shipping">Free shipping</p>
           <p class="bundle-card-desc">Twelve pieces. The whole collection on one wall.</p>
-          <a href="#" class="bundle-card-link">Shop</a>
         </div>
       </div>
     </div>
     <div class="bundle-cta">
-      <p class="bundle-cta-body">Have something specific in mind?<br>Custom sizes, colors, or something entirely yours.</p>
-      <p class="bundle-cta-body">Send me a sketch and I'll bring it to life as a true one of one<br>(unless you want more).</p>
+      <p class="bundle-cta-body">Have something specific in mind? Custom sizes, colors, or something entirely yours. Send me a sketch and I'll bring it to life as a true one of one (unless you want more).</p>
       <a href="mailto:northerncraftnh@gmail.com" class="bundle-cta-link">Let's talk</a>
     </div>
   </section>
@@ -1140,7 +1115,7 @@
       let activeTier = null;
       let selectedItems = new Set();
       let bar = null;
-      let barTierEl, barCountEl, barPriceEl, barUpgradedEl;
+      let barTierEl, barCountEl, barPriceEl, barUpgradedEl, barShipEl;
       const cardMap = new Map(); // id → card element
 
       function tierForCount(n) {
@@ -1158,6 +1133,7 @@
             '<span class="bundle-bar-tier"></span>' +
             '<span class="bundle-bar-count"></span>' +
             '<span class="bundle-bar-upgraded"></span>' +
+            '<span class="bundle-bar-ship"></span>' +
           '</div>' +
           '<div class="bundle-bar-actions">' +
             '<span class="bundle-bar-price"></span>' +
@@ -1169,6 +1145,7 @@
         barCountEl    = bar.querySelector('.bundle-bar-count');
         barPriceEl    = bar.querySelector('.bundle-bar-price');
         barUpgradedEl = bar.querySelector('.bundle-bar-upgraded');
+        barShipEl     = bar.querySelector('.bundle-bar-ship');
         bar.querySelector('.bundle-bar-close').addEventListener('click', close);
         bar.querySelector('.bundle-bar-add').addEventListener('click', addToCart);
       }
@@ -1199,6 +1176,7 @@
         barTierEl.textContent  = activeTier.name;
         barCountEl.textContent = count + ' of ' + activeTier.count + ' selected';
         barPriceEl.textContent = '$' + activeTier.price;
+        barShipEl.textContent  = count >= 2 ? 'Free shipping' : '';
         cardMap.forEach((card, id) => card.classList.toggle('bundle-selected', selectedItems.has(id)));
       }
 
