@@ -6,7 +6,7 @@
   <title>Northern Craft NH — Modern Geometric Wall Art</title>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Arizonia&family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400&family=Merriweather:wght@300&family=Montserrat:wght@300;400;500&family=Newsreader:ital,wght@1,300&family=Cormorant+SC:ital,wght@0,300;0,400;1,300;1,400&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,300;1,400&family=Montserrat:wght@300;400;500&family=Newsreader:ital,wght@1,300&family=Cormorant+SC:ital,wght@0,300;0,400;1,300;1,400&display=swap" rel="stylesheet" />
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
     :root {
@@ -94,7 +94,6 @@
       align-items: center;
     }
     .nav-links a:hover { color: var(--mauve); }
-    .nav-tiktok { color: var(--mauve) !important; }
     /* ── HAMBURGER ── */
     .nav-hamburger {
       display: none;
@@ -275,27 +274,6 @@
       margin-bottom: 20px;
       width: 100%;
     }
-    .specs-bar {
-      display: flex;
-      justify-content: center;
-      font-size: 12px;
-      letter-spacing: 0.09em;
-      margin-top: 10px;
-    }
-    .spec-col {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      gap: 5px;
-      padding: 4px 28px 0;
-      margin-bottom: 24px;
-    }
-    .spec-col:not(:last-child) {
-      border-right: 1px solid #e6e0e3;
-    }
-    .spec-item { color: var(--mauve-dark); white-space: nowrap; }
-    .spec-sub { color: #9e9098; font-style: italic; font-size: 11px; white-space: nowrap; }
-    .spec-email { color: var(--mauve-dark); text-decoration: underline; text-underline-offset: 3px; white-space: nowrap; }
     .collection-transition {
       color: #623a4a;
       font-family: var(--ff-serif);
@@ -323,7 +301,6 @@
     }
     .product-card:hover .product-card-img { opacity: 0.85; }
     .product-card-img img { width: 100%; height: 100%; object-fit: cover; }
-    .product-card-placeholder { display: none; }
     .product-card-info { display: none; }
     .product-card-name {
       position: absolute;
@@ -342,7 +319,6 @@
       opacity: 1;
     }
     /* ── BUNDLE SELECTION MODE ── */
-    body.bundle-mode .product-card { cursor: pointer; }
     body.bundle-mode .product-card.bundle-selected .product-card-img { opacity: 0.75; }
     body.bundle-mode .product-card .bundle-check {
       position: absolute;
@@ -366,9 +342,32 @@
     body.bundle-mode .product-card.bundle-selected .bundle-check svg { display: block; }
     /* ── BUNDLES ── */
     #bundles { background: var(--cream-dark); }
+    .bundle-cta {
+      text-align: center;
+      max-width: 720px;
+      margin: 64px auto 0;
+    }
+    .bundle-cta-body {
+      font-family: var(--ff-serif);
+      font-size: clamp(18px, 2vw, 24px);
+      font-weight: 300;
+      color: var(--charcoal);
+      line-height: 1.55;
+      margin-bottom: 20px;
+    }
+    .bundle-cta-link {
+      font-family: var(--ff-sans);
+      font-size: 10px;
+      letter-spacing: 0.22em;
+      text-transform: uppercase;
+      color: var(--mauve);
+      text-decoration: none;
+      border-bottom: 1px solid currentColor;
+      padding-bottom: 2px;
+    }
     .bundles-grid {
       display: grid;
-      grid-template-columns: 1fr 1fr;
+      grid-template-columns: repeat(4, 1fr);
       gap: 8px;
     }
     .bundle-card {
@@ -428,21 +427,6 @@
       opacity: 0.8;
       max-width: 58%;
     }
-    .bundle-card-link {
-      position: absolute;
-      bottom: 22px;
-      right: 20px;
-      font-family: var(--ff-sans);
-      font-size: 11px;
-      font-weight: 300;
-      letter-spacing: 0.22em;
-      text-transform: uppercase;
-      color: var(--mauve);
-      text-decoration: none;
-      white-space: nowrap;
-      transition: opacity 0.2s;
-    }
-    .bundle-card-link:hover { opacity: 0.7; }
     /* ── ABOUT ── */
     #about {
       background: var(--cream);
@@ -537,15 +521,6 @@
       color: var(--mauve-dark);
       line-height: 1;
     }
-    .bundle-card-shipping {
-      font-family: var(--ff-sans);
-      font-size: 10px;
-      font-weight: 300;
-      letter-spacing: 0.14em;
-      text-transform: uppercase;
-      color: var(--text-muted);
-      line-height: 1;
-    }
     /* ── BUNDLE BUILDER BAR ── */
     .bundle-bar {
       position: fixed;
@@ -578,6 +553,7 @@
     .bundle-bar-close:hover { color: #fff; }
     .bundle-bar-upgraded { font-family: var(--ff-sans); font-size: 10px; letter-spacing: 0.1em; color: var(--wood); opacity: 0; transition: opacity 0.3s; }
     .bundle-bar-upgraded.show { opacity: 1; }
+    .bundle-bar-ship { font-family: var(--ff-sans); font-size: 10px; letter-spacing: 0.14em; text-transform: uppercase; color: rgba(255,255,255,0.6); }
     @media (max-width: 900px) {
       .bundle-bar { padding: 12px 20px; flex-wrap: wrap; gap: 10px; }
     }
@@ -641,7 +617,6 @@
         padding: 40px 28px;
       }
       .footer-links { flex-wrap: wrap; justify-content: center; }
-      .specs-bar { flex-wrap: wrap; gap: 8px 0; }
     }
     @media (pointer: coarse) and (max-width: 900px) {
       #bundles { padding-left: 0 !important; padding-right: 0 !important; }
@@ -668,7 +643,14 @@
     .bundle-card { cursor: pointer; transition: box-shadow 0.2s; }
     .bundle-card:hover { box-shadow: inset 0 0 0 1.5px rgba(92,53,69,0.28), 0 4px 16px rgba(92,53,69,0.12); }
     .bundle-card-save { font-style: normal; font-size: 9px; letter-spacing: 0.1em; opacity: 0.75; }
-    .bundle-card-link--inquire { color: var(--mauve) !important; }
+    .bundles-shipping-note {
+      font-family: var(--ff-sans);
+      font-size: 10px;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--text-muted);
+      margin-top: 6px;
+    }
     @media (pointer: fine) and (max-width: 1050px) {
       #bundles {
         overflow-x: auto;
@@ -679,12 +661,6 @@
       #bundles::-webkit-scrollbar-track { background: transparent; }
       #bundles::-webkit-scrollbar-thumb { background: rgba(92,53,69,0.3); border-radius: 2px; }
       .bundles-grid { grid-template-columns: repeat(4, 220px) !important; }
-    }
-    @media (max-width: 640px) {
-      .specs-bar { flex-wrap: wrap; gap: 8px 0; }
-      .spec-col { padding: 4px 16px 0; }
-      .spec-item { font-size: 11px; }
-      .spec-sub { font-size: 10px; }
     }
   </style>
   <!-- Set your PayPal client ID here (get it from developer.paypal.com → Apps & Credentials) -->
@@ -722,7 +698,7 @@
     </button>
   </nav>
   <!-- HERO -->
-  <section class="hero" style="padding: 0 0px 0 0;">
+  <section class="hero">
     <div class="hero-left">
       <h1 class="hero-title">
         Modern<br>
@@ -852,7 +828,8 @@
   <section id="bundles">
     <p class="section-label">Sets</p>
     <h2 class="section-title">Build a <em>Set</em></h2>
-    <div class="bundles-grid" style="grid-template-columns: repeat(4, 1fr);">
+    <p class="bundles-shipping-note">Free shipping on every set</p>
+    <div class="bundles-grid">
       <div class="bundle-card" data-tier="pair" data-bundle-limit="2" data-bundle-price="55">
         <!-- Pair: 2 pieces side by side (viewBox 22×10) -->
         <div class="bundle-card-visual">
@@ -867,9 +844,7 @@
         <div class="bundle-card-footer">
           <p class="bundle-card-name">Pair</p>
           <p class="bundle-card-price">$55</p>
-          <p class="bundle-card-shipping">Free shipping</p>
           <p class="bundle-card-desc">A simple starting point. Perfect for a bookcase, desk, or anywhere that needs a little something.</p>
-          <a href="#" class="bundle-card-link">Shop</a>
         </div>
       </div>
       <div class="bundle-card" data-tier="set4" data-bundle-limit="4" data-bundle-price="89">
@@ -890,9 +865,7 @@
         <div class="bundle-card-footer">
           <p class="bundle-card-name">Set of 4</p>
           <p class="bundle-card-price">$89</p>
-          <p class="bundle-card-shipping">Free shipping</p>
           <p class="bundle-card-desc">Four pieces that work just about anywhere. A balanced set for any room.</p>
-          <a href="#" class="bundle-card-link">Shop</a>
         </div>
       </div>
       <div class="bundle-card" data-tier="set6" data-bundle-limit="6" data-bundle-price="119">
@@ -917,9 +890,7 @@
         <div class="bundle-card-footer">
           <p class="bundle-card-name">Set of 6</p>
           <p class="bundle-card-price">$119</p>
-          <p class="bundle-card-shipping">Free shipping</p>
           <p class="bundle-card-desc">The most popular choice. Enough to make a real statement.</p>
-          <a href="#" class="bundle-card-link">Shop</a>
         </div>
       </div>
       <div class="bundle-card" data-tier="fullwall" data-bundle-limit="12" data-bundle-price="199">
@@ -956,16 +927,13 @@
         <div class="bundle-card-footer">
           <p class="bundle-card-name">Full Wall</p>
           <p class="bundle-card-price">$199</p>
-          <p class="bundle-card-shipping">Free shipping</p>
           <p class="bundle-card-desc">Twelve pieces. The whole collection on one wall.</p>
-          <a href="#" class="bundle-card-link">Shop</a>
         </div>
       </div>
     </div>
-    <div style="text-align: center; max-width: 720px; margin: 64px auto 0;">
-      <p style="font-family: var(--ff-serif); font-size: clamp(18px, 2vw, 24px); font-weight: 300; color: var(--charcoal); line-height: 1.55; margin-bottom: 20px;">Have something specific in mind?<br>Custom sizes, colors, or something entirely yours.</p>
-      <p style="font-family: var(--ff-serif); font-size: clamp(18px, 2vw, 24px); font-weight: 300; color: var(--charcoal); line-height: 1.55; margin-bottom: 16px;">Send me a sketch and I'll bring it to life as a true one of one<br>(unless you want more).</p>
-      <a href="mailto:northerncraftnh@gmail.com" style="font-family: var(--ff-sans); font-size: 10px; letter-spacing: 0.22em; text-transform: uppercase; color: var(--mauve); text-decoration: none; border-bottom: 1px solid currentColor; padding-bottom: 2px;">Let's talk</a>
+    <div class="bundle-cta">
+      <p class="bundle-cta-body">Have something specific in mind? Custom sizes, colors, or something entirely yours. Send me a sketch and I'll bring it to life as a true one of one (unless you want more).</p>
+      <a href="mailto:northerncraftnh@gmail.com" class="bundle-cta-link">Let's talk</a>
     </div>
   </section>
   <!-- ABOUT -->
@@ -1000,7 +968,7 @@
   <!-- PROCESS -->
   <section id="process">
     <p class="section-label">How It Works</p>
-    <h2 class="section-title" style="color:var(--charcoal);">The <em>Process</em></h2>
+    <h2 class="section-title">The <em>Process</em></h2>
     <div class="process-steps">
       <div>
         <p class="step-num">01</p>
@@ -1145,8 +1113,10 @@
       ];
 
       let activeTier = null;
-      let selectedItems = [];
+      let selectedItems = new Set();
       let bar = null;
+      let barTierEl, barCountEl, barPriceEl, barUpgradedEl, barShipEl;
+      const cardMap = new Map(); // id → card element
 
       function tierForCount(n) {
         for (let i = TIERS.length - 1; i >= 0; i--) {
@@ -1163,6 +1133,7 @@
             '<span class="bundle-bar-tier"></span>' +
             '<span class="bundle-bar-count"></span>' +
             '<span class="bundle-bar-upgraded"></span>' +
+            '<span class="bundle-bar-ship"></span>' +
           '</div>' +
           '<div class="bundle-bar-actions">' +
             '<span class="bundle-bar-price"></span>' +
@@ -1170,14 +1141,20 @@
             '<button class="bundle-bar-close" aria-label="Close">✕</button>' +
           '</div>';
         document.body.appendChild(bar);
+        barTierEl     = bar.querySelector('.bundle-bar-tier');
+        barCountEl    = bar.querySelector('.bundle-bar-count');
+        barPriceEl    = bar.querySelector('.bundle-bar-price');
+        barUpgradedEl = bar.querySelector('.bundle-bar-upgraded');
+        barShipEl     = bar.querySelector('.bundle-bar-ship');
         bar.querySelector('.bundle-bar-close').addEventListener('click', close);
         bar.querySelector('.bundle-bar-add').addEventListener('click', addToCart);
       }
 
-      // Inject checkbox overlay into every product card once
+      // Build card map and inject checkbox overlays once at init
       document.querySelectorAll('.product-card[data-id]').forEach(card => {
+        cardMap.set(card.dataset.id, card);
         const img = card.querySelector('.product-card-img');
-        if (img && !card.querySelector('.bundle-check')) {
+        if (img) {
           const chk = document.createElement('div');
           chk.className = 'bundle-check';
           chk.innerHTML = '<svg width="12" height="12" viewBox="0 0 12 12" fill="none"><polyline points="2,6 5,9 10,3" stroke="#fff" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>';
@@ -1187,37 +1164,35 @@
 
       function updateBar() {
         if (!bar || !activeTier) return;
-        const count = selectedItems.length;
+        const count = selectedItems.size;
         const correct = tierForCount(count);
         if (count > activeTier.count && correct !== activeTier) {
           const from = activeTier.name;
           activeTier = correct;
-          const el = bar.querySelector('.bundle-bar-upgraded');
-          el.textContent = '↑ Upgraded from ' + from;
-          el.classList.add('show');
-          setTimeout(() => el.classList.remove('show'), 2500);
+          barUpgradedEl.textContent = '↑ Upgraded from ' + from;
+          barUpgradedEl.classList.add('show');
+          setTimeout(() => barUpgradedEl.classList.remove('show'), 2500);
         }
-        bar.querySelector('.bundle-bar-tier').textContent = activeTier.name;
-        bar.querySelector('.bundle-bar-count').textContent = count + ' of ' + activeTier.count + ' selected';
-        bar.querySelector('.bundle-bar-price').textContent = '$' + activeTier.price;
-        document.querySelectorAll('.product-card[data-id]').forEach(card => {
-          card.classList.toggle('bundle-selected', selectedItems.includes(card.dataset.id));
-        });
+        barTierEl.textContent  = activeTier.name;
+        barCountEl.textContent = count + ' of ' + activeTier.count + ' selected';
+        barPriceEl.textContent = '$' + activeTier.price;
+        barShipEl.textContent  = count >= 2 ? 'Free shipping' : '';
+        cardMap.forEach((card, id) => card.classList.toggle('bundle-selected', selectedItems.has(id)));
       }
 
       function open(tierKey) {
         activeTier = TIERS.find(t => t.key === tierKey) || TIERS[0];
-        selectedItems = [];
+        selectedItems = new Set();
         if (!bar) buildBar();
         document.body.classList.add('bundle-mode');
         updateBar();
         bar.classList.add('active');
         document.getElementById('collection').scrollIntoView({ behavior: 'smooth' });
-        document.querySelectorAll('.product-card[data-id]').forEach(card => {
+        cardMap.forEach(card => {
           card._bundleClick = e => {
             e.stopPropagation(); e.stopImmediatePropagation();
-            const i = selectedItems.indexOf(card.dataset.id);
-            if (i !== -1) selectedItems.splice(i, 1); else selectedItems.push(card.dataset.id);
+            const id = card.dataset.id;
+            if (selectedItems.has(id)) selectedItems.delete(id); else selectedItems.add(id);
             updateBar();
           };
           card.addEventListener('click', card._bundleClick, true);
@@ -1227,21 +1202,20 @@
       function close() {
         if (bar) bar.classList.remove('active');
         document.body.classList.remove('bundle-mode');
-        activeTier = null; selectedItems = [];
-        document.querySelectorAll('.product-card[data-id]').forEach(card => {
+        activeTier = null;
+        selectedItems = new Set();
+        cardMap.forEach(card => {
           if (card._bundleClick) { card.removeEventListener('click', card._bundleClick, true); delete card._bundleClick; }
           card.classList.remove('bundle-selected');
         });
       }
 
       function addToCart() {
-        if (!activeTier || !selectedItems.length || typeof window.addToCart !== 'function') return;
-        const names = selectedItems.map(id => {
-          const c = document.querySelector('.product-card[data-id="' + id + '"]');
-          return c ? c.dataset.name : id;
-        });
-        const img = document.querySelector('.product-card[data-id="' + selectedItems[0] + '"]');
-        window.addToCart('bundle-' + activeTier.key, activeTier.name + ': ' + names.join(', '), activeTier.price, img ? img.dataset.image : '');
+        if (!activeTier || !selectedItems.size || typeof window.addToCart !== 'function') return;
+        const ids = [...selectedItems];
+        const names = ids.map(id => { const c = cardMap.get(id); return c ? c.dataset.name : id; });
+        const firstCard = cardMap.get(ids[0]);
+        window.addToCart('bundle-' + activeTier.key, activeTier.name + ': ' + names.join(', '), activeTier.price, firstCard ? firstCard.dataset.image : '');
         close();
         const icon = document.getElementById('cart-icon');
         if (icon) icon.click();
