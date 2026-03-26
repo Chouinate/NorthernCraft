@@ -221,19 +221,7 @@
     { limit: 6,  price: 119, name: 'Set of 6' },
     { limit: 12, price: 199, name: 'Full Wall' },
   ];
-  var SINGLE_PRICE = 35;
 
-  function _calcPrice(count) {
-    var extra = Math.max(0, count - bundleLimit);
-    return bundlePrice + extra * SINGLE_PRICE;
-  }
-
-  function _dotsLimit(count) {
-    for (var i = 0; i < BUNDLE_TIERS.length; i++) {
-      if (BUNDLE_TIERS[i].limit >= count) return BUNDLE_TIERS[i].limit;
-    }
-    return count;
-  }
 
   // ── Modal state ──────────────────────────────────────────────────────────────
   var overlay, imgEl, nameEl, priceEl;
@@ -415,23 +403,34 @@
 
   function _updateBundleBar() {
     var count = selectedCards.length;
-    var price = _calcPrice(count);
-    var dotsTotal = _dotsLimit(count);
+
+    // Auto-upgrade to cheapest tier that fits count, never downgrade
+    for (var t = 0; t < BUNDLE_TIERS.length; t++) {
+      if (BUNDLE_TIERS[t].limit >= count) {
+        if (BUNDLE_TIERS[t].price > bundlePrice) {
+          bundleLimit = BUNDLE_TIERS[t].limit;
+          bundlePrice = BUNDLE_TIERS[t].price;
+          bundleTitle = BUNDLE_TIERS[t].name;
+          bbTitle.textContent = bundleTitle;
+        }
+        break;
+      }
+    }
 
     // Progress dots
     bbDots.innerHTML = '';
-    for (var i = 0; i < dotsTotal; i++) {
+    for (var i = 0; i < bundleLimit; i++) {
       var dot = document.createElement('span');
       dot.className = 'bb-dot' + (i < count ? ' bb-dot--filled' : '');
       bbDots.appendChild(dot);
     }
 
     // Count label
-    bbCount.textContent = count + ' of ' + dotsTotal + ' selected';
+    bbCount.textContent = count + ' of ' + bundleLimit + ' selected';
 
     // CTA button text + state
     if (count >= bundleLimit) {
-      bbAdd.textContent = 'Add to Cart \u00b7 $' + price;
+      bbAdd.textContent = 'Add to Cart \u00b7 $' + bundlePrice;
       bbAdd.disabled = false;
     } else {
       bbAdd.textContent = 'Select ' + (bundleLimit - count) + ' more';
@@ -441,14 +440,10 @@
     // Next-tier hint
     var nextTier = null;
     for (var j = 0; j < BUNDLE_TIERS.length; j++) {
-      if (BUNDLE_TIERS[j].limit > count) { nextTier = BUNDLE_TIERS[j]; break; }
+      if (BUNDLE_TIERS[j].limit > bundleLimit) { nextTier = BUNDLE_TIERS[j]; break; }
     }
-    if (nextTier && nextTier.price < price) {
-      var diff = nextTier.limit - count;
-      bbHint.textContent = 'Add ' + diff + ' more for ' + nextTier.name + ' pricing \u00b7 $' + nextTier.price;
-    } else if (nextTier && count >= bundleLimit) {
-      var diff2 = nextTier.limit - count;
-      bbHint.textContent = 'Add ' + diff2 + ' more for ' + nextTier.name + ' \u00b7 $' + nextTier.price;
+    if (nextTier && count >= bundleLimit) {
+      bbHint.textContent = 'Add ' + (nextTier.limit - count) + ' more for ' + nextTier.name + ' \u00b7 $' + nextTier.price;
     } else {
       bbHint.textContent = '';
     }
@@ -456,13 +451,12 @@
 
   function _handleBundleAddToCart() {
     if (selectedCards.length < bundleLimit || typeof window.addToCart !== 'function') return;
-    var count     = selectedCards.length;
-    var price     = _calcPrice(count);
-    var names     = selectedCards.map(function (c) { return c.dataset.name; }).join(', ');
-    var firstImg  = selectedCards[0].dataset.image || '';
-    var bundleId  = 'bundle-' + count + '-' + Date.now();
+    var count       = selectedCards.length;
+    var names       = selectedCards.map(function (c) { return c.dataset.name; }).join(', ');
+    var firstImg    = selectedCards[0].dataset.image || '';
+    var bundleId    = 'bundle-' + count + '-' + Date.now();
     var displayName = bundleTitle + ', ' + names;
-    window.addToCart(bundleId, displayName, price, firstImg);
+    window.addToCart(bundleId, displayName, bundlePrice, firstImg);
     _deactivateBundle();
     var cartIcon = document.getElementById('cart-icon');
     if (cartIcon) cartIcon.click();
