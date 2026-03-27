@@ -412,16 +412,6 @@
 
   // ─── DOM Elements ────────────────────────────────────────────────────────────
   let overlay, drawer, itemsList, totalEl, shippingNoticeEl, badge;
-  let _isUS = true; // default true until geo check resolves
-
-  // Detect country via free IP API; hide shipping notice for non-US visitors
-  fetch('https://ipapi.co/country_code/')
-    .then(function (r) { return r.text(); })
-    .then(function (code) {
-      _isUS = code.trim() === 'US';
-      _updateShippingNotice();
-    })
-    .catch(function () { /* network error — keep default true */ });
 
   function _init() {
     const styleEl = document.createElement('style');
@@ -627,7 +617,7 @@
 
   function _updateShippingNotice() {
     if (!shippingNoticeEl) return;
-    if (!_isUS) { shippingNoticeEl.style.display = 'none'; return; }
+
     const totalQty = cart.reduce(function (s, i) {
       return s + (i.meta && i.meta.bundleCount ? i.meta.bundleCount * i.quantity : i.quantity);
     }, 0);
