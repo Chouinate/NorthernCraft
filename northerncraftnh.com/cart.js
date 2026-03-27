@@ -301,23 +301,15 @@
     }
     .nc-cart-shipping-notice {
       font-family: 'Montserrat', sans-serif;
-      font-size: 10px;
+      font-size: 9px;
       font-weight: 500;
-      letter-spacing: 0.18em;
+      letter-spacing: 0.16em;
       text-transform: uppercase;
-      text-align: center;
-      padding: 8px 12px;
-      margin-bottom: 14px;
-      border-radius: 3px;
+      text-align: right;
+      margin-top: 5px;
     }
-    .nc-cart-shipping-notice.earned {
-      background: #e8f0e8;
-      color: #3a6b3a;
-    }
-    .nc-cart-shipping-notice.promo {
-      background: transparent;
-      color: #7a6f68;
-    }
+    .nc-cart-shipping-notice.earned { color: #3a6b3a; }
+    .nc-cart-shipping-notice.promo  { color: #9a9088; }
     .nc-cart-total-row {
       display: flex;
       justify-content: space-between;
@@ -389,6 +381,16 @@
 
   // ─── DOM Elements ────────────────────────────────────────────────────────────
   let overlay, drawer, itemsList, totalEl, shippingNoticeEl, badge;
+  let _isUS = true; // default true until geo check resolves
+
+  // Detect country via free IP API; hide shipping notice for non-US visitors
+  fetch('https://ipapi.co/country_code/')
+    .then(function (r) { return r.text(); })
+    .then(function (code) {
+      _isUS = code.trim() === 'US';
+      _updateShippingNotice();
+    })
+    .catch(function () { /* network error — keep default true */ });
 
   function _init() {
     const styleEl = document.createElement('style');
@@ -421,11 +423,11 @@
       '<div class="nc-cart-items" role="list"></div>',
       '<div class="nc-cart-footer">',
       '  <div class="nc-cart-checkout-error" style="display:none"></div>',
-      '  <div class="nc-cart-shipping-notice" style="display:none"></div>',
       '  <div class="nc-cart-total-row">',
       '    <span class="nc-cart-total-label">Total</span>',
       '    <span class="nc-cart-total-amount"></span>',
       '  </div>',
+      '  <div class="nc-cart-shipping-notice" style="display:none"></div>',
       '  <div class="nc-cart-pay-area">',
       '    <div id="nc-paypal-mount"></div>',
       '  </div>',
@@ -571,7 +573,7 @@
 
   function _updateShippingNotice() {
     if (!shippingNoticeEl) return;
-    // For bundle items, use bundleCount (number of pieces) rather than cart quantity
+    if (!_isUS) { shippingNoticeEl.style.display = 'none'; return; }
     const totalQty = cart.reduce(function (s, i) {
       return s + (i.meta && i.meta.bundleCount ? i.meta.bundleCount * i.quantity : i.quantity);
     }, 0);
