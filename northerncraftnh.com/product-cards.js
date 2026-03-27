@@ -1,11 +1,9 @@
 /**
  * NorthernCraft — Product Cards & Bundle Selection
  *
- * Click a product → compact bar slides up at bottom.
- * Tier price labels auto-highlight as more cards are selected.
- * "Add N more to save X%" hint updates live.
- * Add to Cart price = calcPrice(selected count).
- * No interactive tier switching — just keep clicking cards.
+ * Desktop: click card → banner slides up, keep clicking to build a set.
+ * Mobile:  click card → bottom-sheet modal with single-buy or Build a Set.
+ *          Build a Set → slim banner with tier pills + cart icon button.
  */
 (function () {
   'use strict';
@@ -38,16 +36,30 @@
       if (TIERS[i].limit > n) return TIERS[i];
     return null;
   }
+  function isMobile() {
+    return window.matchMedia && window.matchMedia('(max-width:768px)').matches;
+  }
 
   /* ──────────────────────────────── state ───────────────────────────── */
-  var activeProd = null;   // { id, name, price, image, card }
-  var selected   = [];     // selected .product-card elements
+  var activeProd = null;
+  var selected   = [];
+  var sheetCard  = null;  // card currently shown in mobile modal
 
   /* ──────────────────────────────── DOM refs ─────────────────────────── */
   var bar, barThumb, barName, barSpecs, barMsg, barAdd, barBack;
-  var tierLabels = [];   // .bb-tier span elements (display only)
+  var tierLabels = [];
+  var sheet, sheetOverlay, sheetImg, sheetName, sheetSpecsEl, sheetPrice,
+      sheetAddBtn, sheetBuildBtn;
 
   /* ──────────────────────────────── CSS ─────────────────────────────── */
+  var CART_SVG =
+    '<svg width="15" height="15" viewBox="0 0 16 16" fill="none" aria-hidden="true">' +
+    '<path d="M1 1.5h2l1.8 7.5h7.4l1.8-6H4.6" stroke="currentColor" stroke-width="1.4"' +
+    ' stroke-linecap="round" stroke-linejoin="round"/>' +
+    '<circle cx="7" cy="13.5" r="1.1" fill="currentColor"/>' +
+    '<circle cx="12" cy="13.5" r="1.1" fill="currentColor"/>' +
+    '</svg>';
+
   var CSS = [
 
     /* nav cart */
@@ -55,7 +67,7 @@
     '  color:var(--charcoal);display:flex;align-items:center;padding:2px;transition:color .2s}',
     '.nav-cart-icon:hover{color:var(--mauve)}',
 
-    /* ── bundle bar ─────────────────────────────────────────────────── */
+    /* ── bundle bar (desktop) ───────────────────────────────────────── */
     '#bundle-bar{',
     '  position:fixed;bottom:0;left:0;right:0;',
     '  background:var(--cream);',
@@ -68,7 +80,6 @@
     '}',
     '#bundle-bar.bb-on{transform:translateY(0)}',
 
-    /* zone: product info */
     '#bb-prod{',
     '  display:flex;align-items:center;gap:16px;',
     '  padding:14px 26px 14px 18px;',
@@ -80,7 +91,6 @@
     '#bb-pspecs{font-family:var(--ff-sans);font-size:11px;letter-spacing:.07em;',
     '  color:var(--mauve-dark);margin:0}',
 
-    /* desktop: tiers row 1 col 2, hint row 2 col 2 — both centred */
     '#bb-tiers{',
     '  grid-column:2;grid-row:1;',
     '  display:flex;align-items:center;gap:8px;flex-wrap:wrap;',
@@ -92,11 +102,9 @@
     '  align-items:center;justify-content:center;',
     '  padding:0 32px 14px;text-align:center;',
     '}',
-    /* left zone spans both rows */
     '#bb-prod{grid-row:1/3}',
     '#bb-acts{grid-column:3;grid-row:1/3}',
 
-    /* tier label — display only, not interactive */
     '.bb-tier{',
     '  padding:7px 16px;',
     '  border:1.5px solid rgba(92,53,69,.16);',
@@ -105,7 +113,6 @@
     '  white-space:nowrap;pointer-events:none;user-select:none;',
     '  transition:border-color .2s,color .2s,background .2s;',
     '}',
-    /* tier auto-highlights when count reaches it */
     '.bb-tier.bb-reached{',
     '  border-color:var(--mauve-dark);color:var(--mauve-dark);',
     '  background:rgba(92,53,69,.05);',
@@ -117,7 +124,6 @@
     '  margin:0;text-align:center;',
     '}',
 
-    /* zone: actions — sits in right 1fr column, pushed to the right edge */
     '#bb-acts{',
     '  display:flex;flex-direction:column;align-items:stretch;',
     '  justify-content:center;gap:6px;',
@@ -142,7 +148,6 @@
     '#bb-add[disabled]{opacity:.35;cursor:not-allowed}',
     '#bb-add:not([disabled]):hover{background:var(--mauve)}',
 
-    /* body padding so last grid cards don't hide behind bar */
     'body.bb-active{padding-bottom:86px}',
 
     /* ── product select circles ──────────────────────────────────────── */
@@ -162,53 +167,93 @@
     '.psc path{opacity:0;transition:opacity .15s}',
     '.product-card.pc-sel .psc path{opacity:1}',
 
+    /* ── mobile bottom-sheet modal ───────────────────────────────────── */
+    '#bb-sheet-overlay{',
+    '  display:none;position:fixed;inset:0;',
+    '  background:rgba(42,37,35,.5);z-index:200;',
+    '  opacity:0;pointer-events:none;',
+    '  transition:opacity .25s;',
+    '}',
+    '#bb-sheet{',
+    '  display:none;position:fixed;bottom:0;left:0;right:0;',
+    '  background:var(--cream);z-index:201;',
+    '  border-radius:16px 16px 0 0;overflow:hidden;',
+    '  transform:translateY(100%);',
+    '  transition:transform .3s cubic-bezier(.4,0,.2,1);',
+    '  max-height:92vh;overflow-y:auto;',
+    '}',
+    '#bb-sheet.bb-on{transform:translateY(0)}',
+    '#bb-sheet-overlay.bb-on{opacity:1;pointer-events:auto}',
+    '#bb-sheet-handle{width:36px;height:4px;background:rgba(92,53,69,.2);',
+    '  border-radius:2px;margin:14px auto 0;}',
+    '#bb-sheet-body{padding:20px 20px 44px;}',
+    '#bb-sheet-img{width:100%;aspect-ratio:1/1;object-fit:cover;display:block;margin-bottom:18px;}',
+    '#bb-sheet-name{font-family:var(--ff-serif);font-size:30px;font-weight:400;',
+    '  color:var(--charcoal);margin:0 0 5px;}',
+    '#bb-sheet-specs{font-family:var(--ff-sans);font-size:11px;letter-spacing:.07em;',
+    '  color:var(--mauve-dark);margin:0 0 6px;}',
+    '#bb-sheet-price{font-family:var(--ff-serif);font-size:24px;',
+    '  color:var(--charcoal);margin:0 0 22px;}',
+    '#bb-sheet-add-btn{',
+    '  display:block;width:100%;box-sizing:border-box;',
+    '  background:var(--mauve-dark);color:#fff;border:none;cursor:pointer;',
+    '  font-family:var(--ff-sans);font-size:11px;letter-spacing:.18em;',
+    '  text-transform:uppercase;padding:15px;margin-bottom:10px;',
+    '  transition:background .2s;',
+    '}',
+    '#bb-sheet-add-btn:hover{background:var(--mauve)}',
+    '#bb-sheet-build-btn{',
+    '  display:block;width:100%;box-sizing:border-box;',
+    '  background:none;border:1.5px solid rgba(92,53,69,.22);cursor:pointer;',
+    '  font-family:var(--ff-sans);font-size:11px;letter-spacing:.18em;',
+    '  text-transform:uppercase;padding:14px;',
+    '  color:var(--mauve-dark);transition:border-color .2s,background .2s;',
+    '}',
+    '#bb-sheet-build-btn:hover{background:rgba(92,53,69,.04);border-color:var(--mauve-dark)}',
+    '#bb-sheet-build-sub{',
+    '  font-family:var(--ff-sans);font-size:9px;letter-spacing:.1em;',
+    '  text-transform:uppercase;color:var(--text-muted);',
+    '  text-align:center;margin:9px 0 0;',
+    '}',
+
     /* ── MOBILE ≤ 768px ──────────────────────────────────────────────── */
     '@media(max-width:768px){',
 
-    /* 3-row grid: [info|acts] / [hint|acts] / [tiers full-width] */
+    /* show modal elements */
+    '  #bb-sheet-overlay{display:block}',
+    '  #bb-sheet{display:block}',
+
+    /* slim single-row banner: tier pills + cart button */
     '  #bundle-bar{',
-    '    display:grid;',
-    '    grid-template-columns:1fr auto;',
-    '    grid-template-rows:auto auto auto;',
-    '    padding:0;',
+    '    display:flex;flex-direction:row;align-items:stretch;min-height:54px;',
     '  }',
-    '  body.bb-active{padding-bottom:108px}',
+    '  body.bb-active{padding-bottom:62px}',
 
-    /* product info — row 1, col 1 */
-    '  #bb-prod{',
-    '    grid-column:1;grid-row:1;',
-    '    padding:10px 12px;gap:10px;',
-    '  }',
-    '  #bb-img-wrap{width:48px;height:48px}',
-    '  #bb-pname{font-size:17px}',
-    '  #bb-pspecs{display:none}',
+    /* hide product info, hint, back button */
+    '  #bb-prod,#bb-mid,#bb-back{display:none}',
 
-    /* hint — row 2, col 1; no tiers here */
-    '  #bb-mid{',
-    '    grid-column:1;grid-row:2;',
-    '    flex-direction:row;justify-content:flex-start;',
-    '    padding:0 12px 8px;gap:0;',
-    '  }',
+    /* tiers: scrollable row filling width */
     '  #bb-tiers{',
-    '    grid-column:1/3;grid-row:3;',
-    '    display:flex;flex-wrap:nowrap;',
+    '    flex:1;display:flex;flex-wrap:nowrap;',
     '    overflow-x:auto;-webkit-overflow-scrolling:touch;',
-    '    gap:6px;padding:7px 12px;',
-    '    border-top:1px solid rgba(92,53,69,.08);',
+    '    align-items:center;gap:6px;padding:0 12px;',
     '    scrollbar-width:none;',
+    '    grid-column:unset;grid-row:unset;',
     '  }',
     '  #bb-tiers::-webkit-scrollbar{display:none}',
-    '  .bb-tier{font-size:9px;padding:5px 10px;white-space:nowrap;flex-shrink:0}',
-    '  #bb-hint{text-align:left;font-size:10px}',
+    '  .bb-tier{font-size:9px;padding:5px 10px;flex-shrink:0}',
 
-    /* actions — span rows 1-2, col 2 */
+    /* actions: compact, no padding gaps */
     '  #bb-acts{',
-    '    grid-column:2;grid-row:1/3;',
-    '    border-left:1px solid rgba(92,53,69,.08);',
-    '    width:150px;margin-left:0;',
+    '    display:flex;align-items:stretch;justify-content:stretch;',
+    '    padding:0;width:auto;margin-left:0;gap:0;',
+    '    border-left:1px solid rgba(92,53,69,.1);',
+    '    grid-column:unset;grid-row:unset;',
     '  }',
-    '  #bb-back{font-size:9px}',
-    '  #bb-add{font-size:10px;padding:10px 12px}',
+    '  #bb-add{',
+    '    display:flex;align-items:center;justify-content:center;',
+    '    gap:6px;padding:0 18px;font-size:13px;letter-spacing:.12em;',
+    '  }',
 
     '}',
 
@@ -220,12 +265,11 @@
     s.textContent = CSS;
     document.head.appendChild(s);
 
-    /* build bar */
+    /* ── desktop banner ── */
     bar = document.createElement('div');
     bar.id = 'bundle-bar';
     bar.setAttribute('aria-hidden', 'true');
     bar.innerHTML =
-      /* left: product */
       '<div id="bb-prod">' +
         '<div id="bb-img-wrap"><img id="bb-img" src="" alt=""></div>' +
         '<div>' +
@@ -233,16 +277,8 @@
           '<p id="bb-pspecs"></p>' +
         '</div>' +
       '</div>' +
-
-      /* mid: hint only (tiers moved to own row for mobile) */
-      '<div id="bb-mid">' +
-        '<p id="bb-hint"></p>' +
-      '</div>' +
-
-      /* tiers: direct bar child so mobile grid can place in row 3 */
+      '<div id="bb-mid"><p id="bb-hint"></p></div>' +
       '<div id="bb-tiers"></div>' +
-
-      /* right: actions */
       '<div id="bb-acts">' +
         '<button id="bb-back">Back to grid</button>' +
         '<button id="bb-add" disabled type="button">Add to Cart</button>' +
@@ -257,7 +293,6 @@
     barAdd   = bar.querySelector('#bb-add');
     barBack  = bar.querySelector('#bb-back');
 
-    /* build static tier labels */
     var tiersEl = bar.querySelector('#bb-tiers');
     TIERS.forEach(function (t) {
       var el = document.createElement('span');
@@ -274,8 +309,43 @@
     });
     barAdd.addEventListener('click', handleAdd);
     document.addEventListener('keydown', function (e) {
-      if (e.key === 'Escape') deactivate();
+      if (e.key === 'Escape') {
+        if (sheet.classList.contains('bb-on')) hideModal();
+        else deactivate();
+      }
     });
+
+    /* ── mobile bottom-sheet modal ── */
+    sheetOverlay = document.createElement('div');
+    sheetOverlay.id = 'bb-sheet-overlay';
+    sheetOverlay.addEventListener('click', hideModal);
+
+    sheet = document.createElement('div');
+    sheet.id = 'bb-sheet';
+    sheet.innerHTML =
+      '<div id="bb-sheet-handle"></div>' +
+      '<div id="bb-sheet-body">' +
+        '<img id="bb-sheet-img" src="" alt="">' +
+        '<p id="bb-sheet-name"></p>' +
+        '<p id="bb-sheet-specs">~8\u2033 Square<br>Beige &amp; Metallic Rose</p>' +
+        '<p id="bb-sheet-price"></p>' +
+        '<button id="bb-sheet-add-btn" type="button">Add to Cart</button>' +
+        '<button id="bb-sheet-build-btn" type="button">Build a Set</button>' +
+        '<p id="bb-sheet-build-sub">Up to 50% off when you build a set</p>' +
+      '</div>';
+
+    document.body.appendChild(sheetOverlay);
+    document.body.appendChild(sheet);
+
+    sheetImg      = sheet.querySelector('#bb-sheet-img');
+    sheetName     = sheet.querySelector('#bb-sheet-name');
+    sheetSpecsEl  = sheet.querySelector('#bb-sheet-specs');
+    sheetPrice    = sheet.querySelector('#bb-sheet-price');
+    sheetAddBtn   = sheet.querySelector('#bb-sheet-add-btn');
+    sheetBuildBtn = sheet.querySelector('#bb-sheet-build-btn');
+
+    sheetAddBtn.addEventListener('click', handleSheetAdd);
+    sheetBuildBtn.addEventListener('click', handleSheetBuild);
 
     /* wire product cards */
     document.querySelectorAll('.product-card[data-id]').forEach(wireCard);
@@ -301,15 +371,59 @@
     }
 
     card.addEventListener('click', function () {
-      if (bar.classList.contains('bb-on')) {
-        toggleCard(card);
+      if (isMobile()) {
+        if (bar.classList.contains('bb-on')) {
+          toggleCard(card);   // already in selection mode — just toggle
+        } else {
+          showModal(card);    // first tap — show modal
+        }
       } else {
-        activate(card);
+        if (bar.classList.contains('bb-on')) {
+          toggleCard(card);
+        } else {
+          activate(card);
+        }
       }
     });
   }
 
-  /* ── open bar for a product ───────────────────────────────────────── */
+  /* ── mobile modal ─────────────────────────────────────────────────── */
+  function showModal(card) {
+    sheetCard = card;
+    sheetImg.src     = card.dataset.image || '';
+    sheetImg.alt     = card.dataset.name  || '';
+    sheetName.textContent  = card.dataset.name || '';
+    sheetPrice.textContent = '$' + (Number(card.dataset.price) || SINGLE);
+    sheetOverlay.classList.add('bb-on');
+    sheet.classList.add('bb-on');
+  }
+
+  function hideModal() {
+    sheetOverlay.classList.remove('bb-on');
+    sheet.classList.remove('bb-on');
+    sheetCard = null;
+  }
+
+  function handleSheetAdd() {
+    if (!sheetCard || typeof window.addToCart !== 'function') return;
+    window.addToCart(
+      sheetCard.dataset.id,
+      sheetCard.dataset.name,
+      Number(sheetCard.dataset.price) || SINGLE,
+      sheetCard.dataset.image || ''
+    );
+    hideModal();
+    var icon = document.getElementById('cart-icon');
+    if (icon) icon.click();
+  }
+
+  function handleSheetBuild() {
+    var card = sheetCard;
+    hideModal();
+    activate(card);   // enters selection mode, adds this card
+  }
+
+  /* ── activate (enter selection mode) ─────────────────────────────── */
   function activate(card) {
     selected.forEach(function (c) { c.classList.remove('pc-sel'); });
     selected = [card];
@@ -340,17 +454,15 @@
       selected.splice(i, 1);
       card.classList.remove('pc-sel');
       if (selected.length === 0) { deactivate(); return; }
-      /* banner shows the last remaining selection */
       var show = selected[selected.length - 1];
       barThumb.src = show.dataset.image || '';
-      barThumb.alt = show.dataset.name || '';
+      barThumb.alt = show.dataset.name  || '';
       barName.textContent = show.dataset.name || '';
     } else {
       selected.push(card);
       card.classList.add('pc-sel');
-      /* banner updates to the newly added card */
       barThumb.src = card.dataset.image || '';
-      barThumb.alt = card.dataset.name || '';
+      barThumb.alt = card.dataset.name  || '';
       barName.textContent = card.dataset.name || '';
     }
     updateBar();
@@ -358,49 +470,39 @@
 
   /* ── update bar state ─────────────────────────────────────────────── */
   function updateBar() {
-    var n   = selected.length;
-    var cur = bestTier(n);
-    var nxt = nextTier(n);
+    var n     = selected.length;
+    var cur   = bestTier(n);
+    var nxt   = nextTier(n);
     var price = calcPrice(n);
 
-    /* auto-highlight earned tiers */
     tierLabels.forEach(function (el) {
       el.classList.toggle('bb-reached', !!(cur && parseInt(el.dataset.limit, 10) <= cur.limit));
     });
 
-    /* hint text */
     if (nxt) {
       var need = nxt.limit - n;
-      barMsg.textContent =
-        'Add\u00a0' + need + '\u00a0more to save\u00a0' + savePct(nxt.limit) + '%+';
+      barMsg.textContent = 'Add\u00a0' + need + '\u00a0more to save\u00a0' + savePct(nxt.limit) + '%+';
     } else if (n > 0) {
       barMsg.textContent = savePct(n) + '%+\u00a0off';
     } else {
       barMsg.textContent = '';
     }
 
-    /* add to cart button */
     if (n > 0) {
-      barAdd.textContent = 'Add to Cart\u00a0\u00b7\u00a0$' + price;
+      if (isMobile()) {
+        barAdd.innerHTML = CART_SVG + '\u00a0$' + price;
+      } else {
+        barAdd.textContent = 'Add to Cart\u00a0\u00b7\u00a0$' + price;
+      }
       barAdd.disabled = false;
     } else {
-      barAdd.textContent = 'Add to Cart';
+      if (isMobile()) {
+        barAdd.innerHTML = CART_SVG;
+      } else {
+        barAdd.textContent = 'Add to Cart';
+      }
       barAdd.disabled = true;
     }
-  }
-
-  /* ── hide banner (keep selections) ───────────────────────────────── */
-  function hideBanner() {
-    bar.classList.remove('bb-on');
-    bar.setAttribute('aria-hidden', 'true');
-    document.body.classList.remove('bb-active');
-  }
-
-  /* ── show banner (restore from hidden) ───────────────────────────── */
-  function showBanner() {
-    bar.classList.add('bb-on');
-    bar.setAttribute('aria-hidden', 'false');
-    document.body.classList.add('bb-active');
   }
 
   /* ── deactivate ───────────────────────────────────────────────────── */
@@ -413,15 +515,13 @@
     bar.setAttribute('aria-hidden', 'true');
   }
 
-  /* ── add to cart ──────────────────────────────────────────────────── */
+  /* ── add to cart (banner) ─────────────────────────────────────────── */
   function handleAdd() {
     if (!selected.length || typeof window.addToCart !== 'function') return;
 
     if (selected.length === 1) {
-      /* single item */
       window.addToCart(activeProd.id, activeProd.name, SINGLE, activeProd.image);
     } else {
-      /* bundle — merge with any existing bundle in cart */
       var newNames = selected.map(function (c) { return c.dataset.name; });
       var img0     = selected[0].dataset.image || '';
       var cart     = typeof window.getCart === 'function' ? window.getCart() : [];
