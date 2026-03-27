@@ -313,9 +313,18 @@
     if (i >= 0) {
       selected.splice(i, 1);
       card.classList.remove('pc-sel');
+      /* banner shows the last remaining selection, or first if none */
+      var show = selected[selected.length - 1] || card;
+      barThumb.src = show.dataset.image || '';
+      barThumb.alt = show.dataset.name || '';
+      barName.textContent = show.dataset.name || '';
     } else {
       selected.push(card);
       card.classList.add('pc-sel');
+      /* banner updates to the newly added card */
+      barThumb.src = card.dataset.image || '';
+      barThumb.alt = card.dataset.name || '';
+      barName.textContent = card.dataset.name || '';
     }
     updateBar();
   }
