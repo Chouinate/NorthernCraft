@@ -307,9 +307,40 @@
       text-transform: uppercase;
       text-align: right;
       margin-top: 5px;
+      display: flex;
+      align-items: center;
+      justify-content: flex-end;
+      gap: 5px;
+      position: relative;
     }
     .nc-cart-shipping-notice.earned { color: #3a6b3a; }
     .nc-cart-shipping-notice.promo  { color: #9a9088; }
+    .nc-ship-info-btn {
+      display: inline-flex; align-items: center; justify-content: center;
+      width: 13px; height: 13px; border-radius: 50%;
+      border: 1.5px solid currentColor;
+      font-size: 8px; font-style: italic; font-family: Georgia, serif;
+      cursor: pointer; background: none; padding: 0; line-height: 1;
+      color: inherit; flex-shrink: 0;
+      transition: opacity .15s;
+    }
+    .nc-ship-info-btn:hover { opacity: .7; }
+    .nc-ship-info-popup {
+      display: none;
+      position: absolute; bottom: calc(100% + 7px); right: 0;
+      background: #2a2523; color: rgba(255,255,255,.85);
+      font-family: 'Montserrat', sans-serif;
+      font-size: 9px; letter-spacing: .1em;
+      text-transform: none; font-weight: 400;
+      padding: 8px 12px; white-space: nowrap;
+      pointer-events: none; z-index: 10;
+    }
+    .nc-ship-info-popup::after {
+      content: ''; position: absolute; top: 100%; right: 14px;
+      border: 5px solid transparent;
+      border-top-color: #2a2523;
+    }
+    .nc-ship-info-popup.visible { display: block; }
     .nc-cart-total-row {
       display: flex;
       justify-content: space-between;
@@ -571,6 +602,29 @@
     badge.dataset.hidden = count === 0 ? 'true' : 'false';
   }
 
+  function _makeInfoBtn() {
+    var popup = document.createElement('span');
+    popup.className = 'nc-ship-info-popup';
+    popup.textContent = 'Applies to shipping within the United States only.';
+
+    var btn = document.createElement('button');
+    btn.className = 'nc-ship-info-btn';
+    btn.setAttribute('type', 'button');
+    btn.setAttribute('aria-label', 'Shipping info');
+    btn.textContent = 'i';
+    btn.appendChild(popup);
+
+    btn.addEventListener('click', function (e) {
+      e.stopPropagation();
+      popup.classList.toggle('visible');
+    });
+    document.addEventListener('click', function () {
+      popup.classList.remove('visible');
+    }, { capture: true });
+
+    return btn;
+  }
+
   function _updateShippingNotice() {
     if (!shippingNoticeEl) return;
     if (!_isUS) { shippingNoticeEl.style.display = 'none'; return; }
@@ -582,11 +636,15 @@
     } else if (totalQty >= 2) {
       shippingNoticeEl.style.display = '';
       shippingNoticeEl.className = 'nc-cart-shipping-notice earned';
-      shippingNoticeEl.textContent = '\u2713 Free shipping applied';
+      shippingNoticeEl.innerHTML = '';
+      shippingNoticeEl.appendChild(document.createTextNode('\u2713 Free shipping applied'));
+      shippingNoticeEl.appendChild(_makeInfoBtn());
     } else {
       shippingNoticeEl.style.display = '';
       shippingNoticeEl.className = 'nc-cart-shipping-notice promo';
-      shippingNoticeEl.textContent = 'Free shipping when you buy 2 or more';
+      shippingNoticeEl.innerHTML = '';
+      shippingNoticeEl.appendChild(document.createTextNode('Free shipping when you buy 2 or more'));
+      shippingNoticeEl.appendChild(_makeInfoBtn());
     }
   }
 
