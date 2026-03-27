@@ -429,26 +429,24 @@
   }
 
   function wireSheetSwipe() {
-    var dragZone = sheet.querySelector('#bb-sheet-drag');
-    var startY   = 0;
-    var dy       = 0;
-    var active   = false;
+    var dragZone  = sheet.querySelector('#bb-sheet-drag');
+    var startY    = 0;
+    var startTime = 0;
+    var dy        = 0;
+    var active    = false;
 
     dragZone.addEventListener('touchstart', function (e) {
-      startY = e.touches[0].clientY;
-      dy     = 0;
-      active = false; // wait to confirm downward direction
+      startY    = e.touches[0].clientY;
+      startTime = Date.now();
+      dy        = 0;
+      active    = false;
       sheet.style.transition = 'none';
     }, { passive: true });
 
     dragZone.addEventListener('touchmove', function (e) {
-      var currentY = e.touches[0].clientY;
-      var delta    = currentY - startY;
-
-      // only activate dismiss-drag on downward swipe
+      var delta = e.touches[0].clientY - startY;
       if (!active && delta > 8) active = true;
       if (!active) return;
-
       e.preventDefault();
       dy = Math.max(0, delta);
       sheet.style.transform = 'translateY(' + dy + 'px)';
@@ -456,7 +454,11 @@
 
     dragZone.addEventListener('touchend', function () {
       sheet.style.transition = '';
-      if (active && dy > sheet.offsetHeight * 0.25) {
+      var elapsed  = Date.now() - startTime;
+      var velocity = dy / elapsed; // px/ms
+      var fastFlick = velocity > 0.4 && dy > 20;
+      var farEnough = dy > sheet.offsetHeight * 0.25;
+      if (active && (fastFlick || farEnough)) {
         hideModal();
       } else {
         sheet.style.transform = 'translateY(0)';
@@ -465,7 +467,6 @@
       active = false;
     });
 
-    // block touchmove on the overlay so background never scrolls
     sheetOverlay.addEventListener('touchmove', function (e) {
       e.preventDefault();
     }, { passive: false });
