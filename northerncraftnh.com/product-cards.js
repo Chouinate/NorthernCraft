@@ -332,10 +332,12 @@
     sheet.innerHTML =
       '<div id="bb-sheet-handle"></div>' +
       '<div id="bb-sheet-body">' +
-        '<img id="bb-sheet-img" src="" alt="">' +
-        '<p id="bb-sheet-name"></p>' +
-        '<p id="bb-sheet-specs">~8\u2033 Square<br>Beige &amp; Metallic Rose</p>' +
-        '<p id="bb-sheet-price"></p>' +
+        '<div id="bb-sheet-drag">' +
+          '<img id="bb-sheet-img" src="" alt="">' +
+          '<p id="bb-sheet-name"></p>' +
+          '<p id="bb-sheet-specs">~8\u2033 Square<br>Beige &amp; Metallic Rose</p>' +
+          '<p id="bb-sheet-price"></p>' +
+        '</div>' +
         '<button id="bb-sheet-add-btn" type="button">Add to Cart</button>' +
         '<button id="bb-sheet-build-btn" type="button">Build a Set</button>' +
         '<p id="bb-sheet-build-sub">Up to 50% off when you build a set</p>' +
@@ -432,35 +434,43 @@
   }
 
   function wireSheetSwipe() {
-    var handle = sheet.querySelector('#bb-sheet-handle');
-    var startY = 0;
-    var dy     = 0;
+    var dragZone = sheet.querySelector('#bb-sheet-drag');
+    var startY   = 0;
+    var dy       = 0;
+    var active   = false;
 
-    handle.addEventListener('touchstart', function (e) {
+    dragZone.addEventListener('touchstart', function (e) {
       startY = e.touches[0].clientY;
       dy     = 0;
+      active = false; // wait to confirm downward direction
       sheet.style.transition = 'none';
     }, { passive: true });
 
-    handle.addEventListener('touchmove', function (e) {
-      e.preventDefault(); // must be non-passive to stop page scroll
-      dy = Math.max(0, e.touches[0].clientY - startY);
+    dragZone.addEventListener('touchmove', function (e) {
+      var currentY = e.touches[0].clientY;
+      var delta    = currentY - startY;
+
+      // only activate dismiss-drag on downward swipe
+      if (!active && delta > 8) active = true;
+      if (!active) return;
+
+      e.preventDefault();
+      dy = Math.max(0, delta);
       sheet.style.transform = 'translateY(' + dy + 'px)';
     }, { passive: false });
 
-    handle.addEventListener('touchend', function () {
+    dragZone.addEventListener('touchend', function () {
       sheet.style.transition = '';
-      // dismiss if dragged more than 30% of the sheet height
-      var threshold = sheet.offsetHeight * 0.3;
-      if (dy > threshold) {
+      if (active && dy > sheet.offsetHeight * 0.25) {
         hideModal();
       } else {
         sheet.style.transform = 'translateY(0)';
       }
-      dy = 0;
+      dy     = 0;
+      active = false;
     });
 
-    // also block touchmove on the overlay so background never scrolls
+    // block touchmove on the overlay so background never scrolls
     sheetOverlay.addEventListener('touchmove', function (e) {
       e.preventDefault();
     }, { passive: false });
