@@ -245,7 +245,7 @@
       tierLabels.push(el);
     });
 
-    barBack.addEventListener('click', deactivate);
+    barBack.addEventListener('click', hideBanner);
     barAdd.addEventListener('click', handleAdd);
     document.addEventListener('keydown', function (e) {
       if (e.key === 'Escape') deactivate();
@@ -270,12 +270,21 @@
       wrap.appendChild(circle);
       circle.addEventListener('click', function (e) {
         e.stopPropagation();
-        toggleCard(card);
+        if (selected.length === 0) {
+          activate(card);
+        } else {
+          if (!bar.classList.contains('bb-on')) showBanner();
+          toggleCard(card);
+        }
       });
     }
 
     card.addEventListener('click', function () {
-      if (bar.classList.contains('bb-on')) {
+      if (selected.length > 0 && !bar.classList.contains('bb-on')) {
+        /* banner was hidden — re-show it and toggle this card */
+        showBanner();
+        toggleCard(card);
+      } else if (bar.classList.contains('bb-on')) {
         toggleCard(card);
       } else {
         activate(card);
@@ -361,6 +370,20 @@
       barAdd.textContent = 'Add to Cart';
       barAdd.disabled = true;
     }
+  }
+
+  /* ── hide banner (keep selections) ───────────────────────────────── */
+  function hideBanner() {
+    bar.classList.remove('bb-on');
+    bar.setAttribute('aria-hidden', 'true');
+    document.body.classList.remove('bb-active');
+  }
+
+  /* ── show banner (restore from hidden) ───────────────────────────── */
+  function showBanner() {
+    bar.classList.add('bb-on');
+    bar.setAttribute('aria-hidden', 'false');
+    document.body.classList.add('bb-active');
   }
 
   /* ── deactivate ───────────────────────────────────────────────────── */
