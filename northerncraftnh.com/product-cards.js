@@ -123,7 +123,7 @@
     '  background:none;border:none;cursor:pointer;',
     '  font-family:var(--ff-sans);font-size:10px;letter-spacing:.18em;',
     '  text-transform:uppercase;color:var(--text-muted);',
-    '  padding:0;transition:color .2s;text-align:right;',
+    '  padding:0;transition:color .2s;text-align:center;',
     '}',
     '#bb-back:hover{color:var(--mauve-dark)}',
     '#bb-add{',
