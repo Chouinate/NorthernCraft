@@ -62,7 +62,7 @@
     '  border-top:1px solid rgba(92,53,69,.12);',
     '  box-shadow:0 -4px 24px rgba(42,37,35,.1);',
     '  z-index:190;',
-    '  display:flex;align-items:stretch;',
+    '  display:grid;grid-template-columns:1fr auto 1fr;align-items:center;',
     '  transform:translateY(100%);',
     '  transition:transform .3s cubic-bezier(.4,0,.2,1);',
     '}',
@@ -72,7 +72,6 @@
     '#bb-prod{',
     '  display:flex;align-items:center;gap:16px;',
     '  padding:14px 26px 14px 18px;',
-    '  flex:1;',
     '}',
     '#bb-img-wrap{width:72px;height:72px;flex-shrink:0;overflow:hidden;background:var(--panel)}',
     '#bb-img-wrap img{width:100%;height:100%;object-fit:cover;display:block}',
@@ -81,9 +80,9 @@
     '#bb-pspecs{font-family:var(--ff-sans);font-size:11px;letter-spacing:.07em;',
     '  color:var(--mauve-dark);margin:0}',
 
-    /* zone: tiers + hint — flex:0 so left/right flex:1 zones balance it */
+    /* zone: tiers + hint — centre column of the 1fr auto 1fr grid */
     '#bb-mid{',
-    '  flex:0 0 auto;display:flex;flex-direction:column;',
+    '  display:flex;flex-direction:column;',
     '  align-items:center;justify-content:center;',
     '  gap:10px;padding:12px 32px;',
     '  text-align:center;',
@@ -112,13 +111,13 @@
     '  margin:0;text-align:center;',
     '}',
 
-    /* zone: actions */
+    /* zone: actions — sits in right 1fr column, pushed to the right edge */
     '#bb-acts{',
     '  display:flex;flex-direction:column;align-items:stretch;',
     '  justify-content:center;gap:7px;',
     '  padding:10px 18px 10px 14px;',
-    '  flex:1;border-left:1px solid rgba(92,53,69,.08);',
-    '  max-width:220px;margin-left:auto;',
+    '  border-left:1px solid rgba(92,53,69,.08);',
+    '  width:200px;margin-left:auto;',
     '}',
     '#bb-back{',
     '  background:none;border:none;cursor:pointer;',
