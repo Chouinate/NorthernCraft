@@ -30,7 +30,8 @@
   }
   function savePct(n) {
     if (!n) return 0;
-    return Math.round((1 - calcPrice(n) / (n * SINGLE)) * 100);
+    var exact = (1 - calcPrice(n) / (n * SINGLE)) * 100;
+    return Math.floor(exact / 5) * 5;
   }
   function nextTier(n) {
     for (var i = 0; i < TIERS.length; i++)
@@ -86,8 +87,10 @@
     '  flex:1;display:flex;flex-direction:column;',
     '  align-items:center;justify-content:center;',
     '  gap:10px;padding:12px 24px;',
+    '  text-align:center;',
     '}',
-    '#bb-tiers{display:flex;align-items:center;gap:8px;flex-wrap:wrap;justify-content:center}',
+    '#bb-tiers{display:flex;align-items:center;gap:8px;flex-wrap:wrap;',
+    '  justify-content:center;width:100%}',
 
     /* tier label — display only, not interactive */
     '.bb-tier{',
@@ -298,8 +301,7 @@
     barThumb.src = activeProd.image;
     barThumb.alt = activeProd.name;
     barName.textContent = activeProd.name;
-    barSpecs.textContent =
-      '$' + SINGLE + '\u00a0\u00b7\u00a0~8\u2033\u00a0square\u00a0\u00b7\u00a0Beige\u00a0&\u00a0Metallic\u00a0Rose';
+    barSpecs.innerHTML = '~8\u2033 Square<br>Beige &amp; Metallic Rose';
 
     bar.classList.add('bb-on');
     bar.setAttribute('aria-hidden', 'false');
@@ -345,9 +347,9 @@
     if (nxt) {
       var need = nxt.limit - n;
       barMsg.textContent =
-        'Add\u00a0' + need + '\u00a0more to save\u00a0' + savePct(nxt.limit) + '%';
+        'Add\u00a0' + need + '\u00a0more to save\u00a0' + savePct(nxt.limit) + '%+';
     } else if (n > 0) {
-      barMsg.textContent = savePct(n) + '%\u00a0off';
+      barMsg.textContent = savePct(n) + '%+\u00a0off';
     } else {
       barMsg.textContent = '';
     }
