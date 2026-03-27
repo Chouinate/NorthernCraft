@@ -245,7 +245,10 @@
       tierLabels.push(el);
     });
 
-    barBack.addEventListener('click', hideBanner);
+    barBack.addEventListener('click', function () {
+      var grid = document.getElementById('collection');
+      if (grid) grid.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    });
     barAdd.addEventListener('click', handleAdd);
     document.addEventListener('keydown', function (e) {
       if (e.key === 'Escape') deactivate();
@@ -270,21 +273,12 @@
       wrap.appendChild(circle);
       circle.addEventListener('click', function (e) {
         e.stopPropagation();
-        if (selected.length === 0) {
-          activate(card);
-        } else {
-          if (!bar.classList.contains('bb-on')) showBanner();
-          toggleCard(card);
-        }
+        toggleCard(card);
       });
     }
 
     card.addEventListener('click', function () {
-      if (selected.length > 0 && !bar.classList.contains('bb-on')) {
-        /* banner was hidden — re-show it and toggle this card */
-        showBanner();
-        toggleCard(card);
-      } else if (bar.classList.contains('bb-on')) {
+      if (bar.classList.contains('bb-on')) {
         toggleCard(card);
       } else {
         activate(card);
