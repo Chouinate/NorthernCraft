@@ -62,7 +62,7 @@
     '  border-top:1px solid rgba(92,53,69,.12);',
     '  box-shadow:0 -4px 24px rgba(42,37,35,.1);',
     '  z-index:190;',
-    '  display:grid;grid-template-columns:1fr auto 1fr;align-items:center;',
+    '  display:grid;grid-template-columns:1fr auto 1fr;grid-template-rows:auto auto;align-items:center;',
     '  transform:translateY(100%);',
     '  transition:transform .3s cubic-bezier(.4,0,.2,1);',
     '}',
@@ -80,15 +80,21 @@
     '#bb-pspecs{font-family:var(--ff-sans);font-size:11px;letter-spacing:.07em;',
     '  color:var(--mauve-dark);margin:0}',
 
-    /* zone: tiers + hint — centre column of the 1fr auto 1fr grid */
+    /* desktop: tiers row 1 col 2, hint row 2 col 2 — both centred */
+    '#bb-tiers{',
+    '  grid-column:2;grid-row:1;',
+    '  display:flex;align-items:center;gap:8px;flex-wrap:wrap;',
+    '  justify-content:center;padding:14px 32px 6px;',
+    '}',
     '#bb-mid{',
+    '  grid-column:2;grid-row:2;',
     '  display:flex;flex-direction:column;',
     '  align-items:center;justify-content:center;',
-    '  gap:10px;padding:12px 32px;',
-    '  text-align:center;',
+    '  padding:0 32px 14px;text-align:center;',
     '}',
-    '#bb-tiers{display:flex;align-items:center;gap:8px;flex-wrap:wrap;',
-    '  justify-content:center;width:100%}',
+    /* left zone spans both rows */
+    '#bb-prod{grid-row:1/3}',
+    '#bb-acts{grid-column:3;grid-row:1/3}',
 
     /* tier label — display only, not interactive */
     '.bb-tier{',
@@ -159,14 +165,14 @@
     /* ── MOBILE ≤ 768px ──────────────────────────────────────────────── */
     '@media(max-width:768px){',
 
-    /* switch bar to 2-row grid: [info | actions] / [hint | actions] */
+    /* 3-row grid: [info|acts] / [hint|acts] / [tiers full-width] */
     '  #bundle-bar{',
     '    display:grid;',
     '    grid-template-columns:1fr auto;',
-    '    grid-template-rows:auto auto;',
+    '    grid-template-rows:auto auto auto;',
     '    padding:0;',
     '  }',
-    '  body.bb-active{padding-bottom:90px}',
+    '  body.bb-active{padding-bottom:108px}',
 
     /* product info — row 1, col 1 */
     '  #bb-prod{',
@@ -177,16 +183,25 @@
     '  #bb-pname{font-size:17px}',
     '  #bb-pspecs{display:none}',
 
-    /* hint only — row 2, col 1; hide tier pills */
+    /* hint — row 2, col 1; no tiers here */
     '  #bb-mid{',
     '    grid-column:1;grid-row:2;',
     '    flex-direction:row;justify-content:flex-start;',
-    '    padding:0 12px 10px;gap:0;',
+    '    padding:0 12px 8px;gap:0;',
     '  }',
-    '  #bb-tiers{display:none}',
+    '  #bb-tiers{',
+    '    grid-column:1/3;grid-row:3;',
+    '    display:flex;flex-wrap:nowrap;',
+    '    overflow-x:auto;-webkit-overflow-scrolling:touch;',
+    '    gap:6px;padding:7px 12px;',
+    '    border-top:1px solid rgba(92,53,69,.08);',
+    '    scrollbar-width:none;',
+    '  }',
+    '  #bb-tiers::-webkit-scrollbar{display:none}',
+    '  .bb-tier{font-size:9px;padding:5px 10px;white-space:nowrap;flex-shrink:0}',
     '  #bb-hint{text-align:left;font-size:10px}',
 
-    /* actions — span both rows, col 2 */
+    /* actions — span rows 1-2, col 2 */
     '  #bb-acts{',
     '    grid-column:2;grid-row:1/3;',
     '    border-left:1px solid rgba(92,53,69,.08);',
@@ -219,11 +234,13 @@
         '</div>' +
       '</div>' +
 
-      /* mid: tier labels + hint */
+      /* mid: hint only (tiers moved to own row for mobile) */
       '<div id="bb-mid">' +
-        '<div id="bb-tiers"></div>' +
         '<p id="bb-hint"></p>' +
       '</div>' +
+
+      /* tiers: direct bar child so mobile grid can place in row 3 */
+      '<div id="bb-tiers"></div>' +
 
       /* right: actions */
       '<div id="bb-acts">' +
