@@ -464,9 +464,11 @@
 
   // ─── Drawer open / close ─────────────────────────────────────────────────────
   function _open() {
+    var scrollbarWidth = window.innerWidth - document.documentElement.clientWidth;
+    document.body.style.paddingRight = scrollbarWidth + 'px';
+    document.body.style.overflow = 'hidden';
     overlay.classList.add('nc-open');
     drawer.classList.add('nc-open');
-    document.body.style.overflow = 'hidden';
     drawer.querySelector('.nc-cart-close').focus();
   }
 
@@ -474,6 +476,7 @@
     overlay.classList.remove('nc-open');
     drawer.classList.remove('nc-open');
     document.body.style.overflow = '';
+    document.body.style.paddingRight = '';
   }
 
   // ─── Rendering ───────────────────────────────────────────────────────────────
