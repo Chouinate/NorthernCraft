@@ -176,6 +176,7 @@
     '}',
     '#bb-sheet{',
     '  display:none;position:fixed;bottom:0;left:0;right:0;',
+    '  box-sizing:border-box;max-width:100vw;',
     '  background:var(--cream);z-index:201;',
     '  border-radius:16px 16px 0 0;overflow:hidden;',
     '  transform:translateY(100%);',
