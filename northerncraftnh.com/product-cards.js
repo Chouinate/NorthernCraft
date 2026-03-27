@@ -159,36 +159,41 @@
     /* ── MOBILE ≤ 768px ──────────────────────────────────────────────── */
     '@media(max-width:768px){',
 
-    /* bar stays compact but stacks into 2 rows */
-    '  #bundle-bar{flex-wrap:wrap;padding:0}',
-    '  body.bb-active{padding-bottom:108px}',
+    /* switch bar to 2-row grid: [info | actions] / [hint | actions] */
+    '  #bundle-bar{',
+    '    display:grid;',
+    '    grid-template-columns:1fr auto;',
+    '    grid-template-rows:auto auto;',
+    '    padding:0;',
+    '  }',
+    '  body.bb-active{padding-bottom:90px}',
 
-    /* product info — row 1 left */
+    /* product info — row 1, col 1 */
     '  #bb-prod{',
-    '    flex:1;border-right:none;',
-    '    border-bottom:1px solid rgba(92,53,69,.08);',
-    '    padding:12px 16px;min-width:0;',
+    '    grid-column:1;grid-row:1;',
+    '    padding:10px 12px;gap:10px;',
     '  }',
+    '  #bb-img-wrap{width:48px;height:48px}',
+    '  #bb-pname{font-size:17px}',
+    '  #bb-pspecs{display:none}',
 
-    /* hint — row 1 right (inline with product) */
+    /* hint only — row 2, col 1; hide tier pills */
     '  #bb-mid{',
-    '    flex:0 0 auto;',
-    '    border-bottom:1px solid rgba(92,53,69,.08);',
-    '    padding:12px 16px;align-items:flex-end;',
-    '    justify-content:center;gap:4px;',
+    '    grid-column:1;grid-row:2;',
+    '    flex-direction:row;justify-content:flex-start;',
+    '    padding:0 12px 10px;gap:0;',
     '  }',
-    '  #bb-tiers{gap:3px}',
-    '  .bb-tier{font-size:8px;padding:4px 8px}',
-    '  #bb-hint{text-align:right}',
+    '  #bb-tiers{display:none}',
+    '  #bb-hint{text-align:left;font-size:10px}',
 
-    /* actions — row 2, full width */
+    /* actions — span both rows, col 2 */
     '  #bb-acts{',
-    '    flex:0 0 100%;flex-direction:row;',
-    '    border-left:none;border-top:1px solid rgba(92,53,69,.08);',
-    '    padding:10px 16px;gap:10px;min-width:0;',
+    '    grid-column:2;grid-row:1/3;',
+    '    border-left:1px solid rgba(92,53,69,.08);',
+    '    width:150px;margin-left:0;',
     '  }',
-    '  #bb-back{border:1.5px solid rgba(92,53,69,.2);padding:10px 14px;flex-shrink:0}',
-    '  #bb-add{flex:1;padding:12px}',
+    '  #bb-back{font-size:9px}',
+    '  #bb-add{font-size:10px;padding:10px 12px}',
 
     '}',
 
