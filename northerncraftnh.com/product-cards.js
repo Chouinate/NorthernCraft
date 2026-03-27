@@ -31,7 +31,7 @@
   function savePct(n) {
     if (!n) return 0;
     var exact = (1 - calcPrice(n) / (n * SINGLE)) * 100;
-    return Math.floor(exact / 5) * 5;
+    return Math.floor(exact / 10) * 10;
   }
   function nextTier(n) {
     for (var i = 0; i < TIERS.length; i++)
