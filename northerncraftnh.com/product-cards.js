@@ -398,18 +398,13 @@
   }
 
   /* ── mobile modal ─────────────────────────────────────────────────── */
-  var _scrollY = 0;
   function lockScroll() {
-    _scrollY = window.scrollY;
-    document.body.style.position = 'fixed';
-    document.body.style.top      = '-' + _scrollY + 'px';
-    document.body.style.width    = '100%';
+    document.body.style.overflowY    = 'hidden';
+    document.body.style.touchAction  = 'none';
   }
   function unlockScroll() {
-    document.body.style.position = '';
-    document.body.style.top      = '';
-    document.body.style.width    = '';
-    window.scrollTo(0, _scrollY);
+    document.body.style.overflowY    = '';
+    document.body.style.touchAction  = '';
   }
 
   function showModal(card) {
