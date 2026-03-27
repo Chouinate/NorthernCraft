@@ -178,16 +178,22 @@
     '  display:none;position:fixed;bottom:0;left:0;right:0;',
     '  box-sizing:border-box;max-width:100vw;',
     '  background:var(--cream);z-index:201;',
-    '  border-radius:16px 16px 0 0;overflow:hidden;',
+    '  border-radius:16px 16px 0 0;',
     '  transform:translateY(100%);',
     '  transition:transform .3s cubic-bezier(.4,0,.2,1);',
-    '  max-height:92vh;overflow-y:auto;',
+    '  max-height:92vh;',
+    '  display:flex;flex-direction:column;',
     '}',
     '#bb-sheet.bb-on{transform:translateY(0)}',
     '#bb-sheet-overlay.bb-on{opacity:1;pointer-events:auto}',
-    '#bb-sheet-handle{width:36px;height:4px;background:rgba(92,53,69,.2);',
-    '  border-radius:2px;margin:14px auto 0;}',
-    '#bb-sheet-body{padding:20px 20px 44px;}',
+    '#bb-sheet-handle{',
+    '  flex-shrink:0;width:36px;height:4px;background:rgba(92,53,69,.2);',
+    '  border-radius:2px;margin:14px auto 8px;cursor:grab;',
+    '}',
+    '#bb-sheet-body{',
+    '  overflow-y:auto;-webkit-overflow-scrolling:touch;',
+    '  padding:8px 20px 44px;',
+    '}',
     '#bb-sheet-img{width:100%;aspect-ratio:1/1;object-fit:cover;display:block;margin-bottom:18px;}',
     '#bb-sheet-name{font-family:var(--ff-serif);font-size:30px;font-weight:400;',
     '  color:var(--charcoal);margin:0 0 5px;}',
@@ -390,24 +396,38 @@
   }
 
   /* ── mobile modal ─────────────────────────────────────────────────── */
+  var _scrollY = 0;
+  function lockScroll() {
+    _scrollY = window.scrollY;
+    document.body.style.position = 'fixed';
+    document.body.style.top      = '-' + _scrollY + 'px';
+    document.body.style.width    = '100%';
+  }
+  function unlockScroll() {
+    document.body.style.position = '';
+    document.body.style.top      = '';
+    document.body.style.width    = '';
+    window.scrollTo(0, _scrollY);
+  }
+
   function showModal(card) {
     sheetCard = card;
-    sheetImg.src     = card.dataset.image || '';
-    sheetImg.alt     = card.dataset.name  || '';
-    sheetName.textContent  = card.dataset.name || '';
+    sheetImg.src           = card.dataset.image || '';
+    sheetImg.alt           = card.dataset.name  || '';
+    sheetName.textContent  = card.dataset.name  || '';
     sheetPrice.textContent = '$' + (Number(card.dataset.price) || SINGLE);
     sheet.style.transition = '';
     sheet.style.transform  = '';
     sheetOverlay.classList.add('bb-on');
     sheet.classList.add('bb-on');
-    document.body.style.overflow = 'hidden';
+    lockScroll();
   }
 
   function hideModal() {
     sheetOverlay.classList.remove('bb-on');
     sheet.classList.remove('bb-on');
     sheet.style.transform = '';
-    document.body.style.overflow = '';
+    unlockScroll();
     sheetCard = null;
   }
 
