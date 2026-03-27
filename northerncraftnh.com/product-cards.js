@@ -313,8 +313,9 @@
     if (i >= 0) {
       selected.splice(i, 1);
       card.classList.remove('pc-sel');
-      /* banner shows the last remaining selection, or first if none */
-      var show = selected[selected.length - 1] || card;
+      if (selected.length === 0) { deactivate(); return; }
+      /* banner shows the last remaining selection */
+      var show = selected[selected.length - 1];
       barThumb.src = show.dataset.image || '';
       barThumb.alt = show.dataset.name || '';
       barName.textContent = show.dataset.name || '';
