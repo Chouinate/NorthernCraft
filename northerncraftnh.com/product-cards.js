@@ -432,37 +432,38 @@
   }
 
   function wireSheetSwipe() {
-    var handle   = sheet.querySelector('#bb-sheet-handle');
-    var startY   = 0;
-    var dy       = 0;
-    var dragging = false;
+    var handle = sheet.querySelector('#bb-sheet-handle');
+    var startY = 0;
+    var dy     = 0;
 
-    function onStart(e) {
-      startY   = (e.touches ? e.touches[0].clientY : e.clientY);
-      dy       = 0;
-      dragging = true;
+    handle.addEventListener('touchstart', function (e) {
+      startY = e.touches[0].clientY;
+      dy     = 0;
       sheet.style.transition = 'none';
-    }
-    function onMove(e) {
-      if (!dragging) return;
-      dy = Math.max(0, (e.touches ? e.touches[0].clientY : e.clientY) - startY);
+    }, { passive: true });
+
+    handle.addEventListener('touchmove', function (e) {
+      e.preventDefault(); // must be non-passive to stop page scroll
+      dy = Math.max(0, e.touches[0].clientY - startY);
       sheet.style.transform = 'translateY(' + dy + 'px)';
-    }
-    function onEnd() {
-      if (!dragging) return;
-      dragging = false;
+    }, { passive: false });
+
+    handle.addEventListener('touchend', function () {
       sheet.style.transition = '';
-      if (dy > 80) {
+      // dismiss if dragged more than 30% of the sheet height
+      var threshold = sheet.offsetHeight * 0.3;
+      if (dy > threshold) {
         hideModal();
       } else {
         sheet.style.transform = 'translateY(0)';
       }
       dy = 0;
-    }
+    });
 
-    handle.addEventListener('touchstart', onStart, { passive: true });
-    handle.addEventListener('touchmove',  onMove,  { passive: true });
-    handle.addEventListener('touchend',   onEnd);
+    // also block touchmove on the overlay so background never scrolls
+    sheetOverlay.addEventListener('touchmove', function (e) {
+      e.preventDefault();
+    }, { passive: false });
   }
 
   function handleSheetAdd() {
