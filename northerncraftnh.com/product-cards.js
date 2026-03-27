@@ -26,7 +26,7 @@
   }
   function calcPrice(n) {
     var t = bestTier(n);
-    return t ? t.price + (n - t.limit) * SINGLE : n * SINGLE;
+    return t ? Math.round(t.price / t.limit * n) : n * SINGLE;
   }
   function savePct(n) {
     if (!n) return 0;
