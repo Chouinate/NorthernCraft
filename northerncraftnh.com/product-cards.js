@@ -347,6 +347,7 @@
 
     sheetAddBtn.addEventListener('click', handleSheetAdd);
     sheetBuildBtn.addEventListener('click', handleSheetBuild);
+    wireSheetSwipe();
 
     /* wire product cards */
     document.querySelectorAll('.product-card[data-id]').forEach(wireCard);
@@ -395,14 +396,53 @@
     sheetImg.alt     = card.dataset.name  || '';
     sheetName.textContent  = card.dataset.name || '';
     sheetPrice.textContent = '$' + (Number(card.dataset.price) || SINGLE);
+    sheet.style.transition = '';
+    sheet.style.transform  = '';
     sheetOverlay.classList.add('bb-on');
     sheet.classList.add('bb-on');
+    document.body.style.overflow = 'hidden';
   }
 
   function hideModal() {
     sheetOverlay.classList.remove('bb-on');
     sheet.classList.remove('bb-on');
+    sheet.style.transform = '';
+    document.body.style.overflow = '';
     sheetCard = null;
+  }
+
+  function wireSheetSwipe() {
+    var handle   = sheet.querySelector('#bb-sheet-handle');
+    var startY   = 0;
+    var dy       = 0;
+    var dragging = false;
+
+    function onStart(e) {
+      startY   = (e.touches ? e.touches[0].clientY : e.clientY);
+      dy       = 0;
+      dragging = true;
+      sheet.style.transition = 'none';
+    }
+    function onMove(e) {
+      if (!dragging) return;
+      dy = Math.max(0, (e.touches ? e.touches[0].clientY : e.clientY) - startY);
+      sheet.style.transform = 'translateY(' + dy + 'px)';
+    }
+    function onEnd() {
+      if (!dragging) return;
+      dragging = false;
+      sheet.style.transition = '';
+      if (dy > 80) {
+        hideModal();
+      } else {
+        sheet.style.transform = 'translateY(0)';
+      }
+      dy = 0;
+    }
+
+    handle.addEventListener('touchstart', onStart, { passive: true });
+    handle.addEventListener('touchmove',  onMove,  { passive: true });
+    handle.addEventListener('touchend',   onEnd);
   }
 
   function handleSheetAdd() {
