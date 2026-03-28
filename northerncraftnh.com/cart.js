@@ -120,7 +120,7 @@
       display: flex;
       align-items: center;
       justify-content: space-between;
-      padding: 24px 36px 24px 28px;
+      padding: 24px 28px;
       border-bottom: 1px solid #d9d4cc;
       flex-shrink: 0;
     }
