@@ -136,7 +136,7 @@
       border: none;
       cursor: pointer;
       color: #7a6f68;
-      padding: 4px 20px 4px 4px;
+      padding: 4px 36px 4px 4px;
       display: flex;
       align-items: center;
       justify-content: center;
