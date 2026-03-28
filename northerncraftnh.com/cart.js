@@ -171,18 +171,18 @@
     /* ── Item row ── */
     .nc-cart-item {
       display: grid;
-      grid-template-columns: 72px 1fr;
+      grid-template-columns: 56px 1fr;
       grid-template-rows: auto auto;
       column-gap: 16px;
       row-gap: 10px;
       align-items: start;
-      padding: 20px 28px;
+      padding: 14px 28px;
       border-bottom: 1px solid #d9d4cc;
     }
     .nc-cart-item-img-wrap {
       grid-row: 1 / 3;
-      width: 72px;
-      height: 72px;
+      width: 56px;
+      height: 56px;
       background: #cbc5bc;
       overflow: hidden;
       flex-shrink: 0;
@@ -294,7 +294,7 @@
       text-align: center;
     }
     .nc-cart-footer {
-      padding: 20px 28px 28px;
+      padding: 12px 28px 20px;
       border-top: 1px solid #d9d4cc;
       background: #ece8e1;
       flex-shrink: 0;
@@ -306,7 +306,7 @@
       letter-spacing: 0.16em;
       text-transform: uppercase;
       text-align: right;
-      margin-top: 5px;
+      margin-bottom: 6px;
       display: flex;
       align-items: center;
       justify-content: flex-end;
@@ -345,7 +345,7 @@
       display: flex;
       justify-content: space-between;
       align-items: baseline;
-      margin-bottom: 18px;
+      margin-bottom: 12px;
     }
     .nc-cart-total-label {
       font-family: 'Montserrat', sans-serif;
@@ -444,11 +444,11 @@
       '<div class="nc-cart-items" role="list"></div>',
       '<div class="nc-cart-footer">',
       '  <div class="nc-cart-checkout-error" style="display:none"></div>',
+      '  <div class="nc-cart-shipping-notice" style="display:none"></div>',
       '  <div class="nc-cart-total-row">',
       '    <span class="nc-cart-total-label">Total</span>',
       '    <span class="nc-cart-total-amount"></span>',
       '  </div>',
-      '  <div class="nc-cart-shipping-notice" style="display:none"></div>',
       '  <div class="nc-cart-pay-area">',
       '    <div id="nc-paypal-mount"></div>',
       '  </div>',
