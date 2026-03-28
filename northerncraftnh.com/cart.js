@@ -106,7 +106,6 @@
       z-index: 200;
       display: flex;
       flex-direction: column;
-      overflow-y: auto;
       transform: translateX(100%);
       transition: transform 0.35s cubic-bezier(0.4, 0, 0.2, 1);
       box-shadow: -4px 0 32px rgba(42, 37, 35, 0.12);
@@ -120,7 +119,7 @@
       display: flex;
       align-items: center;
       justify-content: space-between;
-      padding: 24px 28px;
+      padding: 24px 20px 24px 28px;
       border-bottom: 1px solid #d9d4cc;
       flex-shrink: 0;
     }
@@ -148,7 +147,9 @@
 
     /* ── Items list ── */
     .nc-cart-items {
-      flex: 0 0 auto;
+      flex: 1;
+      overflow-y: auto;
+      overscroll-behavior: contain;
     }
     .nc-cart-empty {
       display: flex;
@@ -297,8 +298,6 @@
       border-top: none;
       background: #ece8e1;
       flex-shrink: 0;
-      position: sticky;
-      bottom: 0;
     }
     .nc-cart-shipping-notice {
       font-family: 'Montserrat', sans-serif;
