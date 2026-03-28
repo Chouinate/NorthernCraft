@@ -294,8 +294,8 @@
       text-align: center;
     }
     .nc-cart-footer {
-      padding: 12px 28px 20px;
-      border-top: 1px solid #d9d4cc;
+      padding: 0 28px 20px;
+      border-top: none;
       background: #ece8e1;
       flex-shrink: 0;
     }
@@ -305,11 +305,11 @@
       font-weight: 500;
       letter-spacing: 0.16em;
       text-transform: uppercase;
-      text-align: right;
+      text-align: center;
       margin-bottom: 6px;
       display: flex;
       align-items: center;
-      justify-content: flex-end;
+      justify-content: center;
       gap: 5px;
       position: relative;
     }
@@ -346,6 +346,8 @@
       justify-content: space-between;
       align-items: baseline;
       margin-bottom: 12px;
+      border-top: 1px solid #d9d4cc;
+      padding-top: 12px;
     }
     .nc-cart-total-label {
       font-family: 'Montserrat', sans-serif;
