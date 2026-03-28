@@ -119,7 +119,7 @@
       display: flex;
       align-items: center;
       justify-content: space-between;
-      padding: 24px 20px 24px 28px;
+      padding: 24px 0 24px 28px;
       border-bottom: 1px solid #d9d4cc;
       flex-shrink: 0;
     }
@@ -136,7 +136,7 @@
       border: none;
       cursor: pointer;
       color: #7a6f68;
-      padding: 4px;
+      padding: 4px 20px 4px 4px;
       display: flex;
       align-items: center;
       justify-content: center;
