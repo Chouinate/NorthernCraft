@@ -15,6 +15,7 @@
     { limit: 6,  price: 119, name: 'Set of 6' },
     { limit: 12, price: 199, name: 'Full Wall' },
   ];
+  var PRICE_MAP = [0, 35, 55, 75, 89, 104, 119, 136, 152, 167, 182, 191, 199];
   var SINGLE = 35;
 
   function bestTier(n) {
@@ -23,8 +24,9 @@
     return null;
   }
   function calcPrice(n) {
-    var t = bestTier(n);
-    return t ? Math.round(t.price / t.limit * n) : n * SINGLE;
+    if (n <= 0) return 0;
+    if (n <= 12) return PRICE_MAP[n];
+    return Math.round(PRICE_MAP[12] / 12 * n);
   }
   function savePct(n) {
     if (!n) return 0;
