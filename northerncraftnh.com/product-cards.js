@@ -117,6 +117,7 @@
     '  border-color:var(--mauve-dark);color:var(--mauve-dark);',
     '  background:rgba(92,53,69,.05);',
     '}',
+    '.bb-tier-num{display:none}',
 
     '#bb-hint{',
     '  font-family:var(--ff-sans);font-size:11px;letter-spacing:.13em;',
@@ -239,16 +240,18 @@
     /* hide product info, hint, back button */
     '  #bb-prod,#bb-mid,#bb-back{display:none}',
 
-    /* tiers: scrollable row filling width */
+    /* tiers: scrollable row filling width, centered when content fits */
     '  #bb-tiers{',
     '    flex:1;display:flex;flex-wrap:nowrap;',
     '    overflow-x:auto;-webkit-overflow-scrolling:touch;',
-    '    align-items:center;gap:6px;padding:0 12px;',
+    '    align-items:center;justify-content:center;gap:6px;padding:0 12px;',
     '    scrollbar-width:none;',
     '    grid-column:unset;grid-row:unset;',
     '  }',
     '  #bb-tiers::-webkit-scrollbar{display:none}',
     '  .bb-tier{font-size:9px;padding:5px 10px;flex-shrink:0}',
+    '  .bb-tier-name{display:none}',
+    '  .bb-tier-num{display:inline}',
 
     /* actions: compact, no padding gaps */
     '  #bb-acts{',
@@ -260,6 +263,7 @@
     '  #bb-add{',
     '    display:flex;align-items:center;justify-content:center;',
     '    gap:6px;padding:0 18px;font-size:13px;letter-spacing:.12em;',
+    '    align-self:stretch;height:auto;',
     '  }',
 
     '}',
@@ -305,7 +309,10 @@
       var el = document.createElement('span');
       el.className = 'bb-tier';
       el.dataset.limit = t.limit;
-      el.textContent = t.name + '\u00a0\u00b7\u00a0$' + t.price;
+      el.innerHTML =
+        '<span class="bb-tier-name">' + t.name + '</span>' +
+        '<span class="bb-tier-num">' + t.limit + '</span>' +
+        '\u00a0\u00b7\u00a0$' + t.price;
       tiersEl.appendChild(el);
       tierLabels.push(el);
     });
