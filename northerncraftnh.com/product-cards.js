@@ -253,18 +253,18 @@
     '  .bb-tier-name{display:none}',
     '  .bb-tier-num{display:inline}',
 
-    /* actions: compact, no padding gaps */
+    /* actions: compact, full-height cart button */
     '  #bb-acts{',
-    '    display:flex;align-items:stretch;justify-content:stretch;',
+    '    display:flex;flex-direction:row;align-items:stretch;',
+    '    justify-content:flex-start;',
     '    padding:0;width:auto;margin-left:0;gap:0;',
     '    border-left:1px solid rgba(92,53,69,.1);',
     '    grid-column:unset;grid-row:unset;',
     '  }',
-    '  #bb-acts{flex-direction:row}',
     '  #bb-add{',
     '    display:flex;align-items:center;justify-content:center;',
     '    gap:6px;padding:0 18px;font-size:13px;letter-spacing:.12em;',
-    '    flex:1;height:100%;',
+    '    align-self:stretch;width:auto;',
     '  }',
 
     '}',
