@@ -260,10 +260,11 @@
     '    border-left:1px solid rgba(92,53,69,.1);',
     '    grid-column:unset;grid-row:unset;',
     '  }',
+    '  #bb-acts{flex-direction:row}',
     '  #bb-add{',
     '    display:flex;align-items:center;justify-content:center;',
     '    gap:6px;padding:0 18px;font-size:13px;letter-spacing:.12em;',
-    '    align-self:stretch;height:auto;',
+    '    flex:1;height:100%;',
     '  }',
 
     '}',
