@@ -99,6 +99,7 @@
       align-items: center;
     }
     .nav-links a:hover { color: var(--mauve); }
+    .mobile-only { display: none; }
     /* ── HAMBURGER ── */
     .nav-hamburger {
       display: none;
@@ -137,6 +138,7 @@
         margin-left: 0;
       }
       .nav-links.open { display: flex; }
+      .nav-links.open .mobile-only { display: block; }
       .nav-links li { width: 100%; }
       .nav-links a { display: block; padding: 12px 28px; }
       .nav-cart-icon { margin-left: auto; margin-right: 16px; }
@@ -560,6 +562,7 @@
       <li><a href="#collection">Collection</a></li>
       <li><a href="#about">About</a></li>
       <li><a href="#process">Process</a></li>
+      <li class="mobile-only"><a href="mailto:northerncraftnh@gmail.com" class="mailto-smart">Contact</a></li>
     </ul>
     <button id="cart-icon" class="nav-cart-icon" aria-label="Open cart">
       <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor"
@@ -800,17 +803,21 @@
       navLinks.classList.toggle('open');
     });
 
+    let snapping = false;
+
     navLinks.querySelectorAll('a').forEach(link => {
       link.addEventListener('click', () => {
         hamburger.classList.remove('open');
         navLinks.classList.remove('open');
+        // suppress snap so the scroll reaches the correct section
+        snapping = true;
+        setTimeout(() => { snapping = false; }, 1200);
       });
     });
 
     // Mobile section snapping
     if (window.matchMedia('(max-width: 768px)').matches) {
       const snapSections = [...document.querySelectorAll('section, footer')];
-      let snapping = false;
       let lastY = window.scrollY;
 
       function doSnap(target) {
