@@ -37,14 +37,16 @@
       display: flex;
       align-items: center;
       padding: 10px 41px 10px 56px;
-      background: var(--cream);
+      background: rgba(240, 235, 228, 0.8);
+      backdrop-filter: blur(15px);
+      -webkit-backdrop-filter: blur(15px);
       position: fixed;
       top: 0;
       left: 0;
       right: 0;
       box-sizing: border-box;
       z-index: 100;
-      border-bottom: 1px solid rgba(0,0,0,0.06);
+      border-bottom: 1px solid var(--mauve-dark);
     }
     .nav-logo {
       display: flex;
@@ -274,6 +276,7 @@
       padding: 0;
     }
     .section-title em { font-style: italic; color: var(--mauve); }
+    #collection .section-title em { color: var(--cream); }
     /* ── COLLECTION ── */
     #collection { background: var(--cream); padding-bottom: 56px; }
     .collection-header {
