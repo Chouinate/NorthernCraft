@@ -1,507 +1,649 @@
 /**
- * NorthernCraft Product Cards + Bundle Selection
+ * NorthernCraft — Product Cards & Bundle Selection
  *
- * Single piece flow:
- *   Click a .product-card body → opens modal at $35 with Add to Cart / Buy Now.
- *
- * Bundle flow:
- *   Click a .bundle-card[data-bundle-limit] → scrolls to collection, circles appear
- *   on every product card. Click circles to select up to the bundle limit.
- *   Sticky bar shows progress and activates "Add to Cart" once limit is reached.
- *
- * Full Wall:
- *   .bundle-card[data-bundle-inquire] → opens mailto inquiry.
+ * Desktop: click card → banner slides up, keep clicking to build a set.
+ * Mobile:  click card → bottom-sheet modal with single-buy or Build a Set.
+ *          Build a Set → slim banner with tier pills + cart icon button.
  */
 (function () {
   'use strict';
 
-  // ── Styles ──────────────────────────────────────────────────────────────────
-  var CSS = [
-
-    /* ── Nav cart icon ── */
-    '.nav-cart-icon {',
-    '  background: none; border: none; cursor: pointer;',
-    '  color: var(--charcoal);',
-    '  display: flex; align-items: center; padding: 2px;',
-    '  transition: color 0.2s;',
-    '}',
-    '.nav-cart-icon:hover { color: var(--mauve); }',
-
-    /* ── Product overlay ── */
-    '.nc-prod-overlay {',
-    '  position: fixed; inset: 0;',
-    '  background: rgba(42,37,35,0.55);',
-    '  z-index: 198;',
-    '  display: flex; align-items: center; justify-content: center;',
-    '  padding: 20px;',
-    '  opacity: 0; pointer-events: none;',
-    '  transition: opacity 0.22s ease;',
-    '}',
-    '.nc-prod-overlay.nc-open { opacity: 1; pointer-events: auto; }',
-
-    /* ── Modal panel ── */
-    '.nc-prod-modal {',
-    '  background: var(--cream);',
-    '  display: flex; gap: 0;',
-    '  width: 100%; max-width: 520px;',
-    '  position: relative;',
-    '  transform: translateY(10px); opacity: 0;',
-    '  transition: transform 0.25s ease, opacity 0.25s ease;',
-    '}',
-    '.nc-prod-overlay.nc-open .nc-prod-modal { transform: translateY(0); opacity: 1; }',
-
-    /* ── Close button ── */
-    '.nc-prod-close {',
-    '  position: absolute; top: 12px; right: 14px;',
-    '  background: none; border: none; cursor: pointer;',
-    '  color: var(--text-muted); padding: 4px;',
-    '  display: flex; align-items: center; justify-content: center;',
-    '  line-height: 0; transition: color 0.2s; z-index: 1;',
-    '}',
-    '.nc-prod-close:hover { color: var(--charcoal); }',
-
-    /* ── Image column ── */
-    '.nc-prod-img-wrap {',
-    '  width: 220px; flex-shrink: 0;',
-    '  aspect-ratio: 1/1; background: var(--panel); overflow: hidden;',
-    '}',
-    '.nc-prod-img-wrap img { width: 100%; height: 100%; object-fit: cover; display: block; }',
-
-    /* ── Details column ── */
-    '.nc-prod-details {',
-    '  flex: 1; display: flex; flex-direction: column;',
-    '  justify-content: center; padding: 36px 32px 36px 28px;',
-    '}',
-    '.nc-prod-name {',
-    '  font-family: var(--ff-serif);',
-    '  font-size: 30px; font-weight: 400;',
-    '  color: var(--charcoal); letter-spacing: 0.03em; margin: 0 0 10px;',
-    '}',
-    '.nc-prod-price {',
-    '  font-family: var(--ff-sans);',
-    '  font-size: 13px; font-weight: 400;',
-    '  letter-spacing: 0.1em; color: var(--mauve-dark); margin: 0 0 28px;',
-    '}',
-
-    /* ── Specs line ── */
-    '.nc-prod-specs {',
-    '  font-family: var(--ff-sans);',
-    '  font-size: 9px; letter-spacing: 0.18em; text-transform: uppercase;',
-    '  color: var(--text-muted); margin: 0 0 16px;',
-    '}',
-
-    /* ── Action buttons ── */
-    '.nc-prod-actions { display: flex; flex-direction: column; gap: 10px; }',
-
-    '.nc-prod-btn {',
-    '  width: 100%; padding: 12px 16px;',
-    '  font-family: var(--ff-sans);',
-    '  font-size: 10px; font-weight: 400;',
-    '  letter-spacing: 0.2em; text-transform: uppercase;',
-    '  cursor: pointer;',
-    '  transition: background 0.2s, color 0.2s, border-color 0.2s;',
-    '}',
-    '.nc-prod-btn-cart {',
-    '  background: var(--mauve-dark); color: #fff; border: none;',
-    '}',
-    '.nc-prod-btn-cart:hover { background: var(--mauve); }',
-
-    /* ── Modal mobile ── */
-    '@media (max-width: 560px) {',
-    '  .nc-prod-modal { flex-direction: column; max-width: 360px; }',
-    '  .nc-prod-img-wrap { width: 100%; aspect-ratio: 4/3; }',
-    '  .nc-prod-details { padding: 24px 24px 28px; }',
-    '}',
-
-    /* ── Bundle selection circles ── */
-    '.product-select-circle {',
-    '  position: absolute; top: 10px; right: 10px;',
-    '  width: 24px; height: 24px; border-radius: 50%;',
-    '  background: rgba(236,232,225,0.88);',
-    '  border: 1.5px solid rgba(92,53,69,0.32);',
-    '  cursor: pointer; padding: 0;',
-    '  display: flex; align-items: center; justify-content: center;',
-    '  opacity: 0; pointer-events: none;',
-    '  transition: opacity 0.2s, background 0.15s, border-color 0.15s;',
-    '  z-index: 3;',
-    '}',
-    '.bundle-mode-active .product-select-circle {',
-    '  opacity: 1; pointer-events: auto;',
-    '}',
-    '.bundle-mode-active .product-card { cursor: pointer; }',
-    '.product-card.pc-selected .product-select-circle {',
-    '  background: var(--mauve-dark); border-color: var(--mauve-dark);',
-    '}',
-    '.product-select-circle path { opacity: 0; transition: opacity 0.15s; }',
-    '.product-card.pc-selected .product-select-circle path { opacity: 1; }',
-
-    /* ── Bundle bar ── */
-    '#bundle-bar {',
-    '  position: fixed; bottom: 0; left: 0; right: 0;',
-    '  background: var(--cream);',
-    '  border-top: 1px solid rgba(92,53,69,0.1);',
-    '  padding: 14px 56px;',
-    '  display: flex; align-items: center; gap: 20px; flex-wrap: wrap;',
-    '  z-index: 95;',
-    '  transform: translateY(100%);',
-    '  transition: transform 0.3s cubic-bezier(0.4,0,0.2,1);',
-    '  box-shadow: 0 -4px 24px rgba(42,37,35,0.07);',
-    '}',
-    '#bundle-bar.bb-visible { transform: translateY(0); }',
-    '#bb-cancel {',
-    '  background: none; border: none; padding: 4px 6px;',
-    '  cursor: pointer; color: var(--text-muted);',
-    '  display: flex; align-items: center; line-height: 0;',
-    '  transition: color 0.2s; flex-shrink: 0;',
-    '}',
-    '#bb-cancel:hover { color: var(--mauve-dark); }',
-    '#bb-title {',
-    '  font-family: var(--ff-sans);',
-    '  font-size: 10px; font-weight: 400;',
-    '  letter-spacing: 0.2em; text-transform: uppercase;',
-    '  color: var(--mauve-dark); flex-shrink: 0;',
-    '}',
-    '.bb-sep { color: var(--panel); font-size: 18px; flex-shrink: 0; line-height: 1; }',
-    '#bb-dots { display: flex; gap: 5px; align-items: center; flex-shrink: 0; }',
-    '.bb-dot {',
-    '  width: 7px; height: 7px; border-radius: 50%;',
-    '  border: 1.5px solid rgba(92,53,69,0.4);',
-    '  background: transparent;',
-    '  transition: background 0.15s, border-color 0.15s;',
-    '}',
-    '.bb-dot.bb-dot--filled { background: var(--mauve-dark); border-color: var(--mauve-dark); }',
-    '#bb-count {',
-    '  font-family: var(--ff-sans);',
-    '  font-size: 10px; letter-spacing: 0.14em;',
-    '  color: var(--text-muted); text-transform: uppercase; flex: 1;',
-    '}',
-    '#bb-add {',
-    '  background: var(--mauve-dark); color: #fff; border: none;',
-    '  font-family: var(--ff-sans);',
-    '  font-size: 10px; font-weight: 400;',
-    '  letter-spacing: 0.2em; text-transform: uppercase;',
-    '  padding: 13px 28px; cursor: pointer; flex-shrink: 0;',
-    '  transition: background 0.2s, opacity 0.2s;',
-    '}',
-    '#bb-add[disabled] { opacity: 0.35; cursor: not-allowed; }',
-    '#bb-add:not([disabled]):hover { background: var(--mauve); }',
-    '#bb-hint {',
-    '  width: 100%; text-align: center; margin-top: 6px;',
-    '  font-family: var(--ff-sans);',
-    '  font-size: 9px; letter-spacing: 0.14em; text-transform: uppercase;',
-    '  color: #9e9098;',
-    '}',
-    'body.bundle-mode-active { padding-bottom: 80px; }',
-    '#bb-scroll {',
-    '  background: none; border: none; padding: 4px 6px;',
-    '  cursor: pointer; color: var(--text-muted);',
-    '  font-family: var(--ff-sans);',
-    '  font-size: 9px; letter-spacing: 0.18em; text-transform: uppercase;',
-    '  display: flex; align-items: center; gap: 5px; flex-shrink: 0;',
-    '  transition: color 0.2s; white-space: nowrap;',
-    '}',
-    '#bb-scroll:hover { color: var(--mauve-dark); }',
-    '@media (max-width: 768px) {',
-    '  #bundle-bar { padding: 12px 20px; gap: 12px; }',
-    '  #bb-scroll span { display: none; }',
-    '}',
-
-  ].join('\n');
-
-  // ── Bundle state ─────────────────────────────────────────────────────────────
-  var bundleLimit = 0;
-  var bundlePrice = 0;
-  var bundleTitle = '';
-  var selectedCards = [];
-  var bundleBar, bbTitle, bbDots, bbCount, bbAdd, bbHint;
-
-  var BUNDLE_TIERS = [
-    { limit: 2,  price: 55,  name: 'Pair' },
+  /* ─────────────────────────── pricing helpers ───────────────────────── */
+  var TIERS = [
+    { limit: 2,  price: 55,  name: 'Pair'     },
     { limit: 4,  price: 89,  name: 'Set of 4' },
     { limit: 6,  price: 119, name: 'Set of 6' },
     { limit: 12, price: 199, name: 'Full Wall' },
   ];
-  var SINGLE_PRICE = 35;
+  var PRICE_MAP = [0, 35, 55, 75, 89, 104, 119, 136, 152, 167, 182, 191, 199];
+  var SINGLE = 35;
 
-  function _calcPrice(count) {
-    var extra = Math.max(0, count - bundleLimit);
-    return bundlePrice + extra * SINGLE_PRICE;
+  function bestTier(n) {
+    for (var i = TIERS.length - 1; i >= 0; i--)
+      if (n >= TIERS[i].limit) return TIERS[i];
+    return null;
+  }
+  function calcPrice(n) {
+    if (n <= 0) return 0;
+    if (n <= 12) return PRICE_MAP[n];
+    return Math.round(PRICE_MAP[12] / 12 * n);
+  }
+  function savePct(n) {
+    if (!n) return 0;
+    var exact = (1 - calcPrice(n) / (n * SINGLE)) * 100;
+    return Math.floor(exact / 10) * 10;
+  }
+  function nextTier(n) {
+    for (var i = 0; i < TIERS.length; i++)
+      if (TIERS[i].limit > n) return TIERS[i];
+    return null;
+  }
+  function isMobile() {
+    return window.matchMedia && window.matchMedia('(max-width:768px)').matches;
   }
 
-  function _dotsLimit(count) {
-    for (var i = 0; i < BUNDLE_TIERS.length; i++) {
-      if (BUNDLE_TIERS[i].limit >= count) return BUNDLE_TIERS[i].limit;
-    }
-    return count;
-  }
+  /* ──────────────────────────────── state ───────────────────────────── */
+  var activeProd = null;
+  var selected   = [];
+  var sheetCard  = null;  // card currently shown in mobile modal
 
-  // ── Modal state ──────────────────────────────────────────────────────────────
-  var overlay, imgEl, nameEl, priceEl;
-  var currentProduct = null;
+  /* ──────────────────────────────── DOM refs ─────────────────────────── */
+  var bar, barThumb, barName, barSpecs, barMsg, barAdd, barBack;
+  var tierLabels = [];
+  var sheet, sheetOverlay, sheetImg, sheetName, sheetSpecsEl, sheetPrice,
+      sheetAddBtn, sheetBuildBtn;
 
-  // ── Init ────────────────────────────────────────────────────────────────────
-  function _init() {
-    var style = document.createElement('style');
-    style.textContent = CSS;
-    document.head.appendChild(style);
+  /* ──────────────────────────────── CSS ─────────────────────────────── */
+  var CART_SVG =
+    '<svg width="15" height="15" viewBox="0 0 16 16" fill="none" aria-hidden="true">' +
+    '<path d="M1 1.5h2l1.8 7.5h7.4l1.8-6H4.6" stroke="currentColor" stroke-width="1.4"' +
+    ' stroke-linecap="round" stroke-linejoin="round"/>' +
+    '<circle cx="7" cy="13.5" r="1.1" fill="currentColor"/>' +
+    '<circle cx="12" cy="13.5" r="1.1" fill="currentColor"/>' +
+    '</svg>';
 
-    // Build product modal overlay
-    overlay = document.createElement('div');
-    overlay.className = 'nc-prod-overlay';
-    overlay.setAttribute('aria-hidden', 'true');
-    overlay.innerHTML = [
-      '<div class="nc-prod-modal" role="dialog" aria-modal="true" aria-label="Product">',
-      '  <button class="nc-prod-close" aria-label="Close">',
-      '    <svg width="18" height="18" viewBox="0 0 20 20" fill="none"',
-      '         stroke="currentColor" stroke-width="1.5" stroke-linecap="round">',
-      '      <line x1="4" y1="4" x2="16" y2="16"/>',
-      '      <line x1="16" y1="4" x2="4" y2="16"/>',
-      '    </svg>',
-      '  </button>',
-      '  <div class="nc-prod-img-wrap"><img class="nc-prod-img" src="" alt=""></div>',
-      '  <div class="nc-prod-details">',
-      '    <h3 class="nc-prod-name"></h3>',
-      '    <p class="nc-prod-price"></p>',
-      '    <p class="nc-prod-specs">~8\u2033 square \u00b7 Beige &amp; Metallic Rose</p>',
-      '    <div class="nc-prod-actions">',
-      '      <button class="nc-prod-btn nc-prod-btn-cart">Add to Cart</button>',
-      '    </div>',
-      '  </div>',
-      '</div>',
-    ].join('');
-    document.body.appendChild(overlay);
+  var CSS = [
 
-    imgEl   = overlay.querySelector('.nc-prod-img');
-    nameEl  = overlay.querySelector('.nc-prod-name');
-    priceEl = overlay.querySelector('.nc-prod-price');
+    /* nav cart */
+    '.nav-cart-icon{background:none;border:none;cursor:pointer;',
+    '  color:var(--charcoal);display:flex;align-items:center;padding:2px;transition:color .2s}',
+    '.nav-cart-icon:hover{color:var(--mauve)}',
 
-    overlay.addEventListener('click', function (e) { if (e.target === overlay) _close(); });
-    overlay.querySelector('.nc-prod-close').addEventListener('click', _close);
-    overlay.querySelector('.nc-prod-btn-cart').addEventListener('click', _handleAddToCart);
+    /* ── bundle bar (desktop) ───────────────────────────────────────── */
+    '#bundle-bar{',
+    '  position:fixed;bottom:0;left:0;right:0;',
+    '  background:var(--cream);',
+    '  border-top:1px solid rgba(92,53,69,.12);',
+    '  box-shadow:0 -4px 24px rgba(42,37,35,.1);',
+    '  z-index:190;',
+    '  display:grid;grid-template-columns:1fr auto 1fr;grid-template-rows:auto auto;align-items:center;',
+    '  transform:translateY(100%);',
+    '  transition:transform .3s cubic-bezier(.4,0,.2,1);',
+    '}',
+    '#bundle-bar.bb-on{transform:translateY(0)}',
+
+    '#bb-prod{',
+    '  display:flex;align-items:center;gap:16px;',
+    '  padding:14px 26px 14px 18px;',
+    '}',
+    '#bb-img-wrap{width:72px;height:72px;flex-shrink:0;overflow:hidden;background:var(--panel)}',
+    '#bb-img-wrap img{width:100%;height:100%;object-fit:cover;display:block}',
+    '#bb-pname{font-family:var(--ff-serif);font-size:22px;font-weight:400;',
+    '  color:var(--charcoal);margin:0 0 4px;line-height:1.1}',
+    '#bb-pspecs{font-family:var(--ff-sans);font-size:11px;letter-spacing:.07em;',
+    '  color:var(--mauve-dark);margin:0}',
+
+    '#bb-tiers{',
+    '  grid-column:2;grid-row:1;',
+    '  display:flex;align-items:center;gap:8px;flex-wrap:wrap;',
+    '  justify-content:center;padding:14px 32px 6px;',
+    '}',
+    '#bb-mid{',
+    '  grid-column:2;grid-row:2;',
+    '  display:flex;flex-direction:column;',
+    '  align-items:center;justify-content:center;',
+    '  padding:0 32px 14px;text-align:center;',
+    '}',
+    '#bb-prod{grid-row:1/3}',
+    '#bb-acts{grid-column:3;grid-row:1/3}',
+
+    '.bb-tier{',
+    '  padding:7px 16px;',
+    '  border:1.5px solid rgba(92,53,69,.16);',
+    '  font-family:var(--ff-sans);font-size:11px;letter-spacing:.13em;',
+    '  text-transform:uppercase;color:rgba(92,53,69,.45);',
+    '  white-space:nowrap;pointer-events:none;user-select:none;',
+    '  transition:border-color .2s,color .2s,background .2s;',
+    '}',
+    '.bb-tier.bb-reached{',
+    '  border-color:var(--mauve-dark);color:var(--mauve-dark);',
+    '  background:rgba(92,53,69,.05);',
+    '}',
+    '.bb-tier-num{display:none}',
+
+    '#bb-hint{',
+    '  font-family:var(--ff-sans);font-size:11px;letter-spacing:.13em;',
+    '  text-transform:uppercase;color:var(--text-muted);',
+    '  margin:0;text-align:center;',
+    '}',
+
+    '#bb-acts{',
+    '  display:flex;flex-direction:column;align-items:stretch;',
+    '  justify-content:center;gap:6px;',
+    '  padding:10px 18px 10px 14px;',
+    '  border-left:1px solid rgba(92,53,69,.08);',
+    '  width:240px;margin-left:auto;',
+    '}',
+    '#bb-back{',
+    '  background:none;border:none;cursor:pointer;',
+    '  font-family:var(--ff-sans);font-size:10px;letter-spacing:.18em;',
+    '  text-transform:uppercase;color:var(--text-muted);',
+    '  padding:0;transition:color .2s;text-align:center;',
+    '}',
+    '#bb-back:hover{color:var(--mauve-dark)}',
+    '#bb-add{',
+    '  background:var(--mauve-dark);color:#fff;border:none;cursor:pointer;',
+    '  font-family:var(--ff-sans);font-size:11px;letter-spacing:.18em;',
+    '  text-transform:uppercase;padding:11px 14px;',
+    '  white-space:nowrap;',
+    '  transition:background .2s,opacity .2s;',
+    '}',
+    '#bb-add[disabled]{opacity:.35;cursor:not-allowed}',
+    '#bb-add:not([disabled]):hover{background:var(--mauve)}',
+
+    'body.bb-active{padding-bottom:86px}',
+
+    /* ── product select circles ──────────────────────────────────────── */
+    '.psc{',
+    '  position:absolute;top:10px;right:10px;',
+    '  width:24px;height:24px;border-radius:50%;',
+    '  background:rgba(236,232,225,.88);',
+    '  border:1.5px solid rgba(92,53,69,.32);',
+    '  cursor:pointer;padding:0;',
+    '  display:flex;align-items:center;justify-content:center;',
+    '  opacity:0;pointer-events:none;z-index:3;',
+    '  transition:opacity .2s,background .15s,border-color .15s;',
+    '}',
+    '.bb-active .psc{opacity:1;pointer-events:auto}',
+    '.bb-active .product-card{cursor:pointer}',
+    '.product-card.pc-sel .psc{background:var(--mauve-dark);border-color:var(--mauve-dark)}',
+    '.psc path{opacity:0;transition:opacity .15s}',
+    '.product-card.pc-sel .psc path{opacity:1}',
+
+    /* ── mobile bottom-sheet modal ───────────────────────────────────── */
+    '#bb-sheet-overlay{',
+    '  display:none;position:fixed;inset:0;',
+    '  background:rgba(42,37,35,.5);z-index:200;',
+    '  opacity:0;pointer-events:none;',
+    '  transition:opacity .25s;',
+    '}',
+    '#bb-sheet{',
+    '  display:none;position:fixed;bottom:0;left:0;right:0;',
+    '  box-sizing:border-box;max-width:100vw;',
+    '  background:var(--cream);z-index:201;',
+    '  border-radius:16px 16px 0 0;',
+    '  transform:translateY(100%);',
+    '  transition:transform .3s cubic-bezier(.4,0,.2,1);',
+    '  max-height:92vh;',
+    '  display:flex;flex-direction:column;',
+    '}',
+    '#bb-sheet.bb-on{transform:translateY(0)}',
+    '#bb-sheet-overlay.bb-on{opacity:1;pointer-events:auto}',
+    '#bb-sheet-handle{',
+    '  flex-shrink:0;width:36px;height:4px;background:rgba(92,53,69,.2);',
+    '  border-radius:2px;margin:14px auto 8px;cursor:grab;',
+    '}',
+    '#bb-sheet-body{',
+    '  overflow-y:auto;-webkit-overflow-scrolling:touch;',
+    '  padding:8px 20px 44px;',
+    '}',
+    '#bb-sheet-img{width:100%;aspect-ratio:1/1;object-fit:cover;display:block;margin-bottom:18px;}',
+    '#bb-sheet-name{font-family:var(--ff-serif);font-size:30px;font-weight:400;',
+    '  color:var(--charcoal);margin:0 0 5px;}',
+    '#bb-sheet-specs{font-family:var(--ff-sans);font-size:11px;letter-spacing:.07em;',
+    '  color:var(--mauve-dark);margin:0 0 6px;}',
+    '#bb-sheet-price{font-family:var(--ff-serif);font-size:24px;',
+    '  color:var(--charcoal);margin:0 0 22px;}',
+    '#bb-sheet-add-btn{',
+    '  display:block;width:100%;box-sizing:border-box;',
+    '  background:var(--mauve-dark);color:#fff;border:none;cursor:pointer;',
+    '  font-family:var(--ff-sans);font-size:11px;letter-spacing:.18em;',
+    '  text-transform:uppercase;padding:15px;margin-bottom:10px;',
+    '  transition:background .2s;',
+    '}',
+    '#bb-sheet-add-btn:hover{background:var(--mauve)}',
+    '#bb-sheet-build-btn{',
+    '  display:block;width:100%;box-sizing:border-box;',
+    '  background:none;border:1.5px solid rgba(92,53,69,.22);cursor:pointer;',
+    '  font-family:var(--ff-sans);font-size:11px;letter-spacing:.18em;',
+    '  text-transform:uppercase;padding:14px;',
+    '  color:var(--mauve-dark);transition:border-color .2s,background .2s;',
+    '}',
+    '#bb-sheet-build-btn:hover{background:rgba(92,53,69,.04);border-color:var(--mauve-dark)}',
+    '#bb-sheet-build-sub{',
+    '  font-family:var(--ff-sans);font-size:9px;letter-spacing:.1em;',
+    '  text-transform:uppercase;color:var(--text-muted);',
+    '  text-align:center;margin:9px 0 0;',
+    '}',
+
+    /* ── MOBILE ≤ 768px ──────────────────────────────────────────────── */
+    '@media(max-width:768px){',
+
+    /* show modal elements */
+    '  #bb-sheet-overlay{display:block}',
+    '  #bb-sheet{display:block}',
+
+    /* slim single-row banner: tier pills + cart button */
+    '  #bundle-bar{',
+    '    display:flex;flex-direction:row;align-items:stretch;min-height:54px;',
+    '  }',
+    '  body.bb-active{padding-bottom:62px}',
+
+    /* hide product info, hint, back button */
+    '  #bb-prod,#bb-mid,#bb-back{display:none}',
+
+    /* tiers: scrollable row filling width, centered when content fits */
+    '  #bb-tiers{',
+    '    flex:1;display:flex;flex-wrap:nowrap;',
+    '    overflow-x:auto;-webkit-overflow-scrolling:touch;',
+    '    align-items:center;justify-content:center;gap:6px;padding:0 12px;',
+    '    scrollbar-width:none;',
+    '    grid-column:unset;grid-row:unset;',
+    '  }',
+    '  #bb-tiers::-webkit-scrollbar{display:none}',
+    '  .bb-tier{font-size:9px;padding:5px 10px;flex-shrink:0}',
+    '  .bb-tier-name{display:none}',
+    '  .bb-tier-num{display:inline}',
+
+    /* actions: compact, full-height cart button */
+    '  #bb-acts{',
+    '    display:flex;flex-direction:row;align-items:stretch;',
+    '    justify-content:flex-start;',
+    '    padding:0;width:auto;margin-left:0;gap:0;',
+    '    border-left:1px solid rgba(92,53,69,.1);',
+    '    grid-column:unset;grid-row:unset;',
+    '  }',
+    '  #bb-add{',
+    '    display:flex;align-items:center;justify-content:center;',
+    '    gap:6px;padding:0 18px;font-size:13px;letter-spacing:.12em;',
+    '    align-self:stretch;width:auto;',
+    '  }',
+
+    '}',
+
+  ].join('\n');
+
+  /* ──────────────────────────────── init ─────────────────────────────── */
+  function init() {
+    var s = document.createElement('style');
+    s.textContent = CSS;
+    document.head.appendChild(s);
+
+    /* ── desktop banner ── */
+    bar = document.createElement('div');
+    bar.id = 'bundle-bar';
+    bar.setAttribute('aria-hidden', 'true');
+    bar.innerHTML =
+      '<div id="bb-prod">' +
+        '<div id="bb-img-wrap"><img id="bb-img" src="" alt=""></div>' +
+        '<div>' +
+          '<p id="bb-pname"></p>' +
+          '<p id="bb-pspecs"></p>' +
+        '</div>' +
+      '</div>' +
+      '<div id="bb-mid"><p id="bb-hint"></p></div>' +
+      '<div id="bb-tiers"></div>' +
+      '<div id="bb-acts">' +
+        '<button id="bb-back">Back to grid</button>' +
+        '<button id="bb-add" disabled type="button">Add to Cart</button>' +
+      '</div>';
+
+    document.body.appendChild(bar);
+
+    barThumb = bar.querySelector('#bb-img');
+    barName  = bar.querySelector('#bb-pname');
+    barSpecs = bar.querySelector('#bb-pspecs');
+    barMsg   = bar.querySelector('#bb-hint');
+    barAdd   = bar.querySelector('#bb-add');
+    barBack  = bar.querySelector('#bb-back');
+
+    var tiersEl = bar.querySelector('#bb-tiers');
+    TIERS.forEach(function (t) {
+      var el = document.createElement('span');
+      el.className = 'bb-tier';
+      el.dataset.limit = t.limit;
+      el.innerHTML =
+        '<span class="bb-tier-name">' + t.name + '</span>' +
+        '<span class="bb-tier-num">' + t.limit + '</span>' +
+        '\u00a0\u00b7\u00a0$' + t.price;
+      tiersEl.appendChild(el);
+      tierLabels.push(el);
+    });
+
+    barBack.addEventListener('click', function () {
+      var grid = document.getElementById('collection');
+      if (grid) grid.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    });
+    barAdd.addEventListener('click', handleAdd);
     document.addEventListener('keydown', function (e) {
-      if (e.key === 'Escape' && overlay.classList.contains('nc-open')) _close();
-    });
-
-    // Build bundle selection bar
-    bundleBar = document.createElement('div');
-    bundleBar.id = 'bundle-bar';
-    bundleBar.setAttribute('aria-hidden', 'true');
-    bundleBar.innerHTML = [
-      '<button id="bb-cancel" aria-label="Cancel bundle selection">',
-      '  <svg width="12" height="12" viewBox="0 0 12 12" fill="none"',
-      '       stroke="currentColor" stroke-width="1.5" stroke-linecap="round">',
-      '    <line x1="2" y1="2" x2="10" y2="10"/>',
-      '    <line x1="10" y1="2" x2="2" y2="10"/>',
-      '  </svg>',
-      '</button>',
-      '<span id="bb-title"></span>',
-      '<span class="bb-sep" aria-hidden="true">\u00b7</span>',
-      '<span id="bb-dots" aria-hidden="true"></span>',
-      '<span id="bb-count"></span>',
-      '<button id="bb-scroll" aria-label="Scroll to grid">',
-      '  <svg width="12" height="12" viewBox="0 0 12 12" fill="none"',
-      '       stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">',
-      '    <polyline points="2,8 6,4 10,8"/>',
-      '  </svg>',
-      '  <span>Back to grid</span>',
-      '</button>',
-      '<button id="bb-add" disabled type="button"></button>',
-      '<span id="bb-hint"></span>',
-    ].join('');
-    document.body.appendChild(bundleBar);
-
-    bbTitle = document.getElementById('bb-title');
-    bbDots  = document.getElementById('bb-dots');
-    bbCount = document.getElementById('bb-count');
-    bbAdd   = document.getElementById('bb-add');
-    bbHint  = document.getElementById('bb-hint');
-
-    document.getElementById('bb-cancel').addEventListener('click', _deactivateBundle);
-    document.getElementById('bb-scroll').addEventListener('click', function () {
-      var coll = document.getElementById('collection');
-      if (coll) coll.scrollIntoView({ behavior: 'smooth' });
-    });
-    bbAdd.addEventListener('click', _handleBundleAddToCart);
-
-    // Wire bundle cards (Pair / Set of 4 / Set of 6)
-    document.querySelectorAll('.bundle-card[data-bundle-limit]').forEach(function (card) {
-      card.addEventListener('click', function () {
-        var limit = parseInt(card.dataset.bundleLimit, 10);
-        var price = parseInt(card.dataset.bundlePrice, 10);
-        var name  = card.querySelector('.bundle-card-name').textContent.trim();
-        _activateBundle(limit, price, name);
-      });
-    });
-
-    // Wire product cards — add circles, handle single vs. bundle clicks
-    document.querySelectorAll('.product-card[data-id]').forEach(function (card) {
-      // Inject select circle into the image wrapper
-      var imgWrap = card.querySelector('.product-card-img');
-      if (imgWrap) {
-        var circle = document.createElement('button');
-        circle.className = 'product-select-circle';
-        circle.setAttribute('aria-label', 'Select ' + card.dataset.name + ' for bundle');
-        circle.setAttribute('type', 'button');
-        circle.innerHTML = [
-          '<svg width="10" height="8" viewBox="0 0 10 8" fill="none" aria-hidden="true">',
-          '  <path d="M1 4l2.5 2.5L9 1" stroke="white" stroke-width="1.5"',
-          '        stroke-linecap="round" stroke-linejoin="round"/>',
-          '</svg>',
-        ].join('');
-        imgWrap.appendChild(circle);
-
-        circle.addEventListener('click', function (e) {
-          e.stopPropagation(); // don't open single-product modal
-          if (bundleLimit > 0) _toggleBundleSelect(card);
-        });
+      if (e.key === 'Escape') {
+        if (sheet.classList.contains('bb-on')) hideModal();
+        else deactivate();
       }
+    });
 
-      // Card body click → toggle bundle selection or open single-piece modal
-      card.addEventListener('click', function () {
-        if (bundleLimit > 0) {
-          _toggleBundleSelect(card);
+    /* ── mobile bottom-sheet modal ── */
+    sheetOverlay = document.createElement('div');
+    sheetOverlay.id = 'bb-sheet-overlay';
+    sheetOverlay.addEventListener('click', hideModal);
+
+    sheet = document.createElement('div');
+    sheet.id = 'bb-sheet';
+    sheet.innerHTML =
+      '<div id="bb-sheet-handle"></div>' +
+      '<div id="bb-sheet-body">' +
+        '<div id="bb-sheet-drag">' +
+          '<img id="bb-sheet-img" src="" alt="">' +
+          '<p id="bb-sheet-name"></p>' +
+          '<p id="bb-sheet-specs">~8\u2033 Square<br>Beige &amp; Metallic Rose</p>' +
+          '<p id="bb-sheet-price"></p>' +
+        '</div>' +
+        '<button id="bb-sheet-add-btn" type="button">Add to Cart</button>' +
+        '<button id="bb-sheet-build-btn" type="button">Build a Set</button>' +
+        '<p id="bb-sheet-build-sub">Up to 50% off when you build a set</p>' +
+      '</div>';
+
+    document.body.appendChild(sheetOverlay);
+    document.body.appendChild(sheet);
+
+    sheetImg      = sheet.querySelector('#bb-sheet-img');
+    sheetName     = sheet.querySelector('#bb-sheet-name');
+    sheetSpecsEl  = sheet.querySelector('#bb-sheet-specs');
+    sheetPrice    = sheet.querySelector('#bb-sheet-price');
+    sheetAddBtn   = sheet.querySelector('#bb-sheet-add-btn');
+    sheetBuildBtn = sheet.querySelector('#bb-sheet-build-btn');
+
+    sheetAddBtn.addEventListener('click', handleSheetAdd);
+    sheetBuildBtn.addEventListener('click', handleSheetBuild);
+    wireSheetSwipe();
+
+    /* wire product cards */
+    document.querySelectorAll('.product-card[data-id]').forEach(wireCard);
+  }
+
+  /* ── wire a card ──────────────────────────────────────────────────── */
+  function wireCard(card) {
+    var wrap = card.querySelector('.product-card-img');
+    if (wrap) {
+      var circle = document.createElement('button');
+      circle.className = 'psc';
+      circle.setAttribute('type', 'button');
+      circle.setAttribute('aria-label', 'Select ' + (card.dataset.name || '') + ' for bundle');
+      circle.innerHTML =
+        '<svg width="10" height="8" viewBox="0 0 10 8" fill="none" aria-hidden="true">' +
+        '<path d="M1 4l2.5 2.5L9 1" stroke="white" stroke-width="1.5"' +
+        ' stroke-linecap="round" stroke-linejoin="round"/></svg>';
+      wrap.appendChild(circle);
+      circle.addEventListener('click', function (e) {
+        e.stopPropagation();
+        toggleCard(card);
+      });
+    }
+
+    card.addEventListener('click', function () {
+      if (isMobile()) {
+        if (bar.classList.contains('bb-on')) {
+          toggleCard(card);   // already in selection mode — just toggle
         } else {
-          _open({
-            id:    card.dataset.id,
-            name:  card.dataset.name,
-            price: Number(card.dataset.price),
-            image: card.dataset.image,
-          });
+          showModal(card);    // first tap — show modal
+        }
+      } else {
+        if (bar.classList.contains('bb-on')) {
+          toggleCard(card);
+        } else {
+          activate(card);
+        }
+      }
+    });
+  }
+
+  /* ── mobile modal ─────────────────────────────────────────────────── */
+  function lockScroll() {
+    document.body.style.overflowY    = 'hidden';
+    document.body.style.touchAction  = 'none';
+  }
+  function unlockScroll() {
+    document.body.style.overflowY    = '';
+    document.body.style.touchAction  = '';
+  }
+
+  function showModal(card) {
+    sheetCard = card;
+    sheetImg.src           = card.dataset.image || '';
+    sheetImg.alt           = card.dataset.name  || '';
+    sheetName.textContent  = card.dataset.name  || '';
+    sheetPrice.textContent = '$' + (Number(card.dataset.price) || SINGLE);
+    sheet.style.transition = '';
+    sheet.style.transform  = '';
+    sheetOverlay.classList.add('bb-on');
+    sheet.classList.add('bb-on');
+    lockScroll();
+  }
+
+  function hideModal() {
+    sheetOverlay.classList.remove('bb-on');
+    sheet.classList.remove('bb-on');
+    sheet.style.transform = '';
+    unlockScroll();
+    sheetCard = null;
+  }
+
+  function wireSheetSwipe() {
+    var dragZone  = sheet.querySelector('#bb-sheet-drag');
+    var startY    = 0;
+    var startTime = 0;
+    var dy        = 0;
+    var active    = false;
+
+    dragZone.addEventListener('touchstart', function (e) {
+      startY    = e.touches[0].clientY;
+      startTime = Date.now();
+      dy        = 0;
+      active    = false;
+      sheet.style.transition = 'none';
+    }, { passive: true });
+
+    dragZone.addEventListener('touchmove', function (e) {
+      var delta = e.touches[0].clientY - startY;
+      if (!active && delta > 8) active = true;
+      if (!active) return;
+      e.preventDefault();
+      dy = Math.max(0, delta);
+      sheet.style.transform = 'translateY(' + dy + 'px)';
+    }, { passive: false });
+
+    dragZone.addEventListener('touchend', function () {
+      sheet.style.transition = '';
+      var elapsed  = Date.now() - startTime;
+      var velocity = dy / elapsed; // px/ms
+      var fastFlick = velocity > 0.4 && dy > 20;
+      var farEnough = dy > sheet.offsetHeight * 0.25;
+      if (active && (fastFlick || farEnough)) {
+        hideModal();
+      } else {
+        sheet.style.transform = 'translateY(0)';
+      }
+      dy     = 0;
+      active = false;
+    });
+
+    sheetOverlay.addEventListener('touchmove', function (e) {
+      e.preventDefault();
+    }, { passive: false });
+  }
+
+  function handleSheetAdd() {
+    if (!sheetCard || typeof window.addToCart !== 'function') return;
+    window.addToCart(
+      sheetCard.dataset.id,
+      sheetCard.dataset.name,
+      Number(sheetCard.dataset.price) || SINGLE,
+      sheetCard.dataset.image || ''
+    );
+    hideModal();
+    var icon = document.getElementById('cart-icon');
+    if (icon) icon.click();
+  }
+
+  function handleSheetBuild() {
+    var card = sheetCard;
+    hideModal();
+    activate(card);   // enters selection mode, adds this card
+  }
+
+  /* ── activate (enter selection mode) ─────────────────────────────── */
+  function activate(card) {
+    selected.forEach(function (c) { c.classList.remove('pc-sel'); });
+    selected = [card];
+    card.classList.add('pc-sel');
+
+    activeProd = {
+      id:    card.dataset.id,
+      name:  card.dataset.name,
+      price: Number(card.dataset.price) || SINGLE,
+      image: card.dataset.image || '',
+    };
+
+    barThumb.src = activeProd.image;
+    barThumb.alt = activeProd.name;
+    barName.textContent = activeProd.name;
+    barSpecs.innerHTML = '~8\u2033 Square<br>Beige &amp; Metallic Rose';
+
+    bar.classList.add('bb-on');
+    bar.setAttribute('aria-hidden', 'false');
+    document.body.classList.add('bb-active');
+    updateBar();
+  }
+
+  /* ── toggle a card ────────────────────────────────────────────────── */
+  function toggleCard(card) {
+    var i = selected.indexOf(card);
+    if (i >= 0) {
+      selected.splice(i, 1);
+      card.classList.remove('pc-sel');
+      if (selected.length === 0) { deactivate(); return; }
+      var show = selected[selected.length - 1];
+      barThumb.src = show.dataset.image || '';
+      barThumb.alt = show.dataset.name  || '';
+      barName.textContent = show.dataset.name || '';
+    } else {
+      selected.push(card);
+      card.classList.add('pc-sel');
+      barThumb.src = card.dataset.image || '';
+      barThumb.alt = card.dataset.name  || '';
+      barName.textContent = card.dataset.name || '';
+    }
+    updateBar();
+  }
+
+  /* ── update bar state ─────────────────────────────────────────────── */
+  function updateBar() {
+    var n     = selected.length;
+    var cur   = bestTier(n);
+    var nxt   = nextTier(n);
+    var price = calcPrice(n);
+
+    tierLabels.forEach(function (el) {
+      el.classList.toggle('bb-reached', !!(cur && parseInt(el.dataset.limit, 10) <= cur.limit));
+    });
+
+    if (nxt) {
+      var need = nxt.limit - n;
+      barMsg.textContent = 'Add\u00a0' + need + '\u00a0more to save\u00a0' + savePct(nxt.limit) + '%+';
+    } else if (n > 0) {
+      barMsg.textContent = savePct(n) + '%+\u00a0off';
+    } else {
+      barMsg.textContent = '';
+    }
+
+    if (n > 0) {
+      if (isMobile()) {
+        barAdd.innerHTML = CART_SVG + '\u00a0$' + price;
+      } else {
+        barAdd.textContent = 'Add to Cart\u00a0\u00b7\u00a0$' + price;
+      }
+      barAdd.disabled = false;
+    } else {
+      if (isMobile()) {
+        barAdd.innerHTML = CART_SVG;
+      } else {
+        barAdd.textContent = 'Add to Cart';
+      }
+      barAdd.disabled = true;
+    }
+  }
+
+  /* ── deactivate ───────────────────────────────────────────────────── */
+  function deactivate() {
+    selected.forEach(function (c) { c.classList.remove('pc-sel'); });
+    selected   = [];
+    activeProd = null;
+    document.body.classList.remove('bb-active');
+    bar.classList.remove('bb-on');
+    bar.setAttribute('aria-hidden', 'true');
+  }
+
+  /* ── add to cart (banner) ─────────────────────────────────────────── */
+  function handleAdd() {
+    if (!selected.length || typeof window.addToCart !== 'function') return;
+
+    if (selected.length === 1) {
+      window.addToCart(activeProd.id, activeProd.name, SINGLE, activeProd.image);
+    } else {
+      var newNames = selected.map(function (c) { return c.dataset.name; });
+      var img0     = selected[0].dataset.image || '';
+      var cart     = typeof window.getCart === 'function' ? window.getCart() : [];
+      var mNames = [], mCount = 0, mImg = img0;
+
+      cart.forEach(function (item) {
+        if (item.meta && item.meta.bundleCount) {
+          mNames  = mNames.concat(item.name.replace(/^[^\u00b7]+\u00b7\s*/, '').split(' \u00b7 '));
+          mCount += item.meta.bundleCount * item.quantity;
+          if (!mImg && item.image) mImg = item.image;
+          window.removeFromCart(item.id);
         }
       });
-    });
-  }
 
-  // ── Bundle logic ─────────────────────────────────────────────────────────────
-  function _activateBundle(limit, price, title) {
-    // Clear any previous selection
-    selectedCards.forEach(function (c) { c.classList.remove('pc-selected'); });
-    selectedCards = [];
+      mNames  = mNames.concat(newNames);
+      mCount += newNames.length;
 
-    bundleLimit = limit;
-    bundlePrice = price;
-    bundleTitle = title;
+      var tier  = bestTier(mCount);
+      var price = calcPrice(mCount);
+      var disc  = savePct(mCount);
+      var next  = nextTier(mCount);
+      var id    = 'bundle-' + mCount + '-' + Date.now();
+      var tname = tier ? tier.name : 'Bundle';
+      var hint  = next
+        ? 'Add ' + (next.limit - mCount) + ' more to save ' + savePct(next.limit) + '%'
+        : '';
 
-    document.body.classList.add('bundle-mode-active');
-    bbTitle.textContent = title;
-    _updateBundleBar();
-    bundleBar.setAttribute('aria-hidden', 'false');
-    bundleBar.classList.add('bb-visible');
-
-    var coll = document.getElementById('collection');
-    if (coll) coll.scrollIntoView({ behavior: 'smooth' });
-  }
-
-  function _deactivateBundle() {
-    selectedCards.forEach(function (c) { c.classList.remove('pc-selected'); });
-    selectedCards = [];
-    bundleLimit = 0;
-    document.body.classList.remove('bundle-mode-active');
-    bundleBar.classList.remove('bb-visible');
-    bundleBar.setAttribute('aria-hidden', 'true');
-  }
-
-  function _toggleBundleSelect(card) {
-    var idx = selectedCards.indexOf(card);
-    if (idx >= 0) {
-      selectedCards.splice(idx, 1);
-      card.classList.remove('pc-selected');
-    } else {
-      selectedCards.push(card);
-      card.classList.add('pc-selected');
-    }
-    _updateBundleBar();
-  }
-
-  function _updateBundleBar() {
-    var count = selectedCards.length;
-    var price = _calcPrice(count);
-    var dotsTotal = _dotsLimit(count);
-
-    // Progress dots
-    bbDots.innerHTML = '';
-    for (var i = 0; i < dotsTotal; i++) {
-      var dot = document.createElement('span');
-      dot.className = 'bb-dot' + (i < count ? ' bb-dot--filled' : '');
-      bbDots.appendChild(dot);
+      window.addToCart(id, tname + ' \u00b7 ' + mNames.join(' \u00b7 '), price, mImg, {
+        bundleCount: mCount,
+        discountPct: disc,
+        nextHint:    hint,
+      });
     }
 
-    // Count label
-    bbCount.textContent = count + ' of ' + dotsTotal + ' selected';
-
-    // CTA button text + state
-    if (count >= bundleLimit) {
-      bbAdd.textContent = 'Add to Cart \u00b7 $' + price;
-      bbAdd.disabled = false;
-    } else {
-      bbAdd.textContent = 'Select ' + (bundleLimit - count) + ' more';
-      bbAdd.disabled = true;
-    }
-
-    // Next-tier hint
-    var nextTier = null;
-    for (var j = 0; j < BUNDLE_TIERS.length; j++) {
-      if (BUNDLE_TIERS[j].limit > count) { nextTier = BUNDLE_TIERS[j]; break; }
-    }
-    if (nextTier && nextTier.price < price) {
-      var diff = nextTier.limit - count;
-      bbHint.textContent = 'Add ' + diff + ' more for ' + nextTier.name + ' pricing \u00b7 $' + nextTier.price;
-    } else if (nextTier && count >= bundleLimit) {
-      var diff2 = nextTier.limit - count;
-      bbHint.textContent = 'Add ' + diff2 + ' more for ' + nextTier.name + ' \u00b7 $' + nextTier.price;
-    } else {
-      bbHint.textContent = '';
-    }
+    deactivate();
+    var icon = document.getElementById('cart-icon');
+    if (icon) icon.click();
   }
 
-  function _handleBundleAddToCart() {
-    if (selectedCards.length < bundleLimit || typeof window.addToCart !== 'function') return;
-    var count     = selectedCards.length;
-    var price     = _calcPrice(count);
-    var names     = selectedCards.map(function (c) { return c.dataset.name; }).join(', ');
-    var firstImg  = selectedCards[0].dataset.image || '';
-    var bundleId  = 'bundle-' + count + '-' + Date.now();
-    var displayName = bundleTitle + ', ' + names;
-    window.addToCart(bundleId, displayName, price, firstImg);
-    _deactivateBundle();
-    var cartIcon = document.getElementById('cart-icon');
-    if (cartIcon) cartIcon.click();
-  }
-
-  // ── Modal open / close ───────────────────────────────────────────────────────
-  function _open(product) {
-    currentProduct = product;
-    imgEl.src = product.image;
-    imgEl.alt = product.name;
-    nameEl.textContent = product.name;
-    priceEl.textContent = '$' + (Number.isInteger(product.price) ? product.price : product.price.toFixed(2));
-    overlay.classList.add('nc-open');
-    overlay.setAttribute('aria-hidden', 'false');
-    document.body.style.overflow = 'hidden';
-    overlay.querySelector('.nc-prod-close').focus();
-  }
-
-  function _close() {
-    overlay.classList.remove('nc-open');
-    overlay.setAttribute('aria-hidden', 'true');
-    document.body.style.overflow = '';
-    currentProduct = null;
-  }
-
-  // ── Single piece actions ─────────────────────────────────────────────────────
-  function _handleAddToCart() {
-    if (!currentProduct || typeof window.addToCart !== 'function') return;
-    window.addToCart(currentProduct.id, currentProduct.name, currentProduct.price, currentProduct.image);
-    _close();
-    var cartIcon = document.getElementById('cart-icon');
-    if (cartIcon) cartIcon.click();
-  }
-
-  // ── Boot ────────────────────────────────────────────────────────────────────
+  /* ── boot ─────────────────────────────────────────────────────────── */
   if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', _init);
+    document.addEventListener('DOMContentLoaded', init);
   } else {
-    _init();
+    init();
   }
 
 })();

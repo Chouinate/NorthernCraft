@@ -30,13 +30,15 @@
   }
 
   // ─── Public API ─────────────────────────────────────────────────────────────
-  window.addToCart = function (id, name, price, image) {
+  window.addToCart = function (id, name, price, image, meta) {
     id = String(id);
     const existing = cart.find(function (i) { return i.id === id; });
     if (existing) {
       existing.quantity += 1;
     } else {
-      cart.push({ id: id, name: name, price: Number(price), quantity: 1, image: image || '' });
+      const item = { id: id, name: name, price: Number(price), quantity: 1, image: image || '' };
+      if (meta && typeof meta === 'object') item.meta = meta;
+      cart.push(item);
     }
     persist();
     _update();
@@ -117,7 +119,7 @@
       display: flex;
       align-items: center;
       justify-content: space-between;
-      padding: 24px 28px;
+      padding: 24px 0 24px 28px;
       border-bottom: 1px solid #d9d4cc;
       flex-shrink: 0;
     }
@@ -134,7 +136,7 @@
       border: none;
       cursor: pointer;
       color: #7a6f68;
-      padding: 4px;
+      padding: 4px 36px 4px 4px;
       display: flex;
       align-items: center;
       justify-content: center;
@@ -169,18 +171,18 @@
     /* ── Item row ── */
     .nc-cart-item {
       display: grid;
-      grid-template-columns: 72px 1fr;
+      grid-template-columns: 56px 1fr;
       grid-template-rows: auto auto;
       column-gap: 16px;
       row-gap: 10px;
       align-items: start;
-      padding: 20px 28px;
+      padding: 14px 28px;
       border-bottom: 1px solid #d9d4cc;
     }
     .nc-cart-item-img-wrap {
       grid-row: 1 / 3;
-      width: 72px;
-      height: 72px;
+      width: 56px;
+      height: 56px;
       background: #cbc5bc;
       overflow: hidden;
       flex-shrink: 0;
@@ -255,6 +257,16 @@
       user-select: none;
     }
 
+    /* ── Bundle meta line ── */
+    .nc-cart-item-meta {
+      font-family: 'Montserrat', sans-serif;
+      font-size: 9px;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      color: #9e9098;
+      margin: 3px 0 0;
+    }
+
     /* ── Remove link ── */
     .nc-cart-remove {
       background: none;
@@ -282,35 +294,60 @@
       text-align: center;
     }
     .nc-cart-footer {
-      padding: 20px 28px 28px;
-      border-top: 1px solid #d9d4cc;
+      padding: 0 28px 20px;
+      border-top: none;
       background: #ece8e1;
       flex-shrink: 0;
     }
     .nc-cart-shipping-notice {
       font-family: 'Montserrat', sans-serif;
-      font-size: 10px;
+      font-size: 9px;
       font-weight: 500;
-      letter-spacing: 0.18em;
+      letter-spacing: 0.16em;
       text-transform: uppercase;
       text-align: center;
-      padding: 8px 12px;
-      margin-bottom: 14px;
-      border-radius: 3px;
+      margin-bottom: 6px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 5px;
+      position: relative;
     }
-    .nc-cart-shipping-notice.earned {
-      background: #e8f0e8;
-      color: #3a6b3a;
+    .nc-cart-shipping-notice.earned { color: #3a6b3a; }
+    .nc-cart-shipping-notice.promo  { color: #9a9088; }
+    .nc-ship-info-btn {
+      display: inline-flex; align-items: center; justify-content: center;
+      width: 13px; height: 13px; border-radius: 50%;
+      border: 1.5px solid currentColor;
+      font-size: 8px; font-style: italic; font-family: Georgia, serif;
+      cursor: pointer; background: none; padding: 0; line-height: 1;
+      color: inherit; flex-shrink: 0;
+      transition: opacity .15s;
     }
-    .nc-cart-shipping-notice.promo {
-      background: transparent;
-      color: #7a6f68;
+    .nc-ship-info-btn:hover { opacity: .7; }
+    .nc-ship-info-popup {
+      display: none;
+      position: absolute; bottom: calc(100% + 7px); right: 0;
+      background: #2a2523; color: rgba(255,255,255,.85);
+      font-family: 'Montserrat', sans-serif;
+      font-size: 9px; letter-spacing: .1em;
+      text-transform: none; font-weight: 400;
+      padding: 8px 12px; white-space: nowrap;
+      pointer-events: none; z-index: 10;
     }
+    .nc-ship-info-popup::after {
+      content: ''; position: absolute; top: 100%; right: 14px;
+      border: 5px solid transparent;
+      border-top-color: #2a2523;
+    }
+    .nc-ship-info-popup.visible { display: block; }
     .nc-cart-total-row {
       display: flex;
       justify-content: space-between;
       align-items: baseline;
-      margin-bottom: 18px;
+      margin-bottom: 12px;
+      border-top: 1px solid #d9d4cc;
+      padding-top: 12px;
     }
     .nc-cart-total-label {
       font-family: 'Montserrat', sans-serif;
@@ -452,9 +489,9 @@
 
   // ─── Drawer open / close ─────────────────────────────────────────────────────
   function _open() {
+    document.body.style.overflow = 'hidden';
     overlay.classList.add('nc-open');
     drawer.classList.add('nc-open');
-    document.body.style.overflow = 'hidden';
     drawer.querySelector('.nc-cart-close').focus();
   }
 
@@ -500,6 +537,16 @@
       const imgInner = item.image
         ? '<img src="' + _esc(item.image) + '" alt="' + _esc(item.name) + '" loading="lazy">'
         : '';
+      // Build meta line for bundle items (% saved + next tier hint)
+      var metaLine = '';
+      if (item.meta && item.meta.bundleCount) {
+        var metaParts = [];
+        if (item.meta.discountPct > 0) metaParts.push('Saving ' + item.meta.discountPct + '%');
+        if (item.meta.nextHint)        metaParts.push(item.meta.nextHint);
+        if (metaParts.length) {
+          metaLine = '<p class="nc-cart-item-meta">' + _esc(metaParts.join(' \u00b7 ')) + '</p>';
+        }
+      }
       return [
         '<div class="nc-cart-item" data-id="' + _esc(item.id) + '" role="listitem">',
         '  <div class="nc-cart-item-img-wrap">' + imgInner + '</div>',
@@ -507,6 +554,7 @@
         '    <p class="nc-cart-item-name">' + _esc(item.name) + '</p>',
         '    <span class="nc-cart-item-price">' + _fmt(item.price * item.quantity) + '</span>',
         '  </div>',
+        metaLine,
         '  <div class="nc-cart-item-bottom">',
         '    <div class="nc-qty" role="group" aria-label="Quantity">',
         '      <button class="nc-qty-dec" aria-label="Decrease quantity">\u2212</button>',
@@ -543,19 +591,49 @@
     badge.dataset.hidden = count === 0 ? 'true' : 'false';
   }
 
+  function _makeInfoBtn() {
+    var popup = document.createElement('span');
+    popup.className = 'nc-ship-info-popup';
+    popup.textContent = 'Applies to shipping within the United States only.';
+
+    var btn = document.createElement('button');
+    btn.className = 'nc-ship-info-btn';
+    btn.setAttribute('type', 'button');
+    btn.setAttribute('aria-label', 'Shipping info');
+    btn.textContent = 'i';
+    btn.appendChild(popup);
+
+    btn.addEventListener('click', function (e) {
+      e.stopPropagation();
+      popup.classList.toggle('visible');
+    });
+    document.addEventListener('click', function () {
+      popup.classList.remove('visible');
+    }, { capture: true });
+
+    return btn;
+  }
+
   function _updateShippingNotice() {
     if (!shippingNoticeEl) return;
-    const totalQty = cart.reduce(function (s, i) { return s + i.quantity; }, 0);
+
+    const totalQty = cart.reduce(function (s, i) {
+      return s + (i.meta && i.meta.bundleCount ? i.meta.bundleCount * i.quantity : i.quantity);
+    }, 0);
     if (totalQty === 0) {
       shippingNoticeEl.style.display = 'none';
     } else if (totalQty >= 2) {
       shippingNoticeEl.style.display = '';
       shippingNoticeEl.className = 'nc-cart-shipping-notice earned';
-      shippingNoticeEl.textContent = '\u2713 Free shipping applied';
+      shippingNoticeEl.innerHTML = '';
+      shippingNoticeEl.appendChild(document.createTextNode('\u2713 Free shipping applied'));
+      shippingNoticeEl.appendChild(_makeInfoBtn());
     } else {
       shippingNoticeEl.style.display = '';
       shippingNoticeEl.className = 'nc-cart-shipping-notice promo';
-      shippingNoticeEl.textContent = 'Free shipping when you buy 2 or more';
+      shippingNoticeEl.innerHTML = '';
+      shippingNoticeEl.appendChild(document.createTextNode('Free shipping when you buy 2 or more'));
+      shippingNoticeEl.appendChild(_makeInfoBtn());
     }
   }
 
