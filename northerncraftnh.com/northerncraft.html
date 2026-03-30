@@ -10,7 +10,7 @@
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
     :root {
-      --cream: #ece8e1;
+      --cream: #f0ebe4;
       --cream-dark: #d9d4cc;
       --panel: #cbc5bc;
       --charcoal: #2a2523;
@@ -145,6 +145,7 @@
       grid-template-columns: 47% 53%;
       min-height: 520px;
       padding: 0;
+      background: #f5f3f1;
     }
     .hero-left {
       padding: clamp(28px, 4vw, 52px) 56px;
@@ -351,7 +352,7 @@
     }
     /* ── ABOUT ── */
     #about {
-      background: #f5f3f1;
+      background: var(--cream);
       display: grid;
       grid-template-columns: 1fr 1fr;
       gap: 80px;
@@ -439,7 +440,7 @@
     }
     /* ── CUSTOM CTA ── */
     .custom-cta-section {
-      background: var(--cream);
+      background: #f5f3f1;
       padding: 56px 56px 80px;
       margin: 0;
     }
