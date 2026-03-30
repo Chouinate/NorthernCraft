@@ -554,7 +554,7 @@
     var price = calcPrice(n);
 
     tierLabels.forEach(function (el) {
-      el.classList.toggle('bb-reached', !!(cur && parseInt(el.dataset.limit, 10) <= cur.limit));
+      el.classList.toggle('bb-reached', !!(cur && parseInt(el.dataset.limit, 10) === cur.limit));
     });
 
     if (nxt) {
