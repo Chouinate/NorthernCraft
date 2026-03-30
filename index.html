@@ -363,8 +363,8 @@
       gap: 80px;
       align-items: start;
       margin: 0;
-      padding-top: 65px !important;
-      padding-bottom: 65px !important;
+      padding-top: 80px !important;
+      padding-bottom: 80px !important;
     }
     .about-img {
       background: none;
@@ -807,21 +807,22 @@
     });
 
     let snapping = false;
+    let lastY = window.scrollY;
 
     navLinks.querySelectorAll('a').forEach(link => {
       link.addEventListener('click', () => {
         hamburger.classList.remove('open');
         navLinks.classList.remove('open');
-        // suppress snap so the scroll reaches the correct section
+        // suppress snap so the scroll reaches the correct section,
+        // then sync lastY so a touch there doesn't trigger a snap back
         snapping = true;
-        setTimeout(() => { snapping = false; }, 1200);
+        setTimeout(() => { snapping = false; lastY = window.scrollY; }, 1200);
       });
     });
 
     // Mobile section snapping
     if (window.matchMedia('(max-width: 768px)').matches) {
       const snapSections = [...document.querySelectorAll('section, footer')];
-      let lastY = window.scrollY;
 
       function doSnap(target) {
         snapping = true;
