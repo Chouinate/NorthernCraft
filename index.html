@@ -511,32 +511,37 @@
     /* ── ABOUT: INTERMEDIATE LAYOUT (medium screens) ── */
     @media (max-width: 1150px) and (min-width: 901px) {
       #about {
-        grid-template-columns: 1fr;
-        justify-items: center;
-        gap: 32px;
+        grid-template-columns: 1fr 1fr;
+        grid-template-rows: auto 1fr auto;
+        column-gap: 60px;
+        row-gap: 0;
+        align-items: start;
       }
       .about-text {
         display: contents;
       }
       .about-header {
-        order: 1;
-        width: 100%;
-        text-align: center;
-        justify-self: center;
+        grid-column: 1;
+        grid-row: 1;
       }
       .about-img {
-        order: 2;
-        max-width: 460px;
-        width: 100%;
-        align-self: auto;
+        grid-column: 1;
+        grid-row: 2;
+        align-self: stretch;
+        aspect-ratio: auto;
       }
-      .about-body {
-        order: 3;
-        width: 100%;
+      .about-bodies {
+        grid-column: 2;
+        grid-row: 1 / span 3;
+        align-self: center;
       }
       .about-signoff {
-        order: 3;
-        width: 100%;
+        grid-column: 1;
+        grid-row: 3;
+        margin-top: 20px;
+      }
+      .signoff-quote {
+        font-size: 18px;
       }
     }
     /* ── RESPONSIVE (MOBILE) ── */
@@ -755,20 +760,22 @@
         <p class="section-label">About</p>
         <h2 class="section-title">Made in <em>New Hampshire</em></h2>
       </div>
-      <p class="about-body">
-        Northern Craft started with a 3D printer and no real plan, just experimenting, making small
-        things around the house, and learning as I went. It didn't take long to realize how much I
-        enjoyed the design process, and I started looking for any excuse to create something new.
-      </p>
-      <p class="about-body">
-        When my girlfriend wanted something to fill an empty wall at home, I jumped at the chance.
-        I designed a set of geometric pieces, she loved them, and soon friends were asking where they
-        could get them. That's when it started feeling like something worth sharing.
-      </p>
-      <p class="about-body">
-        Every design is created digitally and printed to order in New Hampshire. Nothing gets released
-        until it's been tested, adjusted, and approved by someone who won't spare my feelings.
-      </p>
+      <div class="about-bodies">
+        <p class="about-body">
+          Northern Craft started with a 3D printer and no real plan, just experimenting, making small
+          things around the house, and learning as I went. It didn't take long to realize how much I
+          enjoyed the design process, and I started looking for any excuse to create something new.
+        </p>
+        <p class="about-body">
+          When my girlfriend wanted something to fill an empty wall at home, I jumped at the chance.
+          I designed a set of geometric pieces, she loved them, and soon friends were asking where they
+          could get them. That's when it started feeling like something worth sharing.
+        </p>
+        <p class="about-body">
+          Every design is created digitally and printed to order in New Hampshire. Nothing gets released
+          until it's been tested, adjusted, and approved by someone who won't spare my feelings.
+        </p>
+      </div>
       <div class="about-signoff">
         <p class="signoff-quote">If I wouldn't put it on my own wall, it doesn't make it into the collection.</p>
         <span class="signoff-name"><span style="font-weight:100; opacity:0.6;">–</span> N<span style="letter-spacing:-0.05em">.</span>C<span style="letter-spacing:-0.05em">.</span></span>
