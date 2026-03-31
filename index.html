@@ -361,7 +361,7 @@
       display: grid;
       grid-template-columns: 1fr 1fr;
       gap: 80px;
-      align-items: start;
+      align-items: center;
       margin: 0;
       padding-top: 80px !important;
       padding-bottom: 80px !important;
@@ -514,16 +514,17 @@
     @media (max-width: 1500px) and (min-width: 901px) {
       #about {
         position: relative;
-        padding-bottom: 280px !important;
+        padding-bottom: 200px !important;
         align-items: center;
       }
       .about-signoff {
         position: absolute;
-        bottom: 80px;
+        bottom: 56px;
         left: 56px;
         right: 56px;
         margin: 0;
       }
+      .signoff-quote { font-size: clamp(18px, 2vw, 24px); }
     }
     /* ── RESPONSIVE (MOBILE) ── */
     @media (max-width: 900px) {
