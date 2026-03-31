@@ -513,35 +513,29 @@
       #about {
         grid-template-columns: 1fr 1fr;
         grid-template-rows: auto 1fr auto;
-        column-gap: 60px;
-        row-gap: 0;
-        align-items: start;
+        column-gap: 80px;
+        row-gap: 32px;
       }
-      .about-text {
-        display: contents;
-      }
-      .about-header {
-        grid-column: 1;
-        grid-row: 1;
-      }
+      .about-text { display: contents; }
       .about-img {
         grid-column: 1;
-        grid-row: 2;
-        align-self: stretch;
-        aspect-ratio: auto;
+        grid-row: 1 / span 2;
+        align-self: center;
+      }
+      .about-header {
+        grid-column: 2;
+        grid-row: 1;
+        align-self: end;
       }
       .about-bodies {
         grid-column: 2;
-        grid-row: 1 / span 3;
-        align-self: center;
+        grid-row: 2;
+        align-self: start;
       }
       .about-signoff {
-        grid-column: 1;
+        grid-column: 1 / -1;
         grid-row: 3;
-        margin-top: 20px;
-      }
-      .signoff-quote {
-        font-size: 18px;
+        margin-top: 0;
       }
     }
     /* ── RESPONSIVE (MOBILE) ── */
