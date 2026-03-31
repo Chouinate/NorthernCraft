@@ -508,13 +508,17 @@
     #mailto-toast.show {
       opacity: 1; transform: translateX(-50%) translateY(0);
     }
-    /* ── ABOUT: INTERMEDIATE LAYOUT (medium screens) ── */
-    @media (max-width: 1150px) and (min-width: 901px) {
+    /* ── ABOUT: SIGNOFF FULL-WIDTH BELOW BOTH COLUMNS ── */
+    /* Right col is too narrow to hold the quote on 1 line below ~1500px.
+       Pop it to full page width so it stays 1 line.
+       On mobile (<901px) it stacks naturally below the words already. */
+    @media (max-width: 1500px) and (min-width: 901px) {
       #about {
         grid-template-columns: 1fr 1fr;
         grid-template-rows: auto 1fr auto;
         column-gap: 80px;
-        row-gap: 32px;
+        row-gap: 0;
+        align-items: start;
       }
       .about-text { display: contents; }
       .about-img {
@@ -526,6 +530,7 @@
         grid-column: 2;
         grid-row: 1;
         align-self: end;
+        padding-bottom: 8px;
       }
       .about-bodies {
         grid-column: 2;
@@ -535,7 +540,7 @@
       .about-signoff {
         grid-column: 1 / -1;
         grid-row: 3;
-        margin-top: 0;
+        margin-top: 32px;
       }
     }
     /* ── RESPONSIVE (MOBILE) ── */
@@ -544,7 +549,7 @@
       .nav-tagline { display: none; }
       section { padding: 80px 32px !important; }
       .custom-cta-section { padding: 48px 32px !important; }
-      #about { padding: 32px 32px !important; grid-template-columns: 1fr; gap: 24px; }
+      #about { padding: 80px 32px !important; grid-template-columns: 1fr; gap: 24px; }
       #process { padding: 48px 32px !important; }
       .hero {
         grid-template-columns: 1fr;
@@ -572,8 +577,11 @@
       .custom-cta-section { padding: 36px 20px !important; }
       .product-grid { grid-template-columns: 1fr 1fr; }
       .process-steps { grid-template-columns: 1fr; gap: 20px; }
-      #about { padding: 24px 20px !important; }
+      #about { padding: 60px 20px !important; }
       #process { padding: 36px 20px !important; }
+      .about-signoff { padding: 28px 20px; }
+      .signoff-quote { font-size: 18px; }
+      .signoff-name { font-size: 19px; bottom: 14px; right: 20px; }
     }
   </style>
   <!-- Set your PayPal client ID here (get it from developer.paypal.com → Apps & Credentials) -->

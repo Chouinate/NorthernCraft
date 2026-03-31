@@ -109,9 +109,9 @@
 
     '.bb-tier{',
     '  padding:7px 16px;',
-    '  border:1.5px solid rgba(92,53,69,.16);',
+    '  border:1.5px solid rgba(123,79,92,.3);',
     '  font-family:var(--ff-sans);font-size:11px;letter-spacing:.13em;',
-    '  text-transform:uppercase;color:rgba(92,53,69,.45);',
+    '  text-transform:uppercase;color:var(--mauve);',
     '  white-space:nowrap;pointer-events:none;user-select:none;',
     '  transition:border-color .2s,color .2s,background .2s;',
     '}',
