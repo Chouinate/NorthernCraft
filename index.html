@@ -508,10 +508,11 @@
     #mailto-toast.show {
       opacity: 1; transform: translateX(-50%) translateY(0);
     }
-    /* ── ABOUT: INTERMEDIATE LAYOUT (medium screens) ── */
-    /* 901-1049px: no change — signoff stays below paragraphs in right column */
-    /* 1050-1150px: wide enough for quote on 1 line — span full width below both columns */
-    @media (max-width: 1150px) and (min-width: 1050px) {
+    /* ── ABOUT: SIGNOFF FULL-WIDTH BELOW BOTH COLUMNS ── */
+    /* Right col is too narrow to hold the quote on 1 line below ~1500px.
+       Pop it to full page width so it stays 1 line.
+       On mobile (<901px) it stacks naturally below the words already. */
+    @media (max-width: 1500px) and (min-width: 901px) {
       #about {
         grid-template-columns: 1fr 1fr;
         grid-template-rows: auto 1fr auto;
