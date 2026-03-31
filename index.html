@@ -509,38 +509,20 @@
       opacity: 1; transform: translateX(-50%) translateY(0);
     }
     /* ── ABOUT: SIGNOFF FULL-WIDTH BELOW BOTH COLUMNS ── */
-    /* Right col is too narrow to hold the quote on 1 line below ~1500px.
-       Pop it to full page width so it stays 1 line.
-       On mobile (<901px) it stacks naturally below the words already. */
+    /* Absolute-position the signoff at the section bottom so it spans
+       full page width without disrupting the two-column image/text flow. */
     @media (max-width: 1500px) and (min-width: 901px) {
       #about {
-        grid-template-columns: 1fr 1fr;
-        grid-template-rows: auto 1fr auto;
-        column-gap: 80px;
-        row-gap: 0;
-        align-items: start;
-      }
-      .about-text { display: contents; }
-      .about-img {
-        grid-column: 1;
-        grid-row: 1 / span 2;
-        align-self: center;
-      }
-      .about-header {
-        grid-column: 2;
-        grid-row: 1;
-        align-self: end;
-        padding-bottom: 8px;
-      }
-      .about-bodies {
-        grid-column: 2;
-        grid-row: 2;
-        align-self: start;
+        position: relative;
+        padding-bottom: 280px !important;
+        align-items: center;
       }
       .about-signoff {
-        grid-column: 1 / -1;
-        grid-row: 3;
-        margin-top: 32px;
+        position: absolute;
+        bottom: 80px;
+        left: 56px;
+        right: 56px;
+        margin: 0;
       }
     }
     /* ── RESPONSIVE (MOBILE) ── */
