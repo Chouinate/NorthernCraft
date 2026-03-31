@@ -509,8 +509,9 @@
       opacity: 1; transform: translateX(-50%) translateY(0);
     }
     /* ── ABOUT: INTERMEDIATE LAYOUT (medium screens) ── */
-    /* Smaller intermediate: signoff sits centered under the image */
-    @media (max-width: 1150px) and (min-width: 901px) {
+    /* 901-1049px: no change — signoff stays below paragraphs in right column */
+    /* 1050-1150px: wide enough for quote on 1 line — span full width below both columns */
+    @media (max-width: 1150px) and (min-width: 1050px) {
       #about {
         grid-template-columns: 1fr 1fr;
         grid-template-rows: auto 1fr auto;
@@ -536,23 +537,10 @@
         align-self: start;
       }
       .about-signoff {
-        grid-column: 1;
-        grid-row: 3;
-        margin-top: 20px;
-        text-align: center;
-      }
-      .signoff-quote { font-size: 15px; }
-      .signoff-name { font-size: 18px; bottom: 14px; right: 24px; }
-    }
-    /* Larger intermediate: text column matches image height — drop signoff below both */
-    @media (max-width: 1150px) and (min-width: 1051px) {
-      .about-signoff {
         grid-column: 1 / -1;
         grid-row: 3;
         margin-top: 32px;
       }
-      .signoff-quote { font-size: 20px; }
-      .signoff-name { font-size: 21px; bottom: 17px; right: 28px; }
     }
     /* ── RESPONSIVE (MOBILE) ── */
     @media (max-width: 900px) {
