@@ -390,7 +390,7 @@
       display: block;
       position: relative;
       background: var(--mauve-dark);
-      padding: 38px 40px;
+      padding: 32px 40px;
       margin-top: 56px;
       text-align: center;
     }
@@ -405,9 +405,9 @@
       margin: 0;
     }
     .signoff-name {
-      position: absolute;
-      bottom: 20px;
-      right: 33px;
+      display: block;
+      text-align: right;
+      margin-top: 12px;
       font-family: 'Cormorant SC', serif;
       font-size: 23px;
       font-weight: 400;
@@ -523,8 +523,8 @@
       .about-signoff {
         position: absolute;
         bottom: 56px;
-        left: clamp(56px, 8%, 120px);
-        right: clamp(56px, 8%, 120px);
+        left: 56px;
+        right: 56px;
         margin: 0;
       }
       .signoff-quote { font-size: clamp(18px, 2vw, 24px); }
@@ -567,7 +567,7 @@
       #process { padding: 36px 20px !important; }
       .about-signoff { padding: 28px 20px; }
       .signoff-quote { font-size: 18px; }
-      .signoff-name { font-size: 19px; bottom: 14px; right: 20px; }
+      .signoff-name { font-size: 19px; }
     }
   </style>
   <!-- Set your PayPal client ID here (get it from developer.paypal.com → Apps & Credentials) -->
