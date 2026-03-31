@@ -297,7 +297,7 @@
     }
     .product-grid {
       display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+      grid-template-columns: repeat(6, 1fr);
       gap: 24px;
       margin: 0;
       padding: 0;
@@ -512,6 +512,9 @@
     /* Absolute-position the signoff at the section bottom so it spans
        full page width without disrupting the two-column image/text flow. */
     @media (max-width: 1500px) and (min-width: 901px) {
+      .product-grid { grid-template-columns: repeat(4, 1fr); }
+    }
+    @media (min-width: 901px) {
       #about {
         position: relative;
         padding-bottom: 200px !important;
