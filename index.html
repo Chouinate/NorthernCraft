@@ -297,7 +297,7 @@
     }
     .product-grid {
       display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+      grid-template-columns: repeat(6, 1fr);
       gap: 24px;
       margin: 0;
       padding: 0;
@@ -361,14 +361,14 @@
       display: grid;
       grid-template-columns: 1fr 1fr;
       gap: 80px;
-      align-items: start;
+      align-items: center;
       margin: 0;
       padding-top: 80px !important;
       padding-bottom: 80px !important;
     }
     .about-img {
       background: none;
-      aspect-ratio: 4/5;
+      aspect-ratio: 1/1;
       display: flex;
       align-items: center;
       justify-content: center;
@@ -512,18 +512,22 @@
     /* Absolute-position the signoff at the section bottom so it spans
        full page width without disrupting the two-column image/text flow. */
     @media (max-width: 1500px) and (min-width: 901px) {
+      .product-grid { grid-template-columns: repeat(4, 1fr); }
+    }
+    @media (min-width: 901px) {
       #about {
         position: relative;
-        padding-bottom: 280px !important;
+        padding-bottom: 200px !important;
         align-items: center;
       }
       .about-signoff {
         position: absolute;
-        bottom: 80px;
+        bottom: 56px;
         left: 56px;
         right: 56px;
         margin: 0;
       }
+      .signoff-quote { font-size: clamp(18px, 2vw, 24px); }
     }
     /* ── RESPONSIVE (MOBILE) ── */
     @media (max-width: 900px) {
@@ -540,7 +544,7 @@
       }
       .hero-right { height: 380px; max-height: 380px; }
       .hero-left { padding: clamp(60px, 13vw, 120px) 28px 40px; }
-      .about-img { aspect-ratio: 3/2; max-height: 320px; align-self: auto; }
+      .about-img { aspect-ratio: 3/2; max-height: 320px; align-self: auto; justify-self: center; }
       .product-grid { grid-template-columns: 1fr 1fr; }
       .process-steps { grid-template-columns: 1fr 1fr; }
       footer {
