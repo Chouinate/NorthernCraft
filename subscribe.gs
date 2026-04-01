@@ -11,8 +11,8 @@
  */
 
 var SHEET_NAME   = 'Subscribers';
-var FROM_NAME    = 'Northern Craft';
-var FROM_EMAIL   = 'northerncraftnh@gmail.com';
+var FROM_NAME    = 'Northern Craft NH';
+var FROM_EMAIL   = 'nate@northerncraftnh.com';
 var SITE_URL     = 'https://northerncraftnh.com';
 var SCRIPT_URL   = ScriptApp.getService().getUrl();    // auto-filled after deploy
 
@@ -126,13 +126,17 @@ function sendThankYou(email, token) {
     /* ── message ── */
     '<tr><td align="left" style="padding:0 0 12px;font-family:Georgia,serif;font-size:26px;font-weight:400;color:#2a2523;line-height:1.3;">Thank you for subscribing.</td></tr>',
     '<tr><td align="left" style="padding:0 0 12px;font-family:Georgia,serif;font-size:16px;color:#2a2523;line-height:1.75;">You\'re on the list. When new designs drop, you\'ll be the first to know.</td></tr>',
-    '<tr><td align="left" style="padding:0 0 40px;font-family:Georgia,serif;font-size:16px;color:#2a2523;line-height:1.75;">No noise &mdash; just new work.</td></tr>',
+    '<tr><td align="left" style="padding:0 0 12px;font-family:Georgia,serif;font-size:16px;color:#2a2523;line-height:1.75;">We can\'t wait to show you what\'s coming.</td></tr>',
+    '<tr><td align="left" style="padding:0 0 40px;font-family:Georgia,serif;font-size:16px;color:#2a2523;line-height:1.75;">No spam, just new designs.</td></tr>',
 
     /* ── sign-off ── */
     '<tr><td align="left" style="padding:0 0 72px;font-family:Georgia,serif;font-size:18px;font-style:italic;color:#5c3545;">&mdash; N.C.</td></tr>',
 
     /* ── divider ── */
     '<tr><td style="padding:0 0 24px;border-top:1px solid rgba(92,53,69,0.15);font-size:0;">&nbsp;</td></tr>',
+
+    /* ── drag-to-primary note ── */
+    '<tr><td align="center" style="padding:0 0 20px;font-family:Arial,sans-serif;font-size:11px;color:#a09088;font-style:italic;">If this landed in Promotions, drag it to your Primary inbox &mdash; Gmail will remember.</td></tr>',
 
     /* ── footer ── */
     '<tr><td align="center" style="font-family:Arial,sans-serif;font-size:10px;letter-spacing:0.1em;text-transform:uppercase;color:#a09088;"><a href="' + unsubUrl + '" style="color:#7b4f5c;text-decoration:none;border-bottom:1px solid #7b4f5c;">Unsubscribe</a>&nbsp;&nbsp;&middot;&nbsp;&nbsp;Northern Craft&nbsp;&nbsp;&middot;&nbsp;&nbsp;New Hampshire</td></tr>',
