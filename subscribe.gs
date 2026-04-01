@@ -12,7 +12,7 @@
 
 var SHEET_NAME   = 'Subscribers';
 var FROM_NAME    = 'Northern Craft';
-var FROM_EMAIL   = Session.getActiveUser().getEmail(); // your Gmail
+var FROM_EMAIL   = 'northerncraftnh@gmail.com';
 var SITE_URL     = 'https://northerncraftnh.com';
 var SCRIPT_URL   = ScriptApp.getService().getUrl();    // auto-filled after deploy
 
