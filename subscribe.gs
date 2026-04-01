@@ -95,37 +95,105 @@ function doGet(e) {
 ───────────────────────────────────────────────────────────── */
 
 function sendThankYou(email, token) {
-  var unsubUrl = SCRIPT_URL + '?token=' + token;
+  var unsubUrl  = SCRIPT_URL + '?token=' + token;
+  var imgUrl    = 'https://northerncraftnh.com/WallGrid.jpg';
 
   var html = [
-    '<div style="font-family:Georgia,serif;max-width:520px;margin:0 auto;color:#2a2523;">',
+    '<!DOCTYPE html>',
+    '<html><head><meta charset="UTF-8">',
+    '<meta name="viewport" content="width=device-width,initial-scale=1">',
+    '</head>',
 
-    '<p style="font-size:22px;font-weight:400;margin:0 0 20px;">',
-    '  Thank you for subscribing.',
-    '</p>',
+    /* outer wrapper */
+    '<body style="margin:0;padding:0;background-color:#f5f2ec;">',
+    '<table width="100%" cellpadding="0" cellspacing="0" border="0"',
+    '  style="background-color:#f5f2ec;">',
+    '<tr><td align="center" style="padding:48px 16px 48px;">',
 
-    '<p style="font-size:15px;line-height:1.7;margin:0 0 16px;">',
-    '  You\'re on the list. When new designs drop, you\'ll be the first to know.',
-    '  No noise — just new work.',
-    '</p>',
+    /* card */
+    '<table width="600" cellpadding="0" cellspacing="0" border="0"',
+    '  style="max-width:600px;width:100%;background-color:#f5f2ec;">',
 
-    '<p style="font-size:15px;line-height:1.7;margin:0 0 32px;">',
-    '  &mdash; N.C.',
-    '</p>',
+    /* ── header ── */
+    '<tr><td align="center"',
+    '  style="padding:0 0 32px;',
+    '         font-family:Georgia,\'Times New Roman\',serif;',
+    '         font-size:11px;letter-spacing:0.22em;',
+    '         text-transform:uppercase;color:#5c3545;">',
+    'NORTHERN CRAFT',
+    '</td></tr>',
 
-    '<hr style="border:none;border-top:1px solid rgba(92,53,69,.15);margin:0 0 24px;">',
+    /* ── divider ── */
+    '<tr><td style="padding:0 0 32px;">',
+    '<table width="100%" cellpadding="0" cellspacing="0" border="0">',
+    '<tr><td style="border-top:1px solid rgba(92,53,69,0.2);font-size:0;">&nbsp;</td></tr>',
+    '</table></td></tr>',
 
-    '<p style="font-size:11px;letter-spacing:.06em;text-transform:uppercase;',
-    '   color:#999;margin:0;">',
-    '  <a href="' + unsubUrl + '" style="color:#7b4f5c;text-decoration:none;',
-    '     border-bottom:1px solid currentColor;">Unsubscribe</a>',
-    '  &nbsp;&middot;&nbsp; Northern Craft &nbsp;&middot;&nbsp; New Hampshire',
-    '</p>',
+    /* ── message ── */
+    '<tr><td align="left"',
+    '  style="padding:0 0 12px;',
+    '         font-family:Georgia,\'Times New Roman\',serif;',
+    '         font-size:26px;font-weight:400;',
+    '         color:#2a2523;line-height:1.3;">',
+    'Thank you for subscribing.',
+    '</td></tr>',
 
-    '</div>',
-  ].join('');
+    '<tr><td align="left"',
+    '  style="padding:0 0 12px;',
+    '         font-family:Georgia,\'Times New Roman\',serif;',
+    '         font-size:16px;font-weight:400;',
+    '         color:#2a2523;line-height:1.75;">',
+    "You're on the list. When new designs drop, you'll be the first to know.",
+    '</td></tr>',
 
-  GmailApp.sendEmail(email, 'Welcome to the list — Northern Craft', '', {
+    '<tr><td align="left"',
+    '  style="padding:0 0 40px;',
+    '         font-family:Georgia,\'Times New Roman\',serif;',
+    '         font-size:16px;font-weight:400;',
+    '         color:#2a2523;line-height:1.75;">',
+    'No noise &mdash; just new work.',
+    '</td></tr>',
+
+    /* ── sign-off ── */
+    '<tr><td align="left"',
+    '  style="padding:0 0 48px;',
+    '         font-family:Georgia,\'Times New Roman\',serif;',
+    '         font-size:18px;font-style:italic;',
+    '         color:#5c3545;">',
+    '&mdash; N.C.',
+    '</td></tr>',
+
+    /* ── image ── */
+    '<tr><td align="center" style="padding:0 0 48px;">',
+    '<img src="' + imgUrl + '"',
+    '  width="600" alt="Northern Craft studio wall"',
+    '  style="display:block;width:100%;max-width:600px;',
+    '         height:auto;border:0;">',
+    '</td></tr>',
+
+    /* ── divider ── */
+    '<tr><td style="padding:0 0 20px;">',
+    '<table width="100%" cellpadding="0" cellspacing="0" border="0">',
+    '<tr><td style="border-top:1px solid rgba(92,53,69,0.15);font-size:0;">&nbsp;</td></tr>',
+    '</table></td></tr>',
+
+    /* ── footer ── */
+    '<tr><td align="center"',
+    '  style="font-family:Arial,Helvetica,sans-serif;',
+    '         font-size:10px;letter-spacing:0.1em;',
+    '         text-transform:uppercase;color:#a09088;">',
+    '<a href="' + unsubUrl + '"',
+    '  style="color:#7b4f5c;text-decoration:none;',
+    '         border-bottom:1px solid #7b4f5c;">Unsubscribe</a>',
+    '&nbsp;&nbsp;&middot;&nbsp;&nbsp;Northern Craft&nbsp;&nbsp;&middot;&nbsp;&nbsp;New Hampshire',
+    '</td></tr>',
+
+    '</table>',  /* end card */
+    '</td></tr></table>',  /* end outer */
+    '</body></html>',
+  ].join('\n');
+
+  GmailApp.sendEmail(email, 'Welcome to the list \u2014 Northern Craft', '', {
     from:     FROM_EMAIL,
     name:     FROM_NAME,
     htmlBody: html,
