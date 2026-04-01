@@ -330,7 +330,9 @@
       transition: opacity 0.2s;
     }
     .product-card:hover .product-card-name,
-    .bb-active .product-card-name {
+    .product-card:hover .product-card-price,
+    .bb-active .product-card-name,
+    .bb-active .product-card-price {
       opacity: 1;
     }
     .product-card-price {
@@ -345,6 +347,8 @@
       padding: 3px 7px;
       pointer-events: none;
       z-index: 2;
+      opacity: 0;
+      transition: opacity 0.2s;
     }
     .bundle-cta {
       text-align: center;
