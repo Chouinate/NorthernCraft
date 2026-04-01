@@ -124,7 +124,7 @@ function sendThankYou(email, token) {
     '<tr><td style="padding:0 0 32px;border-top:1px solid rgba(92,53,69,0.2);font-size:0;">&nbsp;</td></tr>',
 
     /* ── message ── */
-    '<tr><td align="left" style="padding:0 0 12px;font-family:Georgia,serif;font-size:26px;font-weight:400;color:#2a2523;line-height:1.3;">Thank you for subscribing.</td></tr>',
+    '<tr><td align="left" style="padding:0 0 40px;font-family:Georgia,serif;font-size:26px;font-weight:400;color:#2a2523;line-height:1.3;">Thank you for subscribing.</td></tr>',
     '<tr><td align="left" style="padding:0 0 12px;font-family:Georgia,serif;font-size:16px;color:#2a2523;line-height:1.75;">You\'re on the list. When new designs drop, you\'ll be the first to know.</td></tr>',
     '<tr><td align="left" style="padding:0 0 40px;font-family:Georgia,serif;font-size:16px;color:#2a2523;line-height:1.75;">We can\'t wait to show you what\'s coming.</td></tr>',
 
