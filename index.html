@@ -346,6 +346,23 @@
       margin: 12px 0 0;
       min-height: 1.4em;
     }
+    #sub-error-bar {
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      background: #9b2335;
+      color: #fff;
+      text-align: center;
+      padding: 11px 16px;
+      font-family: var(--ff-sans);
+      font-size: 10px;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      z-index: 500;
+      cursor: pointer;
+      transform: translateY(-100%);
+      transition: transform 0.3s cubic-bezier(.4,0,.2,1);
+    }
+    #sub-error-bar.sub-err-on { transform: translateY(0); }
     .product-grid {
       display: grid;
       grid-template-columns: repeat(6, 1fr);
@@ -650,6 +667,7 @@
   <script src="product-cards.js" defer></script>
 </head>
 <body>
+  <div id="sub-error-bar">Please re-enter your email &mdash; something went wrong</div>
   <!-- NAV -->
   <nav>
     <div class="nav-brand">
@@ -1009,16 +1027,58 @@
 
 <script>
 (function () {
+  /* ── Replace with your deployed Apps Script URL when ready ── */
+  var SCRIPT_URL = '';
+
   var submitBtn  = document.getElementById('sub-submit');
   var emailInput = document.getElementById('sub-email');
   var footnote   = document.getElementById('sub-footnote');
+  var errorBar   = document.getElementById('sub-error-bar');
+  var errTimer;
+
+  function showErrorBar() {
+    clearTimeout(errTimer);
+    errorBar.classList.add('sub-err-on');
+    errTimer = setTimeout(hideErrorBar, 5000);
+  }
+  function hideErrorBar() {
+    errorBar.classList.remove('sub-err-on');
+  }
+  errorBar.addEventListener('click', hideErrorBar);
+
+  function resetForm() {
+    emailInput.disabled   = false;
+    submitBtn.disabled    = false;
+    submitBtn.textContent = 'Subscribe';
+    footnote.textContent  = 'No spam, just new designs.';
+    emailInput.focus();
+  }
+
+  function postEmail(email, attempt) {
+    if (!SCRIPT_URL) return; /* no-op until URL is configured */
+    fetch(SCRIPT_URL, {
+      method:  'POST',
+      mode:    'no-cors', /* Apps Script requires no-cors */
+      headers: { 'Content-Type': 'application/json' },
+      body:    JSON.stringify({ email: email }),
+    }).catch(function () {
+      if (attempt < 2) {
+        setTimeout(function () { postEmail(email, attempt + 1); }, 2500);
+      } else {
+        showErrorBar();
+        resetForm();
+      }
+    });
+  }
 
   submitBtn.addEventListener('click', function () {
     var email = emailInput.value.trim();
     if (!email || !email.includes('@')) { emailInput.focus(); return; }
-    emailInput.disabled  = true;
-    submitBtn.disabled   = true;
-    footnote.textContent = "You're on the list.";
+    emailInput.disabled   = true;
+    submitBtn.disabled    = true;
+    submitBtn.textContent = 'Thank you!';
+    footnote.textContent  = "You're on the list.";
+    postEmail(email, 1);
   });
 
   emailInput.addEventListener('keydown', function (e) {
