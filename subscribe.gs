@@ -14,7 +14,7 @@ var SHEET_NAME   = 'Subscribers';
 var FROM_NAME    = 'Northern Craft NH';
 var FROM_EMAIL   = 'nate@northerncraftnh.com';
 var SITE_URL     = 'https://northerncraftnh.com';
-var SCRIPT_URL   = ScriptApp.getService().getUrl();    // auto-filled after deploy
+var SCRIPT_URL   = 'https://script.google.com/macros/s/AKfycbzDvvz5Ww7IAwZFq5eJYDx15BEozIxxl7FemerROTSBie95NhxmcgrG6MKJ5x1tBcka/exec';
 
 
 /* ─────────────────────────────────────────────────────────────
@@ -126,11 +126,16 @@ function sendThankYou(email, token) {
     /* ── message ── */
     '<tr><td align="left" style="padding:0 0 12px;font-family:Georgia,serif;font-size:26px;font-weight:400;color:#2a2523;line-height:1.3;">Thank you for subscribing.</td></tr>',
     '<tr><td align="left" style="padding:0 0 12px;font-family:Georgia,serif;font-size:16px;color:#2a2523;line-height:1.75;">You\'re on the list. When new designs drop, you\'ll be the first to know.</td></tr>',
-    '<tr><td align="left" style="padding:0 0 12px;font-family:Georgia,serif;font-size:16px;color:#2a2523;line-height:1.75;">We can\'t wait to show you what\'s coming.</td></tr>',
-    '<tr><td align="left" style="padding:0 0 40px;font-family:Georgia,serif;font-size:16px;color:#2a2523;line-height:1.75;">No spam, just new designs.</td></tr>',
+    '<tr><td align="left" style="padding:0 0 40px;font-family:Georgia,serif;font-size:16px;color:#2a2523;line-height:1.75;">We can\'t wait to show you what\'s coming.</td></tr>',
 
     /* ── sign-off ── */
-    '<tr><td align="left" style="padding:0 0 72px;font-family:Georgia,serif;font-size:18px;font-style:italic;color:#5c3545;">&mdash; N.C.</td></tr>',
+    '<tr><td align="left" style="padding:0 0 40px;font-family:Georgia,serif;font-size:18px;font-style:italic;color:#5c3545;">&mdash; N.C.</td></tr>',
+
+    /* ── wall grid image ── */
+    '<tr><td align="center" style="padding:0 0 40px;">',
+    '<img src="https://northerncraftnh.com/WallGrid.jpg" width="560" alt="Northern Craft wall art collection"',
+    '  style="display:block;width:100%;max-width:560px;height:auto;border:0;">',
+    '</td></tr>',
 
     /* ── divider ── */
     '<tr><td style="padding:0 0 24px;border-top:1px solid rgba(92,53,69,0.15);font-size:0;">&nbsp;</td></tr>',
