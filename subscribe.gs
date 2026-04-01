@@ -95,8 +95,7 @@ function doGet(e) {
 ───────────────────────────────────────────────────────────── */
 
 function sendThankYou(email, token) {
-  var unsubUrl  = SCRIPT_URL + '?token=' + token;
-  var imgUrl    = 'https://northerncraftnh.com/WallGrid.jpg';
+  var unsubUrl = SCRIPT_URL + '?token=' + token;
 
   var html = [
     '<!DOCTYPE html>',
@@ -114,79 +113,29 @@ function sendThankYou(email, token) {
     '<table width="600" cellpadding="0" cellspacing="0" border="0"',
     '  style="max-width:600px;width:100%;background-color:#f5f2ec;">',
 
-    /* ── header ── */
-    '<tr><td align="center"',
-    '  style="padding:0 0 32px;',
-    '         font-family:Georgia,\'Times New Roman\',serif;',
-    '         font-size:11px;letter-spacing:0.22em;',
-    '         text-transform:uppercase;color:#5c3545;">',
-    'NORTHERN CRAFT',
+    /* ── header: logo ── */
+    '<tr><td align="center" style="padding:0 0 32px;">',
+    '<img src="https://northerncraftnh.com/NCNH_Logo.png"',
+    '  width="120" alt="Northern Craft NH"',
+    '  style="display:block;margin:0 auto;height:auto;border:0;">',
     '</td></tr>',
 
     /* ── divider ── */
-    '<tr><td style="padding:0 0 32px;">',
-    '<table width="100%" cellpadding="0" cellspacing="0" border="0">',
-    '<tr><td style="border-top:1px solid rgba(92,53,69,0.2);font-size:0;">&nbsp;</td></tr>',
-    '</table></td></tr>',
+    '<tr><td style="padding:0 0 32px;border-top:1px solid rgba(92,53,69,0.2);font-size:0;">&nbsp;</td></tr>',
 
     /* ── message ── */
-    '<tr><td align="left"',
-    '  style="padding:0 0 12px;',
-    '         font-family:Georgia,\'Times New Roman\',serif;',
-    '         font-size:26px;font-weight:400;',
-    '         color:#2a2523;line-height:1.3;">',
-    'Thank you for subscribing.',
-    '</td></tr>',
-
-    '<tr><td align="left"',
-    '  style="padding:0 0 12px;',
-    '         font-family:Georgia,\'Times New Roman\',serif;',
-    '         font-size:16px;font-weight:400;',
-    '         color:#2a2523;line-height:1.75;">',
-    "You're on the list. When new designs drop, you'll be the first to know.",
-    '</td></tr>',
-
-    '<tr><td align="left"',
-    '  style="padding:0 0 40px;',
-    '         font-family:Georgia,\'Times New Roman\',serif;',
-    '         font-size:16px;font-weight:400;',
-    '         color:#2a2523;line-height:1.75;">',
-    'No noise &mdash; just new work.',
-    '</td></tr>',
+    '<tr><td align="left" style="padding:0 0 12px;font-family:Georgia,serif;font-size:26px;font-weight:400;color:#2a2523;line-height:1.3;">Thank you for subscribing.</td></tr>',
+    '<tr><td align="left" style="padding:0 0 12px;font-family:Georgia,serif;font-size:16px;color:#2a2523;line-height:1.75;">You\'re on the list. When new designs drop, you\'ll be the first to know.</td></tr>',
+    '<tr><td align="left" style="padding:0 0 40px;font-family:Georgia,serif;font-size:16px;color:#2a2523;line-height:1.75;">No noise &mdash; just new work.</td></tr>',
 
     /* ── sign-off ── */
-    '<tr><td align="left"',
-    '  style="padding:0 0 48px;',
-    '         font-family:Georgia,\'Times New Roman\',serif;',
-    '         font-size:18px;font-style:italic;',
-    '         color:#5c3545;">',
-    '&mdash; N.C.',
-    '</td></tr>',
-
-    /* ── image ── */
-    '<tr><td align="center" style="padding:0 0 48px;">',
-    '<img src="' + imgUrl + '"',
-    '  width="600" alt="Northern Craft studio wall"',
-    '  style="display:block;width:100%;max-width:600px;',
-    '         height:auto;border:0;">',
-    '</td></tr>',
+    '<tr><td align="left" style="padding:0 0 72px;font-family:Georgia,serif;font-size:18px;font-style:italic;color:#5c3545;">&mdash; N.C.</td></tr>',
 
     /* ── divider ── */
-    '<tr><td style="padding:0 0 20px;">',
-    '<table width="100%" cellpadding="0" cellspacing="0" border="0">',
-    '<tr><td style="border-top:1px solid rgba(92,53,69,0.15);font-size:0;">&nbsp;</td></tr>',
-    '</table></td></tr>',
+    '<tr><td style="padding:0 0 24px;border-top:1px solid rgba(92,53,69,0.15);font-size:0;">&nbsp;</td></tr>',
 
     /* ── footer ── */
-    '<tr><td align="center"',
-    '  style="font-family:Arial,Helvetica,sans-serif;',
-    '         font-size:10px;letter-spacing:0.1em;',
-    '         text-transform:uppercase;color:#a09088;">',
-    '<a href="' + unsubUrl + '"',
-    '  style="color:#7b4f5c;text-decoration:none;',
-    '         border-bottom:1px solid #7b4f5c;">Unsubscribe</a>',
-    '&nbsp;&nbsp;&middot;&nbsp;&nbsp;Northern Craft&nbsp;&nbsp;&middot;&nbsp;&nbsp;New Hampshire',
-    '</td></tr>',
+    '<tr><td align="center" style="font-family:Arial,sans-serif;font-size:10px;letter-spacing:0.1em;text-transform:uppercase;color:#a09088;"><a href="' + unsubUrl + '" style="color:#7b4f5c;text-decoration:none;border-bottom:1px solid #7b4f5c;">Unsubscribe</a>&nbsp;&nbsp;&middot;&nbsp;&nbsp;Northern Craft&nbsp;&nbsp;&middot;&nbsp;&nbsp;New Hampshire</td></tr>',
 
     '</table>',  /* end card */
     '</td></tr></table>',  /* end outer */
