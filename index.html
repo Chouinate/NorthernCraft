@@ -294,6 +294,128 @@
       text-align: center;
       letter-spacing: 0.08em;
       margin-top: clamp(40px, 5vh, 72px);
+      line-height: 1.8;
+    }
+    .subscribe-link {
+      color: var(--mauve);
+      text-decoration: none;
+      border-bottom: 1px solid currentColor;
+      padding-bottom: 1px;
+    }
+    .subscribe-link:hover { color: var(--mauve-dark); }
+    .collection-no-spam {
+      display: block;
+      font-size: 13px;
+      font-weight: 400;
+      letter-spacing: 0.06em;
+      color: var(--text-muted);
+    }
+
+    /* ── Subscribe modal ── */
+    #subscribe-overlay {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(42, 37, 35, 0.55);
+      z-index: 300;
+      opacity: 0;
+      transition: opacity 0.25s;
+    }
+    #subscribe-overlay.sub-on { opacity: 1; }
+    #subscribe-modal {
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -48%);
+      background: var(--cream);
+      z-index: 301;
+      width: min(420px, 92vw);
+      padding: 44px 40px 36px;
+      box-sizing: border-box;
+      opacity: 0;
+      transition: opacity 0.25s, transform 0.25s;
+    }
+    #subscribe-modal.sub-on {
+      opacity: 1;
+      transform: translate(-50%, -50%);
+    }
+    #subscribe-modal h3 {
+      font-family: var(--ff-serif);
+      font-size: 26px;
+      font-weight: 400;
+      color: var(--charcoal);
+      margin: 0 0 8px;
+    }
+    #subscribe-modal p {
+      font-family: var(--ff-sans);
+      font-size: 12px;
+      letter-spacing: 0.06em;
+      color: var(--text-muted);
+      margin: 0 0 28px;
+      text-transform: uppercase;
+    }
+    #subscribe-modal input[type="email"] {
+      display: block;
+      width: 100%;
+      box-sizing: border-box;
+      background: none;
+      border: none;
+      border-bottom: 1px solid rgba(92, 53, 69, 0.3);
+      padding: 8px 0;
+      font-family: var(--ff-serif);
+      font-size: 18px;
+      color: var(--charcoal);
+      outline: none;
+      margin-bottom: 28px;
+      transition: border-color 0.2s;
+    }
+    #subscribe-modal input[type="email"]:focus {
+      border-bottom-color: var(--mauve-dark);
+    }
+    #subscribe-modal input[type="email"]::placeholder {
+      color: rgba(92, 53, 69, 0.35);
+    }
+    #sub-submit {
+      display: block;
+      width: 100%;
+      background: var(--mauve-dark);
+      color: #fff;
+      border: none;
+      cursor: pointer;
+      font-family: var(--ff-sans);
+      font-size: 11px;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      padding: 14px;
+      transition: background 0.2s;
+    }
+    #sub-submit:hover { background: var(--mauve); }
+    #sub-close {
+      position: absolute;
+      top: 16px;
+      right: 18px;
+      background: none;
+      border: none;
+      cursor: pointer;
+      font-size: 20px;
+      line-height: 1;
+      color: var(--text-muted);
+      padding: 4px;
+      transition: color 0.2s;
+    }
+    #sub-close:hover { color: var(--mauve-dark); }
+    #sub-success {
+      display: none;
+      text-align: center;
+      padding: 16px 0 8px;
+    }
+    #sub-success p {
+      font-family: var(--ff-serif);
+      font-size: 20px;
+      color: var(--charcoal);
+      text-transform: none;
+      letter-spacing: 0;
+      margin: 0;
     }
     .product-grid {
       display: grid;
@@ -762,7 +884,7 @@
         </div>
       </div>
     </div>
-    <p class="collection-transition">Our collection is always growing. Check back often.</p>
+    <p class="collection-transition">Our collection is always growing. Check back often, or <a href="#" class="subscribe-link" id="subscribe-trigger">subscribe for updates</a>.<br><span class="collection-no-spam">No spam, just new designs.</span></p>
   </section>
   <!-- CUSTOM CTA -->
   <section class="custom-cta-section">
@@ -945,6 +1067,76 @@
         }
       }, 800);
     });
+  });
+}());
+</script>
+
+<!-- Subscribe modal -->
+<div id="subscribe-overlay"></div>
+<div id="subscribe-modal" role="dialog" aria-modal="true" aria-labelledby="sub-title">
+  <button id="sub-close" aria-label="Close">&times;</button>
+  <h3 id="sub-title">Stay in the loop</h3>
+  <p>New designs, no noise.</p>
+  <div id="sub-form-wrap">
+    <input type="email" id="sub-email" placeholder="your@email.com" autocomplete="email">
+    <button id="sub-submit" type="button">Subscribe</button>
+  </div>
+  <div id="sub-success">
+    <p>You're on the list.</p>
+  </div>
+</div>
+
+<script>
+(function () {
+  var overlay = document.getElementById('subscribe-overlay');
+  var modal   = document.getElementById('subscribe-modal');
+  var trigger = document.getElementById('subscribe-trigger');
+  var closeBtn = document.getElementById('sub-close');
+  var submitBtn = document.getElementById('sub-submit');
+  var emailInput = document.getElementById('sub-email');
+  var formWrap = document.getElementById('sub-form-wrap');
+  var success  = document.getElementById('sub-success');
+
+  function openModal() {
+    overlay.style.display = 'block';
+    modal.style.display   = 'block';
+    requestAnimationFrame(function () {
+      overlay.classList.add('sub-on');
+      modal.classList.add('sub-on');
+    });
+    emailInput.focus();
+  }
+
+  function closeModal() {
+    overlay.classList.remove('sub-on');
+    modal.classList.remove('sub-on');
+    setTimeout(function () {
+      overlay.style.display = 'none';
+      modal.style.display   = 'none';
+      formWrap.style.display = '';
+      success.style.display  = 'none';
+      emailInput.value = '';
+    }, 260);
+  }
+
+  trigger.addEventListener('click', function (e) { e.preventDefault(); openModal(); });
+  closeBtn.addEventListener('click', closeModal);
+  overlay.addEventListener('click', closeModal);
+  modal.addEventListener('click', function (e) { e.stopPropagation(); });
+
+  document.addEventListener('keydown', function (e) {
+    if (e.key === 'Escape' && overlay.classList.contains('sub-on')) closeModal();
+  });
+
+  submitBtn.addEventListener('click', function () {
+    var email = emailInput.value.trim();
+    if (!email || !email.includes('@')) {
+      emailInput.focus();
+      return;
+    }
+    formWrap.style.display = 'none';
+    success.style.display  = 'block';
+    setTimeout(closeModal, 2200);
   });
 }());
 </script>
