@@ -329,8 +329,22 @@
       opacity: 0;
       transition: opacity 0.2s;
     }
-    .product-card:hover .product-card-name {
+    .product-card:hover .product-card-name,
+    .bb-active .product-card-name {
       opacity: 1;
+    }
+    .product-card-price {
+      position: absolute;
+      bottom: 8px;
+      left: 8px;
+      font-family: var(--ff-sans);
+      font-size: 12px;
+      letter-spacing: 0.05em;
+      color: var(--cream);
+      background: rgba(24, 9, 16, 0.45);
+      padding: 3px 7px;
+      pointer-events: none;
+      z-index: 2;
     }
     .bundle-cta {
       text-align: center;
@@ -621,7 +635,7 @@
       </p>
       <div class="hero-ctas">
         <a href="#collection" class="btn-primary">Browse Collection</a>
-        <a href="#about" class="btn-secondary">About Us</a>
+        <a href="#about" class="btn-secondary" id="hero-build-btn">Build a Set</a>
       </div>
     </div>
     <div class="hero-right">
@@ -639,6 +653,7 @@
         <div class="product-card-img">
           <img src="Products/Solstice.jpg" alt="Solstice">
           <p class="product-card-name">Solstice</p>
+          <span class="product-card-price">$35</span>
         </div>
         <div class="product-card-info">
         </div>
@@ -647,6 +662,7 @@
         <div class="product-card-img">
           <img src="Products/Bloom.jpg" alt="Bloom">
           <p class="product-card-name">Bloom</p>
+          <span class="product-card-price">$35</span>
         </div>
         <div class="product-card-info">
         </div>
@@ -655,6 +671,7 @@
         <div class="product-card-img">
           <img src="Products/Petal.jpg" alt="Petal">
           <p class="product-card-name">Petal</p>
+          <span class="product-card-price">$35</span>
         </div>
         <div class="product-card-info">
         </div>
@@ -663,6 +680,7 @@
         <div class="product-card-img">
           <img src="Products/Quarry.jpg" alt="Quarry">
           <p class="product-card-name">Quarry</p>
+          <span class="product-card-price">$35</span>
         </div>
         <div class="product-card-info">
         </div>
@@ -671,6 +689,7 @@
         <div class="product-card-img">
           <img src="Products/Meadow.jpg" alt="Meadow">
           <p class="product-card-name">Meadow</p>
+          <span class="product-card-price">$35</span>
         </div>
         <div class="product-card-info">
         </div>
@@ -679,6 +698,7 @@
         <div class="product-card-img">
           <img src="Products/Summit.jpg" alt="Summit">
           <p class="product-card-name">Summit</p>
+          <span class="product-card-price">$35</span>
         </div>
         <div class="product-card-info">
         </div>
@@ -687,6 +707,7 @@
         <div class="product-card-img">
           <img src="Products/Grove.jpg" alt="Grove">
           <p class="product-card-name">Grove</p>
+          <span class="product-card-price">$35</span>
         </div>
         <div class="product-card-info">
         </div>
@@ -695,6 +716,7 @@
         <div class="product-card-img">
           <img src="Products/Flora.jpg" alt="Flora">
           <p class="product-card-name">Flora</p>
+          <span class="product-card-price">$35</span>
         </div>
         <div class="product-card-info">
         </div>
@@ -703,6 +725,7 @@
         <div class="product-card-img">
           <img src="Products/North.jpg" alt="North">
           <p class="product-card-name">North</p>
+          <span class="product-card-price">$35</span>
         </div>
         <div class="product-card-info">
         </div>
@@ -711,6 +734,7 @@
         <div class="product-card-img">
           <img src="Products/Blossom.jpg" alt="Blossom">
           <p class="product-card-name">Blossom</p>
+          <span class="product-card-price">$35</span>
         </div>
         <div class="product-card-info">
         </div>
@@ -719,6 +743,7 @@
         <div class="product-card-img">
           <img src="Products/Rosette.jpg" alt="Rosette">
           <p class="product-card-name">Rosette</p>
+          <span class="product-card-price">$35</span>
         </div>
         <div class="product-card-info">
         </div>
@@ -727,6 +752,7 @@
         <div class="product-card-img">
           <img src="Products/Flare.jpg" alt="Flare">
           <p class="product-card-name">Flare</p>
+          <span class="product-card-price">$35</span>
         </div>
         <div class="product-card-info">
         </div>

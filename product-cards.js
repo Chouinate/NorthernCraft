@@ -165,6 +165,7 @@
     '  transition:opacity .2s,background .15s,border-color .15s;',
     '}',
     '.bb-active .psc{opacity:1;pointer-events:auto}',
+    '.bb-active .product-card-name{opacity:1}',
     '.bb-active .product-card{cursor:pointer}',
     '.product-card.pc-sel .psc{background:var(--mauve-dark);border-color:var(--mauve-dark)}',
     '.psc path{opacity:0;transition:opacity .15s}',
@@ -369,6 +370,19 @@
 
     /* wire product cards */
     document.querySelectorAll('.product-card[data-id]').forEach(wireCard);
+
+    /* hero "Build a Set" button */
+    var heroBtn = document.getElementById('hero-build-btn');
+    if (heroBtn) {
+      heroBtn.addEventListener('click', function (e) {
+        e.preventDefault();
+        var coll = document.getElementById('collection');
+        if (coll) coll.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        setTimeout(activateEmpty, 600);
+      });
+    }
+
+    window.enterBuildMode = activateEmpty;
   }
 
   /* ── wire a card ──────────────────────────────────────────────────── */
@@ -501,6 +515,17 @@
     activate(card);   // enters selection mode, adds this card
   }
 
+  /* ── activate with no pre-selected card ──────────────────────────── */
+  function activateEmpty() {
+    selected.forEach(function (c) { c.classList.remove('pc-sel'); });
+    selected   = [];
+    activeProd = null;
+    bar.classList.add('bb-on');
+    bar.setAttribute('aria-hidden', 'false');
+    document.body.classList.add('bb-active');
+    updateBar();
+  }
+
   /* ── activate (enter selection mode) ─────────────────────────────── */
   function activate(card) {
     selected.forEach(function (c) { c.classList.remove('pc-sel'); });
@@ -546,6 +571,14 @@
     updateBar();
   }
 
+  /* ── update per-card price badges ────────────────────────────────── */
+  function updateCardPrices(n) {
+    var perItem = n > 1 ? Math.round(calcPrice(n) / n) : SINGLE;
+    document.querySelectorAll('.product-card-price').forEach(function (el) {
+      el.textContent = '$' + perItem;
+    });
+  }
+
   /* ── update bar state ─────────────────────────────────────────────── */
   function updateBar() {
     var n     = selected.length;
@@ -581,6 +614,7 @@
       }
       barAdd.disabled = true;
     }
+    updateCardPrices(n);
   }
 
   /* ── deactivate ───────────────────────────────────────────────────── */
@@ -591,6 +625,7 @@
     document.body.classList.remove('bb-active');
     bar.classList.remove('bb-on');
     bar.setAttribute('aria-hidden', 'true');
+    updateCardPrices(0);
   }
 
   /* ── add to cart (banner) ─────────────────────────────────────────── */
