@@ -136,7 +136,7 @@ function sendThankYou(email, token) {
     /* ── logo ── */
     '<tr><td align="center" style="padding:0 0 32px;">',
     '<img src="https://northerncraftnh.com/NCNH_Logo.png"',
-    '  width="180" alt="Northern Craft NH"',
+    '  width="200" alt="Northern Craft NH"',
     '  style="display:block;margin:0 auto;height:auto;border:0;">',
     '</td></tr>',
 
@@ -194,7 +194,7 @@ function unsubscribePage(token) {
     '  *{box-sizing:border-box}' +
     '  body{font-family:Georgia,serif;background:#f5f2ec;margin:0;padding:48px 24px;color:#2a2523;}' +
     '  .card{max-width:500px;margin:0 auto;}' +
-    '  .logo{display:block;margin:0 auto 32px;width:225px;}' +
+    '  .logo{display:block;margin:0 auto 32px;width:200px;}' +
     '  hr{border:none;border-top:1px solid rgba(92,53,69,0.2);margin:0 0 32px;}' +
     '  h1{font-size:26px;font-weight:400;margin:0 0 12px;line-height:1.3;}' +
     '  .sub{font-size:15px;color:#6b5f5a;line-height:1.7;margin:0 0 32px;}' +
