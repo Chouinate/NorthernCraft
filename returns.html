@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Returns & Refunds — Northern Craft NH</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,300;1,400&family=Montserrat:wght@300;400;500&display=block" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --cream: #f0ebe4;
+      --cream-dark: #d9d4cc;
+      --panel: #cbc5bc;
+      --charcoal: #2a2523;
+      --mauve: #7b4f5c;
+      --mauve-dark: #5c3545;
+      --text-muted: #7a6f68;
+      --ff-serif: 'Cormorant Garamond', Georgia, serif;
+      --ff-sans: 'Montserrat', sans-serif;
+    }
+    html { scroll-behavior: smooth; }
+    body {
+      background: var(--cream);
+      color: var(--charcoal);
+      font-family: var(--ff-sans);
+      font-weight: 300;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* ── NAV ── */
+    nav {
+      display: flex;
+      align-items: center;
+      padding: 10px 41px 10px 56px;
+      background: rgba(255,255,255,0.3);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      z-index: 100;
+      border-bottom: 0.5px solid rgba(92,53,69,0.12);
+    }
+    .nav-logo img {
+      height: 48px;
+      width: auto;
+      display: block;
+    }
+    .nav-links {
+      display: flex;
+      gap: 32px;
+      list-style: none;
+      margin-left: auto;
+    }
+    .nav-links a {
+      font-size: 10px;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--charcoal);
+      text-decoration: none;
+      transition: color 0.2s;
+    }
+    .nav-links a:hover { color: var(--mauve); }
+
+    /* ── PAGE ── */
+    .page-wrap {
+      max-width: 640px;
+      margin: 0 auto;
+      padding: 140px 32px 100px;
+    }
+    .page-label {
+      font-family: var(--ff-sans);
+      font-size: 10px;
+      letter-spacing: 0.25em;
+      text-transform: uppercase;
+      color: var(--text-muted);
+      margin-bottom: 20px;
+    }
+    h1 {
+      font-family: var(--ff-serif);
+      font-size: clamp(32px, 5vw, 48px);
+      font-weight: 400;
+      line-height: 1.15;
+      color: var(--charcoal);
+      margin-bottom: 48px;
+    }
+    .policy-block {
+      border-top: 1px solid rgba(92,53,69,0.15);
+      padding: 32px 0;
+    }
+    .policy-block:last-of-type {
+      border-bottom: 1px solid rgba(92,53,69,0.15);
+    }
+    .policy-block p {
+      font-size: 15px;
+      line-height: 1.8;
+      color: var(--charcoal);
+      font-weight: 300;
+    }
+    .policy-block a {
+      color: var(--mauve-dark);
+      text-decoration: none;
+      border-bottom: 1px solid rgba(92,53,69,0.3);
+      padding-bottom: 1px;
+      transition: color 0.2s, border-color 0.2s;
+    }
+    .policy-block a:hover {
+      color: var(--mauve);
+      border-color: var(--mauve);
+    }
+    .back-link {
+      display: inline-block;
+      margin-top: 48px;
+      font-family: var(--ff-sans);
+      font-size: 10px;
+      letter-spacing: 0.25em;
+      text-transform: uppercase;
+      color: var(--text-muted);
+      text-decoration: none;
+      border-bottom: 1px solid var(--text-muted);
+      padding-bottom: 2px;
+      transition: color 0.2s, border-color 0.2s;
+    }
+    .back-link:hover { color: var(--mauve); border-color: var(--mauve); }
+
+    /* ── FOOTER ── */
+    footer {
+      background: var(--mauve-dark);
+      color: rgba(240,235,228,0.6);
+      padding: 8px 56px;
+      display: grid;
+      grid-template-columns: 1fr auto 1fr;
+      align-items: center;
+      border-top: 2px solid var(--cream);
+    }
+    .footer-logo img {
+      height: 150px;
+      width: auto;
+      display: block;
+      filter: brightness(0) saturate(100%) invert(94%) sepia(8%) saturate(300%) hue-rotate(340deg) brightness(103%);
+      opacity: 0.85;
+    }
+    .footer-links {
+      display: flex;
+      gap: 32px;
+      list-style: none;
+    }
+    .footer-links a {
+      font-size: 10px;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: rgba(240,235,228,0.6);
+      text-decoration: none;
+      transition: color 0.2s;
+    }
+    .footer-links a:hover { color: var(--cream); }
+    .footer-right { justify-self: end; text-align: right; }
+    .footer-copy { font-size: 11px; letter-spacing: 0.08em; }
+
+    @media (max-width: 768px) {
+      nav { padding: 10px 24px; }
+      footer {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 20px;
+        text-align: center;
+        padding: 40px 28px;
+      }
+      .footer-links { flex-wrap: wrap; justify-content: center; }
+    }
+  </style>
+</head>
+<body>
+
+  <nav>
+    <div class="nav-logo">
+      <a href="/"><img src="NCNH_Logo.png" alt="Northern Craft NH" /></a>
+    </div>
+    <ul class="nav-links">
+      <li><a href="/#collection">Collection</a></li>
+      <li><a href="/#about">About</a></li>
+      <li><a href="/#process">Process</a></li>
+    </ul>
+  </nav>
+
+  <div class="page-wrap">
+    <p class="page-label">Northern Craft NH</p>
+    <h1>Returns &amp; Refunds</h1>
+
+    <div class="policy-block">
+      <p>Changed your mind? It happens. If the piece is in original condition, send it back within 14 days and I'll refund you — just cover the return shipping.</p>
+    </div>
+
+    <div class="policy-block">
+      <p>Arrived damaged? Shoot me a photo and I'll take care of it. Replacement or refund, whatever works for you.</p>
+    </div>
+
+    <div class="policy-block">
+      <p>Custom pieces are final sale, but if something's not right, reach out. I'll always work with you.</p>
+    </div>
+
+    <div class="policy-block">
+      <p>Questions? <a href="mailto:nate@northerncraftnh.com">nate@northerncraftnh.com</a></p>
+    </div>
+
+    <a href="/" class="back-link">Back to site</a>
+  </div>
+
+  <footer>
+    <div class="footer-logo">
+      <img src="NCNH_Logo.png" alt="Northern Craft NH" />
+    </div>
+    <ul class="footer-links">
+      <li><a href="/#collection">Collection</a></li>
+      <li><a href="/#about">About</a></li>
+      <li><a href="/#process">Process</a></li>
+      <li><a href="mailto:nate@northerncraftnh.com">Contact</a></li>
+      <li><a href="/returns">Returns</a></li>
+    </ul>
+    <div class="footer-right">
+      <p class="footer-copy">© 2026 Northern Craft NH</p>
+    </div>
+  </footer>
+
+</body>
+</html>
