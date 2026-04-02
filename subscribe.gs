@@ -204,11 +204,11 @@ function unsubscribePage(token) {
     '  input[type=checkbox]{accent-color:#5c3545;width:15px;height:15px;flex-shrink:0;}' +
     '  textarea{width:100%;border:1px solid rgba(92,53,69,0.25);background:#fff;font-family:Georgia,serif;font-size:15px;color:#2a2523;padding:10px 12px;resize:vertical;outline:none;margin-bottom:28px;}' +
     '  textarea:focus{border-color:#5c3545;}' +
-    '  .btn-row{display:flex;gap:12px;flex-wrap:wrap;}' +
-    '  button{font-family:Georgia,serif;font-size:14px;letter-spacing:0.04em;padding:11px 26px;border:none;cursor:pointer;transition:opacity 0.15s;}' +
-    '  button:hover{opacity:0.8;}' +
-    '  .btn-resub{background:#5c3545;color:#fff;}' +
-    '  .btn-feed{background:transparent;border:1px solid rgba(92,53,69,0.35);color:#5c3545;}' +
+    '  .btn-row{display:flex;align-items:center;gap:24px;flex-wrap:wrap;}' +
+    '  .btn-feed{font-family:Georgia,serif;font-size:14px;letter-spacing:0.04em;padding:11px 26px;border:none;cursor:pointer;background:#5c3545;color:#fff;transition:opacity 0.15s;}' +
+    '  .btn-feed:hover{opacity:0.8;}' +
+    '  .btn-resub{font-family:Arial,sans-serif;font-size:10px;font-weight:400;letter-spacing:0.3em;text-transform:uppercase;background:none;border:none;border-bottom:1px solid #6b5f5a;color:#6b5f5a;padding:0 0 2px;cursor:pointer;transition:color 0.2s,border-color 0.2s;}' +
+    '  .btn-resub:hover{color:#5c3545;border-color:#5c3545;}' +
     '  #msg{margin-top:18px;font-size:14px;color:#6b5f5a;min-height:20px;}' +
     '</style></head>' +
     '<body><div class="card">' +
@@ -226,8 +226,8 @@ function unsubscribePage(token) {
     '</div>' +
     '<textarea rows="3" placeholder="Anything else you\'d like to share..."></textarea>' +
     '<div class="btn-row">' +
-    '  <button class="btn-resub" onclick="resub()">Resubscribe</button>' +
     '  <button class="btn-feed" onclick="sendFeedback()">Submit Feedback</button>' +
+    '  <button class="btn-resub" onclick="resub()">Resubscribe</button>' +
     '</div>' +
     '<p id="msg"></p>' +
     '</div>' +
