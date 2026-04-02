@@ -221,7 +221,6 @@ function unsubscribePage(token) {
     '  <label><input type="checkbox" value="too_frequent"> Too many emails</label>' +
     '  <label><input type="checkbox" value="not_relevant"> Not relevant to me</label>' +
     '  <label><input type="checkbox" value="style_change"> The designs aren\'t my style anymore</label>' +
-    '  <label><input type="checkbox" value="accidental"> I didn\'t mean to unsubscribe</label>' +
     '  <label><input type="checkbox" value="other"> Other</label>' +
     '</div>' +
     '<textarea rows="3" placeholder="Anything else you\'d like to share..."></textarea>' +
