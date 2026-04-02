@@ -104,9 +104,8 @@ module.exports = async (req, res) => {
 
     if (Array.isArray(payment_method_types) && payment_method_types.length > 0) {
       sessionParams.payment_method_types = payment_method_types;
-    } else {
-      sessionParams.automatic_payment_methods = { enabled: true };
     }
+    // automatic_payment_methods is the default in newer Stripe API versions — no need to set it
 
     const session = await stripe.checkout.sessions.create(sessionParams);
     res.json({ clientSecret: session.client_secret });
