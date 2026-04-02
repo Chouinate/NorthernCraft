@@ -239,6 +239,10 @@
       _showError(pageContainer, 'Your cart is empty.');
       return;
     }
+
+    var itemCount = items.reduce(function(sum, i) {
+      return sum + (parseInt(i.quantity, 10) || 1);
+    }, 0);
     if (typeof Stripe === 'undefined') {
       _showError(pageContainer, 'Payment system failed to load — please refresh.');
       return;
@@ -254,7 +258,7 @@
     fetch(SERVER + '/create-checkout-session', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ items: items, return_url: _buildReturnUrl() }),
+      body: JSON.stringify({ items: items, itemCount: itemCount, return_url: _buildReturnUrl() }),
     })
       .then(function (res) {
         return res.json().then(function (data) {
