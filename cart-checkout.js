@@ -321,10 +321,17 @@
       return;
     }
 
+    var itemCount = items.reduce(function (sum, i) {
+      var qty        = parseInt(i.quantity, 10) || 1;
+      var bundleSize = (i.meta && i.meta.bundleCount) ? i.meta.bundleCount : 1;
+      return sum + (qty * bundleSize);
+    }, 0);
+
     if (btnEl) { btnEl.disabled = true; btnEl.textContent = '\u2026'; }
 
     var body = {
       items:      items,
+      itemCount:  itemCount,
       return_url: _buildReturnUrl(),
     };
     if (methodTypes) body.payment_method_types = methodTypes;
