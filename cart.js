@@ -150,6 +150,7 @@
       flex: 1;
       overflow-y: auto;
       overscroll-behavior: contain;
+      scrollbar-gutter: stable;
     }
     .nc-cart-empty {
       display: flex;
