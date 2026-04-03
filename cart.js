@@ -694,8 +694,8 @@
           '  <div class="nc-bundle-header">',
           '    <p class="nc-cart-item-name">' + _esc(tierName) + '</p>',
           '    <div class="nc-bundle-actions">',
-          '      <button class="nc-cart-remove" aria-label="Remove ' + _esc(item.name) + '">Remove</button>',
           '      <button class="nc-bundle-edit-btn" aria-label="Edit this bundle">Edit</button>',
+          '      <button class="nc-cart-remove" aria-label="Remove ' + _esc(item.name) + '">Remove</button>',
           '    </div>',
           '    <div class="nc-bundle-top-right">',
           '      <span class="nc-cart-item-price">' + _fmt(item.price * item.quantity) + '</span>',
@@ -752,39 +752,59 @@
       // Bundle-only: click anywhere on the entire row to toggle (FLIP animation)
       if (row.classList.contains('nc-cart-bundle')) {
         row.addEventListener('click', function () {
-          var imgs = row.querySelectorAll('.nc-bundle-print-img');
+          var isOpen = row.classList.contains('nc-bundle-open');
+          var imgs   = row.querySelectorAll('.nc-bundle-print-img');
+          var names  = row.querySelectorAll('.nc-bundle-print-name');
 
-          // FIRST: snapshot current positions of all images
+          // FIRST: snapshot current positions before any layout change
           var rects = Array.from(imgs).map(function (img) {
             return img.getBoundingClientRect();
           });
 
-          // Toggle class — instantly reflows layout to new state
+          // When closing: immediately zero names so their max-width transition
+          // doesn't shift flex items during the FLIP (that causes the jumping)
+          if (isOpen) {
+            names.forEach(function (n) {
+              n.style.transition = 'none';
+              n.style.maxWidth   = '0';
+              n.style.opacity    = '0';
+              n.style.paddingLeft = '0';
+            });
+          }
+
+          // Toggle state — instantly reflows layout
           row.classList.toggle('nc-bundle-open');
 
-          // LAST → INVERT → PLAY: each image flies from old spot to new spot
+          // LAST: read all new positions and apply inverse transforms atomically
           imgs.forEach(function (img, i) {
             var last = img.getBoundingClientRect();
-            var dx   = rects[i].left - last.left;
-            var dy   = rects[i].top  - last.top;
-
             img.style.transition = 'none';
-            img.style.transform  = 'translate(' + dx + 'px, ' + dy + 'px)';
+            img.style.transform  = 'translate(' +
+              (rects[i].left - last.left) + 'px, ' +
+              (rects[i].top  - last.top)  + 'px)';
+          });
 
-            requestAnimationFrame(function () {
-              requestAnimationFrame(function () {
-                img.style.transition = 'transform 0.38s cubic-bezier(0.4, 0, 0.2, 1)';
-                img.style.transform  = '';
-              });
+          // Force one synchronous reflow so all transforms are "seen" by the browser
+          if (imgs.length) imgs[0].getBoundingClientRect();
+
+          // PLAY: start all animations in a single frame so they stay in sync
+          requestAnimationFrame(function () {
+            imgs.forEach(function (img) {
+              img.style.transition = 'transform 0.38s cubic-bezier(0.4, 0, 0.2, 1)';
+              img.style.transform  = '';
             });
           });
 
-          // Clean up inline styles after animation finishes
+          // Cleanup after animation
           setTimeout(function () {
             imgs.forEach(function (img) {
               img.style.transition = '';
               img.style.transform  = '';
             });
+            // If we were closing, remove the inline name styles we set above
+            if (isOpen) {
+              names.forEach(function (n) { n.style.cssText = ''; });
+            }
           }, 420);
         });
 
