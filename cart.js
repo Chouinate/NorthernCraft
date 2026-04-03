@@ -267,25 +267,28 @@
       margin: 3px 0 0;
     }
 
-    /* ── Bundle toggle header ── */
-    .nc-bundle-toggle {
+    /* ── Bundle row: override grid layout ── */
+    .nc-cart-item.nc-cart-bundle {
+      display: block;
+    }
+
+    /* ── Bundle header: name | remove | price | chevron ── */
+    .nc-bundle-header {
+      display: flex;
+      align-items: center;
+      gap: 10px;
       cursor: pointer;
       user-select: none;
     }
-    .nc-bundle-toggle:hover .nc-cart-item-name { color: #5c3545; }
-    .nc-bundle-count {
-      display: block;
-      font-family: 'Montserrat', sans-serif;
-      font-size: 9px;
-      letter-spacing: 0.16em;
-      text-transform: uppercase;
-      color: #9e9098;
-      margin-top: 2px;
+    .nc-bundle-header:hover .nc-cart-item-name { color: #5c3545; }
+    .nc-bundle-header .nc-cart-item-name {
+      flex: 1;
+      margin: 0;
     }
     .nc-bundle-top-right {
       display: flex;
       align-items: center;
-      gap: 8px;
+      gap: 6px;
       flex-shrink: 0;
     }
     .nc-bundle-chevron {
@@ -297,11 +300,28 @@
       transform: rotate(180deg);
     }
 
+    /* ── Bundle thumbnail strip ── */
+    .nc-bundle-thumbs {
+      display: flex;
+      gap: 4px;
+      margin-top: 8px;
+    }
+    .nc-bundle-thumbs img,
+    .nc-bundle-thumb-empty {
+      width: 30px;
+      height: 30px;
+      object-fit: cover;
+      display: block;
+      flex-shrink: 0;
+      background: #cbc5bc;
+    }
+
     /* ── Bundle expandable body ── */
     .nc-cart-bundle-body {
-      grid-column: 1 / -1;
       display: none;
-      margin-top: 6px;
+      margin-top: 10px;
+      border-top: 1px solid #d9d4cc;
+      padding-top: 8px;
     }
     .nc-cart-item.nc-bundle-open .nc-cart-bundle-body {
       display: block;
@@ -309,9 +329,19 @@
     .nc-cart-bundle-print-row {
       display: flex;
       align-items: center;
-      justify-content: space-between;
+      gap: 10px;
       padding: 5px 0;
+    }
+    .nc-cart-bundle-print-row + .nc-cart-bundle-print-row {
       border-top: 1px solid #e8e0dc;
+    }
+    .nc-cart-bundle-row-img {
+      width: 36px;
+      height: 36px;
+      object-fit: cover;
+      display: block;
+      flex-shrink: 0;
+      background: #cbc5bc;
     }
     .nc-cart-bundle-print-name {
       font-family: 'Montserrat', sans-serif;
@@ -319,10 +349,14 @@
       letter-spacing: 0.14em;
       text-transform: uppercase;
       color: #7a6f68;
+      flex: 1;
     }
-    .nc-cart-replace-btn {
+    .nc-cart-edit-bundle {
+      display: block;
+      width: 100%;
       background: none;
       border: none;
+      border-top: 1px solid #e8e0dc;
       cursor: pointer;
       font-family: 'Montserrat', sans-serif;
       font-size: 9px;
@@ -331,10 +365,12 @@
       color: #5c3545;
       text-decoration: underline;
       text-underline-offset: 2px;
-      padding: 0;
+      padding: 8px 0 0;
+      margin-top: 6px;
+      text-align: left;
       transition: opacity 0.2s;
     }
-    .nc-cart-replace-btn:hover { opacity: 0.7; }
+    .nc-cart-edit-bundle:hover { opacity: 0.7; }
 
     /* ── Remove link ── */
     .nc-cart-remove {
@@ -602,23 +638,48 @@
       return;
     }
 
+    // Helper: look up a print's image from product cards in the DOM
+    function _printImg(printName) {
+      var cards = document.querySelectorAll('.product-card[data-id]');
+      for (var ci = 0; ci < cards.length; ci++) {
+        if (cards[ci].dataset.name === printName) return cards[ci].dataset.image || '';
+      }
+      return '';
+    }
+
+    var chevronSvg =
+      '<svg class="nc-bundle-chevron" width="12" height="12" viewBox="0 0 12 12" fill="none"' +
+      ' stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"' +
+      ' aria-hidden="true"><polyline points="2,4 6,8 10,4"/></svg>';
+
     itemsList.innerHTML = cart.map(function (item) {
       const imgInner = item.image
         ? '<img src="' + _esc(item.image) + '" alt="' + _esc(item.name) + '" loading="lazy">'
         : '';
 
       if (item.meta && item.meta.bundleCount) {
-        // ── Bundle item: collapsible dropdown ──
-        var parts     = item.name.split(' \u00b7 ');
-        var tierName  = parts[0];
-        var prints    = parts.slice(1);
-        var pCount    = prints.length;
+        // ── Bundle item: collapsible header + thumbnail strip + dropdown ──
+        var parts    = item.name.split(' \u00b7 ');
+        var tierName = parts[0];
+        var prints   = parts.slice(1);
 
-        var bodyRows = prints.map(function (p, idx) {
+        // Thumbnail strip: small images for each print
+        var thumbsHtml = prints.map(function (p) {
+          var src = _printImg(p);
+          return src
+            ? '<img src="' + _esc(src) + '" alt="' + _esc(p) + '" loading="lazy">'
+            : '<span class="nc-bundle-thumb-empty"></span>';
+        }).join('');
+
+        // Expanded body: each print with its image + name
+        var bodyRows = prints.map(function (p) {
+          var src = _printImg(p);
+          var imgEl = src
+            ? '<img class="nc-cart-bundle-row-img" src="' + _esc(src) + '" alt="' + _esc(p) + '" loading="lazy">'
+            : '<span class="nc-cart-bundle-row-img"></span>';
           return '<div class="nc-cart-bundle-print-row">' +
+            imgEl +
             '<span class="nc-cart-bundle-print-name">' + _esc(p) + '</span>' +
-            '<button class="nc-cart-replace-btn" data-idx="' + idx + '"' +
-              ' aria-label="Replace ' + _esc(p) + '">Replace</button>' +
           '</div>';
         }).join('');
 
@@ -629,34 +690,20 @@
           ? '<p class="nc-cart-item-meta">' + _esc(metaParts.join(' \u00b7 ')) + '</p>'
           : '';
 
-        var chevron =
-          '<svg class="nc-bundle-chevron" width="12" height="12" viewBox="0 0 12 12" fill="none"' +
-          ' stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"' +
-          ' aria-hidden="true"><polyline points="2,4 6,8 10,4"/></svg>';
-
         return [
-          '<div class="nc-cart-item" data-id="' + _esc(item.id) + '" role="listitem">',
-          '  <div class="nc-cart-item-img-wrap">' + imgInner + '</div>',
-          '  <div class="nc-cart-item-top nc-bundle-toggle">',
-          '    <div>',
-          '      <p class="nc-cart-item-name">' + _esc(tierName) + '</p>',
-          '      <span class="nc-bundle-count">' + pCount + ' ' + (pCount === 1 ? 'Print' : 'Prints') + '</span>',
-          '    </div>',
+          '<div class="nc-cart-item nc-cart-bundle" data-id="' + _esc(item.id) + '" role="listitem">',
+          '  <div class="nc-bundle-header">',
+          '    <p class="nc-cart-item-name">' + _esc(tierName) + '</p>',
+          '    <button class="nc-cart-remove" aria-label="Remove ' + _esc(item.name) + '">Remove</button>',
           '    <div class="nc-bundle-top-right">',
           '      <span class="nc-cart-item-price">' + _fmt(item.price * item.quantity) + '</span>',
-          '      ' + chevron,
+          '      ' + chevronSvg,
           '    </div>',
           '  </div>',
-          '  <div class="nc-cart-item-bottom">',
-          '    <div class="nc-qty" role="group" aria-label="Quantity">',
-          '      <button class="nc-qty-dec" aria-label="Decrease quantity">\u2212</button>',
-          '      <span class="nc-qty-count" aria-live="polite">' + item.quantity + '</span>',
-          '      <button class="nc-qty-inc" aria-label="Increase quantity">+</button>',
-          '    </div>',
-          '    <button class="nc-cart-remove" aria-label="Remove ' + _esc(item.name) + '">Remove</button>',
-          '  </div>',
+          '  <div class="nc-bundle-thumbs">' + thumbsHtml + '</div>',
           '  <div class="nc-cart-bundle-body">',
           bodyRows,
+          '    <button class="nc-cart-edit-bundle" aria-label="Edit this bundle">Edit Bundle</button>',
           metaRow,
           '  </div>',
           '</div>',
@@ -687,41 +734,45 @@
     itemsList.querySelectorAll('.nc-cart-item').forEach(function (row) {
       const id = row.dataset.id;
 
-      row.querySelector('.nc-qty-dec').addEventListener('click', function () {
+      // Qty stepper (regular items only)
+      var decBtn = row.querySelector('.nc-qty-dec');
+      var incBtn = row.querySelector('.nc-qty-inc');
+      if (decBtn) decBtn.addEventListener('click', function () {
         const it = cart.find(function (i) { return i.id === id; });
         if (it) window.updateQuantity(id, it.quantity - 1);
       });
-      row.querySelector('.nc-qty-inc').addEventListener('click', function () {
+      if (incBtn) incBtn.addEventListener('click', function () {
         const it = cart.find(function (i) { return i.id === id; });
         if (it) window.updateQuantity(id, it.quantity + 1);
       });
-      row.querySelector('.nc-cart-remove').addEventListener('click', function () {
+
+      row.querySelector('.nc-cart-remove').addEventListener('click', function (e) {
+        e.stopPropagation();
         window.removeFromCart(id);
       });
 
-      // Bundle-only: toggle dropdown
-      var toggle = row.querySelector('.nc-bundle-toggle');
-      if (toggle) {
-        toggle.addEventListener('click', function () {
+      // Bundle-only: toggle dropdown on header click
+      var header = row.querySelector('.nc-bundle-header');
+      if (header) {
+        header.addEventListener('click', function () {
           row.classList.toggle('nc-bundle-open');
         });
       }
 
-      // Bundle-only: Replace buttons
-      row.querySelectorAll('.nc-cart-replace-btn').forEach(function (btn) {
-        btn.addEventListener('click', function (e) {
-          e.stopPropagation(); // don't also toggle the dropdown
-          var idx  = parseInt(btn.dataset.idx, 10);
+      // Bundle-only: Edit Bundle button
+      var editBtn = row.querySelector('.nc-cart-edit-bundle');
+      if (editBtn) {
+        editBtn.addEventListener('click', function (e) {
+          e.stopPropagation();
           var item = cart.find(function (i) { return i.id === id; });
           if (!item) return;
-          var prints    = item.name.split(' \u00b7 ').slice(1);
-          var keepNames = prints.filter(function (_, i) { return i !== idx; });
+          var allPrints = item.name.split(' \u00b7 ').slice(1);
           _close();
           if (typeof window.ncEnterReplaceMode === 'function') {
-            window.ncEnterReplaceMode(id, keepNames);
+            window.ncEnterReplaceMode(id, allPrints);
           }
         });
-      });
+      }
     });
   }
 
