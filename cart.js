@@ -446,7 +446,9 @@
       text-transform: uppercase;
       color: #5c3545;
       text-align: center;
-      margin-bottom: 6px;
+      padding: 8px 0;
+      border-bottom: 1px solid #d9d4cc;
+      margin-bottom: 0;
     }
     .nc-cart-shipping-notice {
       font-family: 'Montserrat', sans-serif;
@@ -455,7 +457,8 @@
       letter-spacing: 0.16em;
       text-transform: uppercase;
       text-align: center;
-      margin-bottom: 6px;
+      padding: 10px 0 6px;
+      margin-bottom: 0;
       display: flex;
       align-items: center;
       justify-content: center;
