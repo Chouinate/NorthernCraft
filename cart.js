@@ -274,7 +274,7 @@
       user-select: none;
     }
 
-    /* ── Bundle header: name | [remove · edit] | price | chevron ── */
+    /* ── Bundle header: name | Edit (centered) | Remove · price · chevron ── */
     .nc-bundle-header {
       display: flex;
       align-items: center;
@@ -285,12 +285,6 @@
       flex: 1;
       margin: 0;
     }
-    .nc-bundle-actions {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      flex-shrink: 0;
-    }
     .nc-bundle-edit-btn {
       background: none;
       border: none;
@@ -299,18 +293,30 @@
       font-size: 9px;
       letter-spacing: 0.18em;
       text-transform: uppercase;
-      color: #5c3545;
-      text-decoration: underline;
-      text-underline-offset: 2px;
+      color: #9e9098;
+      text-decoration: none;
       padding: 0;
-      transition: opacity 0.2s;
+      flex-shrink: 0;
+      transition: color 0.2s;
     }
-    .nc-bundle-edit-btn:hover { opacity: 0.7; }
+    .nc-bundle-edit-btn:hover { color: #7b4f5c; }
     .nc-bundle-top-right {
       display: flex;
       align-items: center;
-      gap: 6px;
-      flex-shrink: 0;
+      gap: 8px;
+      flex: 1;
+      justify-content: flex-end;
+    }
+    /* Bundle Remove styled as the underlined action */
+    .nc-cart-item.nc-cart-bundle .nc-cart-remove {
+      color: #5c3545;
+      text-decoration: underline;
+      text-underline-offset: 2px;
+      transition: opacity 0.2s;
+    }
+    .nc-cart-item.nc-cart-bundle .nc-cart-remove:hover {
+      color: #5c3545;
+      opacity: 0.7;
     }
     .nc-bundle-chevron {
       color: #9e9098;
@@ -721,11 +727,9 @@
           '<div class="nc-cart-item nc-cart-bundle" data-id="' + _esc(item.id) + '" role="listitem">',
           '  <div class="nc-bundle-header">',
           '    <p class="nc-cart-item-name">' + _esc(tierName) + '</p>',
-          '    <div class="nc-bundle-actions">',
-          '      <button class="nc-bundle-edit-btn" aria-label="Edit this bundle">Edit</button>',
-          '      <button class="nc-cart-remove" aria-label="Remove ' + _esc(item.name) + '">Remove</button>',
-          '    </div>',
+          '    <button class="nc-bundle-edit-btn" aria-label="Edit this bundle">Edit</button>',
           '    <div class="nc-bundle-top-right">',
+          '      <button class="nc-cart-remove" aria-label="Remove ' + _esc(item.name) + '">Remove</button>',
           '      <span class="nc-cart-item-price">' + _fmt(item.price * item.quantity) + '</span>',
           '      ' + chevronSvg,
           '    </div>',
