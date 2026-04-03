@@ -272,7 +272,7 @@
       display: block;
     }
 
-    /* ── Bundle header: name | remove | price | chevron ── */
+    /* ── Bundle header: name | [remove · edit] | price | chevron ── */
     .nc-bundle-header {
       display: flex;
       align-items: center;
@@ -285,6 +285,27 @@
       flex: 1;
       margin: 0;
     }
+    .nc-bundle-actions {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex-shrink: 0;
+    }
+    .nc-bundle-edit-btn {
+      background: none;
+      border: none;
+      cursor: pointer;
+      font-family: 'Montserrat', sans-serif;
+      font-size: 9px;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: #5c3545;
+      text-decoration: underline;
+      text-underline-offset: 2px;
+      padding: 0;
+      transition: opacity 0.2s;
+    }
+    .nc-bundle-edit-btn:hover { opacity: 0.7; }
     .nc-bundle-top-right {
       display: flex;
       align-items: center;
@@ -293,84 +314,74 @@
     }
     .nc-bundle-chevron {
       color: #9e9098;
-      transition: transform 0.2s;
+      transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
       flex-shrink: 0;
     }
     .nc-cart-item.nc-bundle-open .nc-bundle-chevron {
       transform: rotate(180deg);
     }
 
-    /* ── Bundle thumbnail strip ── */
-    .nc-bundle-thumbs {
+    /* ── Bundle prints: single list that morphs horizontal ↔ vertical ── */
+    .nc-bundle-prints {
       display: flex;
-      gap: 4px;
+      flex-wrap: wrap;
       margin-top: 8px;
     }
-    .nc-bundle-thumbs img,
-    .nc-bundle-thumb-empty {
+    .nc-bundle-print-item {
+      display: flex;
+      align-items: center;
+      overflow: hidden;
+      width: 30px;
+      padding-right: 4px;
+      transition: width 0.38s cubic-bezier(0.4, 0, 0.2, 1),
+                  padding 0.38s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+    .nc-bundle-print-img {
       width: 30px;
       height: 30px;
       object-fit: cover;
       display: block;
       flex-shrink: 0;
       background: #cbc5bc;
+      transition: width 0.38s cubic-bezier(0.4, 0, 0.2, 1),
+                  height 0.38s cubic-bezier(0.4, 0, 0.2, 1);
     }
-
-    /* ── Bundle expandable body ── */
-    .nc-cart-bundle-body {
-      display: none;
-      margin-top: 10px;
-      border-top: 1px solid #d9d4cc;
-      padding-top: 8px;
-    }
-    .nc-cart-item.nc-bundle-open .nc-cart-bundle-body {
-      display: block;
-    }
-    .nc-cart-bundle-print-row {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      padding: 5px 0;
-    }
-    .nc-cart-bundle-print-row + .nc-cart-bundle-print-row {
-      border-top: 1px solid #e8e0dc;
-    }
-    .nc-cart-bundle-row-img {
-      width: 36px;
-      height: 36px;
-      object-fit: cover;
-      display: block;
-      flex-shrink: 0;
-      background: #cbc5bc;
-    }
-    .nc-cart-bundle-print-name {
+    .nc-bundle-print-name {
       font-family: 'Montserrat', sans-serif;
       font-size: 9px;
       letter-spacing: 0.14em;
       text-transform: uppercase;
       color: #7a6f68;
-      flex: 1;
+      white-space: nowrap;
+      max-width: 0;
+      overflow: hidden;
+      opacity: 0;
+      padding-left: 0;
+      transition: max-width 0.38s cubic-bezier(0.4, 0, 0.2, 1),
+                  opacity 0.2s 0.15s,
+                  padding-left 0.38s;
     }
-    .nc-cart-edit-bundle {
-      display: block;
+    /* Expanded state */
+    .nc-cart-item.nc-bundle-open .nc-bundle-prints {
+      margin-top: 10px;
+      border-top: 1px solid #d9d4cc;
+      padding-top: 4px;
+    }
+    .nc-cart-item.nc-bundle-open .nc-bundle-print-item {
       width: 100%;
-      background: none;
-      border: none;
-      border-top: 1px solid #e8e0dc;
-      cursor: pointer;
-      font-family: 'Montserrat', sans-serif;
-      font-size: 9px;
-      letter-spacing: 0.16em;
-      text-transform: uppercase;
-      color: #5c3545;
-      text-decoration: underline;
-      text-underline-offset: 2px;
-      padding: 8px 0 0;
-      margin-top: 6px;
-      text-align: left;
-      transition: opacity 0.2s;
+      padding: 6px 0;
+      padding-right: 0;
+      border-bottom: 1px solid #e8e0dc;
     }
-    .nc-cart-edit-bundle:hover { opacity: 0.7; }
+    .nc-cart-item.nc-bundle-open .nc-bundle-print-img {
+      width: 38px;
+      height: 38px;
+    }
+    .nc-cart-item.nc-bundle-open .nc-bundle-print-name {
+      max-width: 200px;
+      opacity: 1;
+      padding-left: 10px;
+    }
 
     /* ── Remove link ── */
     .nc-cart-remove {
@@ -658,28 +669,20 @@
         : '';
 
       if (item.meta && item.meta.bundleCount) {
-        // ── Bundle item: collapsible header + thumbnail strip + dropdown ──
+        // ── Bundle item: header + single animated print list ──
         var parts    = item.name.split(' \u00b7 ');
         var tierName = parts[0];
         var prints   = parts.slice(1);
 
-        // Thumbnail strip: small images for each print
-        var thumbsHtml = prints.map(function (p) {
-          var src = _printImg(p);
-          return src
-            ? '<img src="' + _esc(src) + '" alt="' + _esc(p) + '" loading="lazy">'
-            : '<span class="nc-bundle-thumb-empty"></span>';
-        }).join('');
-
-        // Expanded body: each print with its image + name
-        var bodyRows = prints.map(function (p) {
+        // Single list of prints — animates from horizontal row → vertical list
+        var printItems = prints.map(function (p) {
           var src = _printImg(p);
           var imgEl = src
-            ? '<img class="nc-cart-bundle-row-img" src="' + _esc(src) + '" alt="' + _esc(p) + '" loading="lazy">'
-            : '<span class="nc-cart-bundle-row-img"></span>';
-          return '<div class="nc-cart-bundle-print-row">' +
+            ? '<img class="nc-bundle-print-img" src="' + _esc(src) + '" alt="' + _esc(p) + '" loading="lazy">'
+            : '<span class="nc-bundle-print-img"></span>';
+          return '<div class="nc-bundle-print-item">' +
             imgEl +
-            '<span class="nc-cart-bundle-print-name">' + _esc(p) + '</span>' +
+            '<span class="nc-bundle-print-name">' + _esc(p) + '</span>' +
           '</div>';
         }).join('');
 
@@ -694,18 +697,17 @@
           '<div class="nc-cart-item nc-cart-bundle" data-id="' + _esc(item.id) + '" role="listitem">',
           '  <div class="nc-bundle-header">',
           '    <p class="nc-cart-item-name">' + _esc(tierName) + '</p>',
-          '    <button class="nc-cart-remove" aria-label="Remove ' + _esc(item.name) + '">Remove</button>',
+          '    <div class="nc-bundle-actions">',
+          '      <button class="nc-cart-remove" aria-label="Remove ' + _esc(item.name) + '">Remove</button>',
+          '      <button class="nc-bundle-edit-btn" aria-label="Edit this bundle">Edit</button>',
+          '    </div>',
           '    <div class="nc-bundle-top-right">',
           '      <span class="nc-cart-item-price">' + _fmt(item.price * item.quantity) + '</span>',
           '      ' + chevronSvg,
           '    </div>',
           '  </div>',
-          '  <div class="nc-bundle-thumbs">' + thumbsHtml + '</div>',
-          '  <div class="nc-cart-bundle-body">',
-          bodyRows,
-          '    <button class="nc-cart-edit-bundle" aria-label="Edit this bundle">Edit Bundle</button>',
+          '  <div class="nc-bundle-prints">' + printItems + '</div>',
           metaRow,
-          '  </div>',
           '</div>',
         ].join('');
       }
@@ -751,7 +753,7 @@
         window.removeFromCart(id);
       });
 
-      // Bundle-only: toggle dropdown on header click
+      // Bundle-only: toggle animated print list on header click
       var header = row.querySelector('.nc-bundle-header');
       if (header) {
         header.addEventListener('click', function () {
@@ -759,8 +761,8 @@
         });
       }
 
-      // Bundle-only: Edit Bundle button
-      var editBtn = row.querySelector('.nc-cart-edit-bundle');
+      // Bundle-only: Edit button (in header)
+      var editBtn = row.querySelector('.nc-bundle-edit-btn');
       if (editBtn) {
         editBtn.addEventListener('click', function (e) {
           e.stopPropagation();
