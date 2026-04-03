@@ -241,7 +241,9 @@
     }
 
     var itemCount = items.reduce(function(sum, i) {
-      return sum + (parseInt(i.quantity, 10) || 1);
+      var qty = parseInt(i.quantity, 10) || 1;
+      var bundleSize = (i.meta && i.meta.bundleCount) ? i.meta.bundleCount : 1;
+      return sum + (qty * bundleSize);
     }, 0);
     if (typeof Stripe === 'undefined') {
       _showError(pageContainer, 'Payment system failed to load — please refresh.');

@@ -267,6 +267,22 @@
       margin: 3px 0 0;
     }
 
+    /* ── Bundle print list ── */
+    .nc-cart-bundle-prints {
+      list-style: none;
+      margin: 4px 0 0;
+      padding: 0 0 0 8px;
+      border-left: 2px solid #e8e0dc;
+    }
+    .nc-cart-bundle-prints li {
+      font-family: 'Montserrat', sans-serif;
+      font-size: 9px;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: #9e9098;
+      line-height: 1.6;
+    }
+
     /* ── Remove link ── */
     .nc-cart-remove {
       background: none;
@@ -537,24 +553,37 @@
       const imgInner = item.image
         ? '<img src="' + _esc(item.image) + '" alt="' + _esc(item.name) + '" loading="lazy">'
         : '';
-      // Build meta line for bundle items (% saved + next tier hint)
-      var metaLine = '';
+
+      // For bundles: split "Pair · Solstice · Bloom" into tier name + print list
+      var displayName, printsHtml = '', metaLine = '';
       if (item.meta && item.meta.bundleCount) {
+        var parts = item.name.split(' \u00b7 ');
+        displayName = parts[0]; // e.g. "Pair"
+        var prints  = parts.slice(1);  // e.g. ["Solstice", "Bloom"]
+        if (prints.length) {
+          printsHtml = '<ul class="nc-cart-bundle-prints">' +
+            prints.map(function (p) {
+              return '<li>' + _esc(p) + '</li>';
+            }).join('') +
+          '</ul>';
+        }
         var metaParts = [];
         if (item.meta.discountPct > 0) metaParts.push('Saving ' + item.meta.discountPct + '%');
         if (item.meta.nextHint)        metaParts.push(item.meta.nextHint);
         if (metaParts.length) {
           metaLine = '<p class="nc-cart-item-meta">' + _esc(metaParts.join(' \u00b7 ')) + '</p>';
         }
+      } else {
+        displayName = item.name;
       }
+
       return [
         '<div class="nc-cart-item" data-id="' + _esc(item.id) + '" role="listitem">',
         '  <div class="nc-cart-item-img-wrap">' + imgInner + '</div>',
         '  <div class="nc-cart-item-top">',
-        '    <p class="nc-cart-item-name">' + _esc(item.name) + '</p>',
+        '    <p class="nc-cart-item-name">' + _esc(displayName) + '</p>',
         '    <span class="nc-cart-item-price">' + _fmt(item.price * item.quantity) + '</span>',
         '  </div>',
-        metaLine,
         '  <div class="nc-cart-item-bottom">',
         '    <div class="nc-qty" role="group" aria-label="Quantity">',
         '      <button class="nc-qty-dec" aria-label="Decrease quantity">\u2212</button>',
@@ -563,6 +592,8 @@
         '    </div>',
         '    <button class="nc-cart-remove" aria-label="Remove ' + _esc(item.name) + '">Remove</button>',
         '  </div>',
+        printsHtml,
+        metaLine,
         '</div>'
       ].join('');
     }).join('');
