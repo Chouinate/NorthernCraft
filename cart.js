@@ -92,7 +92,7 @@
     var next   = _bundleNextTier(mCount);
     var tname  = tier ? tier.name : 'Bundle';
     var hint   = next
-      ? 'Add ' + (next.limit - mCount) + ' more to save ' + _bundleSavePct(next.limit) + '%'
+      ? 'Add ' + (next.limit - mCount) + ' more to ' + next.name + ' \u00b7 ' + disc + '% \u2192 ' + _bundleSavePct(next.limit) + '%'
       : '';
 
     item.name             = tname + ' \u00b7 ' + newPrints.join(' \u00b7 ');

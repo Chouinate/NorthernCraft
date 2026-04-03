@@ -687,7 +687,7 @@
       var id    = 'bundle-' + mCount + '-' + Date.now();
       var tname = tier ? tier.name : 'Bundle';
       var hint  = next
-        ? 'Add ' + (next.limit - mCount) + ' more to save ' + savePct(next.limit) + '%'
+        ? 'Add ' + (next.limit - mCount) + ' more to ' + next.name + ' \u00b7 ' + disc + '% \u2192 ' + savePct(next.limit) + '%'
         : '';
 
       window.addToCart(id, tname + ' \u00b7 ' + mNames.join(' \u00b7 '), price, mImg, {
