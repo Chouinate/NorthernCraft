@@ -119,7 +119,7 @@
       display: flex;
       align-items: center;
       justify-content: space-between;
-      padding: 24px 0 24px 28px;
+      padding: 16px 0 16px 28px;
       border-bottom: 1px solid #d9d4cc;
       flex-shrink: 0;
     }
@@ -434,10 +434,19 @@
       text-align: center;
     }
     .nc-cart-footer {
-      padding: 0 28px 20px;
+      padding: 14px 28px 20px;
       border-top: none;
       background: #ece8e1;
       flex-shrink: 0;
+    }
+    .nc-cart-bundle-hint {
+      font-family: 'Montserrat', sans-serif;
+      font-size: 9px;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      color: #5c3545;
+      text-align: center;
+      margin-bottom: 6px;
     }
     .nc-cart-shipping-notice {
       font-family: 'Montserrat', sans-serif;
@@ -546,14 +555,14 @@
     /* ── Mobile ── */
     @media (max-width: 480px) {
       .nc-cart-drawer { width: 100%; }
-      .nc-cart-header { padding: 20px 20px; }
+      .nc-cart-header { padding: 14px 20px; }
       .nc-cart-item  { padding: 16px 20px; }
-      .nc-cart-footer { padding: 16px 20px 24px; }
+      .nc-cart-footer { padding: 14px 20px 24px; }
     }
   `;
 
   // ─── DOM Elements ────────────────────────────────────────────────────────────
-  let overlay, drawer, itemsList, totalEl, shippingNoticeEl, badge;
+  let overlay, drawer, itemsList, totalEl, shippingNoticeEl, bundleHintEl, badge;
 
   function _init() {
     const styleEl = document.createElement('style');
@@ -586,6 +595,7 @@
       '<div class="nc-cart-items" role="list"></div>',
       '<div class="nc-cart-footer">',
       '  <div class="nc-cart-checkout-error" style="display:none"></div>',
+      '  <div class="nc-cart-bundle-hint" style="display:none"></div>',
       '  <div class="nc-cart-shipping-notice" style="display:none"></div>',
       '  <div class="nc-cart-total-row">',
       '    <span class="nc-cart-total-label">Total</span>',
@@ -602,6 +612,7 @@
     itemsList        = drawer.querySelector('.nc-cart-items');
     totalEl          = drawer.querySelector('.nc-cart-total-amount');
     shippingNoticeEl = drawer.querySelector('.nc-cart-shipping-notice');
+    bundleHintEl     = drawer.querySelector('.nc-cart-bundle-hint');
 
     document.body.appendChild(overlay);
     document.body.appendChild(drawer);
@@ -717,11 +728,9 @@
           '</div>';
         }).join('');
 
-        var metaParts = [];
-        if (item.meta.discountPct > 0) metaParts.push('Saving ' + item.meta.discountPct + '%');
-        if (item.meta.nextHint)        metaParts.push(item.meta.nextHint);
-        var metaRow = metaParts.length
-          ? '<p class="nc-cart-item-meta">' + _esc(metaParts.join(' \u00b7 ')) + '</p>'
+        // Only show current discount in the bundle body; nextHint lives in the footer
+        var metaRow = item.meta.discountPct > 0
+          ? '<p class="nc-cart-item-meta">Saving ' + item.meta.discountPct + '%</p>'
           : '';
 
         return [
@@ -863,9 +872,24 @@
     }
   }
 
+  function _updateBundleHint() {
+    if (!bundleHintEl) return;
+    var hint = '';
+    cart.forEach(function (item) {
+      if (!hint && item.meta && item.meta.nextHint) hint = item.meta.nextHint;
+    });
+    if (hint) {
+      bundleHintEl.style.display = '';
+      bundleHintEl.textContent = hint;
+    } else {
+      bundleHintEl.style.display = 'none';
+    }
+  }
+
   function _update() {
     _renderItems();
     if (totalEl) totalEl.textContent = _fmt(window.getCartTotal());
+    _updateBundleHint();
     _updateShippingNotice();
     _updateBadge();
   }
