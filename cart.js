@@ -29,6 +29,82 @@
     try { localStorage.setItem(STORAGE_KEY, JSON.stringify(cart)); } catch (_) {}
   }
 
+  // ─── Bundle pricing (mirrors product-cards.js) ───────────────────────────────
+  var _BUNDLE_TIERS = [
+    { limit: 2,  price: 55,  name: 'Pair' },
+    { limit: 4,  price: 89,  name: 'Set of 4' },
+    { limit: 6,  price: 119, name: 'Set of 6' },
+    { limit: 12, price: 199, name: 'Full Wall' },
+  ];
+  var _BUNDLE_PRICE_MAP = [0, 35, 55, 75, 89, 104, 119, 136, 152, 167, 182, 191, 199];
+  var _BUNDLE_SINGLE = 35;
+
+  function _bundleCalcPrice(n) {
+    if (n < _BUNDLE_PRICE_MAP.length) return _BUNDLE_PRICE_MAP[n];
+    return _BUNDLE_PRICE_MAP[_BUNDLE_PRICE_MAP.length - 1];
+  }
+  function _bundleBestTier(n) {
+    for (var t = 0; t < _BUNDLE_TIERS.length; t++) {
+      if (n <= _BUNDLE_TIERS[t].limit) return _BUNDLE_TIERS[t];
+    }
+    return _BUNDLE_TIERS[_BUNDLE_TIERS.length - 1];
+  }
+  function _bundleSavePct(n) {
+    if (n <= 1) return 0;
+    var full = n * _BUNDLE_SINGLE;
+    var disc = _bundleCalcPrice(n);
+    return Math.round((full - disc) / full * 100);
+  }
+  function _bundleNextTier(n) {
+    for (var t = 0; t < _BUNDLE_TIERS.length; t++) {
+      if (n < _BUNDLE_TIERS[t].limit) return _BUNDLE_TIERS[t];
+    }
+    return null;
+  }
+
+  function _updateBundlePrintQty(bundleId, printName, delta) {
+    var item = cart.find(function (i) { return i.id === bundleId; });
+    if (!item || !item.meta || !item.meta.bundleCount) return;
+
+    // Build count map preserving original print order
+    var parts = item.name.split(' \u00b7 ');
+    var prints = parts.slice(1);
+    var counts = {};
+    var order = [];
+    prints.forEach(function (p) {
+      if (!counts[p]) { counts[p] = 0; order.push(p); }
+      counts[p]++;
+    });
+
+    if (counts[printName] === undefined) return;
+    counts[printName] = Math.max(1, counts[printName] + delta);
+
+    // Rebuild flat prints list
+    var newPrints = [];
+    order.forEach(function (p) {
+      for (var i = 0; i < counts[p]; i++) newPrints.push(p);
+    });
+
+    var mCount = newPrints.length;
+    var tier   = _bundleBestTier(mCount);
+    var price  = _bundleCalcPrice(mCount);
+    var disc   = _bundleSavePct(mCount);
+    var next   = _bundleNextTier(mCount);
+    var tname  = tier ? tier.name : 'Bundle';
+    var hint   = next
+      ? 'Add ' + (next.limit - mCount) + ' more to save ' + _bundleSavePct(next.limit) + '%'
+      : '';
+
+    item.name             = tname + ' \u00b7 ' + newPrints.join(' \u00b7 ');
+    item.price            = price;
+    item.meta.bundleCount = mCount;
+    item.meta.discountPct = disc;
+    item.meta.nextHint    = hint;
+
+    persist();
+    _update();
+  }
+
   // ─── Public API ─────────────────────────────────────────────────────────────
   window.addToCart = function (id, name, price, image, meta) {
     id = String(id);
@@ -405,6 +481,42 @@
       letter-spacing: 0.14em;
       text-transform: uppercase;
       color: #7a6f68;
+      flex: 1;
+    }
+
+    /* ── Bundle print qty stepper ── */
+    .nc-bun-qty {
+      display: flex;
+      align-items: center;
+      border: 1px solid #cbc5bc;
+      background: #fff;
+      flex-shrink: 0;
+    }
+    .nc-bun-qty button {
+      background: none;
+      border: none;
+      cursor: pointer;
+      width: 22px;
+      height: 22px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: 'Montserrat', sans-serif;
+      font-size: 13px;
+      color: #7a6f68;
+      padding: 0;
+      line-height: 1;
+      transition: color 0.2s, background 0.2s;
+    }
+    .nc-bun-qty button:hover { color: #2a2523; background: #ece8e1; }
+    .nc-bun-qty-count {
+      min-width: 22px;
+      text-align: center;
+      font-family: 'Montserrat', sans-serif;
+      font-size: 10px;
+      color: #2a2523;
+      letter-spacing: 0.05em;
+      user-select: none;
     }
 
     /* ── Remove link ── */
@@ -687,6 +799,12 @@
       return;
     }
 
+    // Preserve open bundle state across re-renders
+    var openBundleIds = [];
+    itemsList.querySelectorAll('.nc-cart-bundle.nc-bundle-open').forEach(function (el) {
+      openBundleIds.push(el.dataset.id);
+    });
+
     // Helper: look up a print's image from product cards in the DOM
     function _printImg(printName) {
       var cards = document.querySelectorAll('.product-card[data-id]');
@@ -720,14 +838,28 @@
             : '<span class="nc-bundle-thumb-img"></span>';
         }).join('');
 
-        // Expanded body rows (dropdown view)
-        var bodyRows = prints.map(function (p) {
+        // Group duplicate prints for qty display
+        var printCounts = {};
+        var printOrder = [];
+        prints.forEach(function (p) {
+          if (!printCounts[p]) { printCounts[p] = 0; printOrder.push(p); }
+          printCounts[p]++;
+        });
+
+        // Expanded body rows (dropdown view) with qty steppers
+        var bodyRows = printOrder.map(function (p) {
+          var qty = printCounts[p];
           var src = _printImg(p);
           var imgEl = src
             ? '<img class="nc-bundle-body-img" src="' + _esc(src) + '" alt="' + _esc(p) + '" loading="lazy">'
             : '<span class="nc-bundle-body-img"></span>';
           return '<div class="nc-bundle-print-row">' + imgEl +
             '<span class="nc-bundle-body-name">' + _esc(p) + '</span>' +
+            '<div class="nc-bun-qty">' +
+              '<button class="nc-bun-qty-dec" data-print="' + _esc(p) + '" aria-label="Decrease quantity">\u2212</button>' +
+              '<span class="nc-bun-qty-count">' + qty + '</span>' +
+              '<button class="nc-bun-qty-inc" data-print="' + _esc(p) + '" aria-label="Increase quantity">+</button>' +
+            '</div>' +
           '</div>';
         }).join('');
 
@@ -801,6 +933,11 @@
 
       // Bundle-only: click anywhere on the row to toggle
       if (row.classList.contains('nc-cart-bundle')) {
+        // Restore open state after re-render
+        if (openBundleIds.indexOf(id) >= 0) {
+          row.classList.add('nc-bundle-open');
+        }
+
         row.addEventListener('click', function () {
           row.classList.toggle('nc-bundle-open');
         });
@@ -818,6 +955,16 @@
             }
           });
         }
+
+        // Per-print qty steppers
+        row.querySelectorAll('.nc-bun-qty-dec, .nc-bun-qty-inc').forEach(function (btn) {
+          btn.addEventListener('click', function (e) {
+            e.stopPropagation();
+            var printName = btn.dataset.print;
+            var delta = btn.classList.contains('nc-bun-qty-inc') ? 1 : -1;
+            _updateBundlePrintQty(id, printName, delta);
+          });
+        });
       }
     });
   }
