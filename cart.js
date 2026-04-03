@@ -907,8 +907,17 @@
           '</div>';
         }).join('');
 
+        var hintArrowSvg =
+          '<svg width="12" height="6" viewBox="0 0 12 6" fill="none"' +
+          ' style="vertical-align:middle;margin:0 1px" aria-hidden="true">' +
+          '<line x1="0" y1="3" x2="9.5" y2="3" stroke="#5c3545" stroke-width="1"/>' +
+          '<polyline points="7,0.5 10.5,3 7,5.5" stroke="#5c3545" stroke-width="1"' +
+          ' stroke-linecap="round" stroke-linejoin="round"/>' +
+          '</svg>';
         var hintText = item.meta.nextHint
-          ? '<span class="nc-bundle-hint-inline">' + _esc(item.meta.nextHint) + '</span>'
+          ? '<span class="nc-bundle-hint-inline">' +
+              item.meta.nextHint.split('\u2192').map(_esc).join(hintArrowSvg) +
+            '</span>'
           : '';
 
         return [
