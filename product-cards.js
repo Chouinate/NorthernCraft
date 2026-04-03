@@ -383,6 +383,28 @@
     }
 
     window.enterBuildMode = activateEmpty;
+
+    // Called from cart when user clicks Replace on a bundle print.
+    // Removes that bundle, pre-selects all kept prints, and enters build mode
+    // so the user picks one replacement print then hits Add to Cart.
+    window.ncEnterReplaceMode = function (bundleCartId, keepPrintNames) {
+      if (typeof window.removeFromCart === 'function') {
+        window.removeFromCart(bundleCartId);
+      }
+
+      var coll = document.getElementById('collection');
+      if (coll) coll.scrollIntoView({ behavior: 'smooth', block: 'start' });
+
+      activateEmpty();
+
+      if (keepPrintNames && keepPrintNames.length) {
+        document.querySelectorAll('.product-card[data-id]').forEach(function (card) {
+          if (keepPrintNames.indexOf(card.dataset.name) >= 0) {
+            toggleCard(card);
+          }
+        });
+      }
+    };
   }
 
   /* ── wire a card ──────────────────────────────────────────────────── */
@@ -633,7 +655,13 @@
     if (!selected.length || typeof window.addToCart !== 'function') return;
 
     if (selected.length === 1) {
-      window.addToCart(activeProd.id, activeProd.name, SINGLE, activeProd.image);
+      var solo = activeProd || {
+        id:    selected[0].dataset.id,
+        name:  selected[0].dataset.name,
+        price: Number(selected[0].dataset.price) || SINGLE,
+        image: selected[0].dataset.image || '',
+      };
+      window.addToCart(solo.id, solo.name, SINGLE, solo.image);
     } else {
       var newNames = selected.map(function (c) { return c.dataset.name; });
       var img0     = selected[0].dataset.image || '';

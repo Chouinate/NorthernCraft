@@ -267,21 +267,74 @@
       margin: 3px 0 0;
     }
 
-    /* ── Bundle print list ── */
-    .nc-cart-bundle-prints {
-      list-style: none;
-      margin: 4px 0 0;
-      padding: 0 0 0 8px;
-      border-left: 2px solid #e8e0dc;
+    /* ── Bundle toggle header ── */
+    .nc-bundle-toggle {
+      cursor: pointer;
+      user-select: none;
     }
-    .nc-cart-bundle-prints li {
+    .nc-bundle-toggle:hover .nc-cart-item-name { color: #5c3545; }
+    .nc-bundle-count {
+      display: block;
+      font-family: 'Montserrat', sans-serif;
+      font-size: 9px;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      color: #9e9098;
+      margin-top: 2px;
+    }
+    .nc-bundle-top-right {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex-shrink: 0;
+    }
+    .nc-bundle-chevron {
+      color: #9e9098;
+      transition: transform 0.2s;
+      flex-shrink: 0;
+    }
+    .nc-cart-item.nc-bundle-open .nc-bundle-chevron {
+      transform: rotate(180deg);
+    }
+
+    /* ── Bundle expandable body ── */
+    .nc-cart-bundle-body {
+      grid-column: 1 / -1;
+      display: none;
+      margin-top: 6px;
+    }
+    .nc-cart-item.nc-bundle-open .nc-cart-bundle-body {
+      display: block;
+    }
+    .nc-cart-bundle-print-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 5px 0;
+      border-top: 1px solid #e8e0dc;
+    }
+    .nc-cart-bundle-print-name {
       font-family: 'Montserrat', sans-serif;
       font-size: 9px;
       letter-spacing: 0.14em;
       text-transform: uppercase;
-      color: #9e9098;
-      line-height: 1.6;
+      color: #7a6f68;
     }
+    .nc-cart-replace-btn {
+      background: none;
+      border: none;
+      cursor: pointer;
+      font-family: 'Montserrat', sans-serif;
+      font-size: 9px;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      color: #5c3545;
+      text-decoration: underline;
+      text-underline-offset: 2px;
+      padding: 0;
+      transition: opacity 0.2s;
+    }
+    .nc-cart-replace-btn:hover { opacity: 0.7; }
 
     /* ── Remove link ── */
     .nc-cart-remove {
@@ -554,34 +607,68 @@
         ? '<img src="' + _esc(item.image) + '" alt="' + _esc(item.name) + '" loading="lazy">'
         : '';
 
-      // For bundles: split "Pair · Solstice · Bloom" into tier name + print list
-      var displayName, printsHtml = '', metaLine = '';
       if (item.meta && item.meta.bundleCount) {
-        var parts = item.name.split(' \u00b7 ');
-        displayName = parts[0]; // e.g. "Pair"
-        var prints  = parts.slice(1);  // e.g. ["Solstice", "Bloom"]
-        if (prints.length) {
-          printsHtml = '<ul class="nc-cart-bundle-prints">' +
-            prints.map(function (p) {
-              return '<li>' + _esc(p) + '</li>';
-            }).join('') +
-          '</ul>';
-        }
+        // ── Bundle item: collapsible dropdown ──
+        var parts     = item.name.split(' \u00b7 ');
+        var tierName  = parts[0];
+        var prints    = parts.slice(1);
+        var pCount    = prints.length;
+
+        var bodyRows = prints.map(function (p, idx) {
+          return '<div class="nc-cart-bundle-print-row">' +
+            '<span class="nc-cart-bundle-print-name">' + _esc(p) + '</span>' +
+            '<button class="nc-cart-replace-btn" data-idx="' + idx + '"' +
+              ' aria-label="Replace ' + _esc(p) + '">Replace</button>' +
+          '</div>';
+        }).join('');
+
         var metaParts = [];
         if (item.meta.discountPct > 0) metaParts.push('Saving ' + item.meta.discountPct + '%');
         if (item.meta.nextHint)        metaParts.push(item.meta.nextHint);
-        if (metaParts.length) {
-          metaLine = '<p class="nc-cart-item-meta">' + _esc(metaParts.join(' \u00b7 ')) + '</p>';
-        }
-      } else {
-        displayName = item.name;
+        var metaRow = metaParts.length
+          ? '<p class="nc-cart-item-meta">' + _esc(metaParts.join(' \u00b7 ')) + '</p>'
+          : '';
+
+        var chevron =
+          '<svg class="nc-bundle-chevron" width="12" height="12" viewBox="0 0 12 12" fill="none"' +
+          ' stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"' +
+          ' aria-hidden="true"><polyline points="2,4 6,8 10,4"/></svg>';
+
+        return [
+          '<div class="nc-cart-item" data-id="' + _esc(item.id) + '" role="listitem">',
+          '  <div class="nc-cart-item-img-wrap">' + imgInner + '</div>',
+          '  <div class="nc-cart-item-top nc-bundle-toggle">',
+          '    <div>',
+          '      <p class="nc-cart-item-name">' + _esc(tierName) + '</p>',
+          '      <span class="nc-bundle-count">' + pCount + ' ' + (pCount === 1 ? 'Print' : 'Prints') + '</span>',
+          '    </div>',
+          '    <div class="nc-bundle-top-right">',
+          '      <span class="nc-cart-item-price">' + _fmt(item.price * item.quantity) + '</span>',
+          '      ' + chevron,
+          '    </div>',
+          '  </div>',
+          '  <div class="nc-cart-item-bottom">',
+          '    <div class="nc-qty" role="group" aria-label="Quantity">',
+          '      <button class="nc-qty-dec" aria-label="Decrease quantity">\u2212</button>',
+          '      <span class="nc-qty-count" aria-live="polite">' + item.quantity + '</span>',
+          '      <button class="nc-qty-inc" aria-label="Increase quantity">+</button>',
+          '    </div>',
+          '    <button class="nc-cart-remove" aria-label="Remove ' + _esc(item.name) + '">Remove</button>',
+          '  </div>',
+          '  <div class="nc-cart-bundle-body">',
+          bodyRows,
+          metaRow,
+          '  </div>',
+          '</div>',
+        ].join('');
       }
 
+      // ── Regular (non-bundle) item ──
       return [
         '<div class="nc-cart-item" data-id="' + _esc(item.id) + '" role="listitem">',
         '  <div class="nc-cart-item-img-wrap">' + imgInner + '</div>',
         '  <div class="nc-cart-item-top">',
-        '    <p class="nc-cart-item-name">' + _esc(displayName) + '</p>',
+        '    <p class="nc-cart-item-name">' + _esc(item.name) + '</p>',
         '    <span class="nc-cart-item-price">' + _fmt(item.price * item.quantity) + '</span>',
         '  </div>',
         '  <div class="nc-cart-item-bottom">',
@@ -592,15 +679,14 @@
         '    </div>',
         '    <button class="nc-cart-remove" aria-label="Remove ' + _esc(item.name) + '">Remove</button>',
         '  </div>',
-        printsHtml,
-        metaLine,
-        '</div>'
+        '</div>',
       ].join('');
     }).join('');
 
     // Wire up events on the newly rendered rows
     itemsList.querySelectorAll('.nc-cart-item').forEach(function (row) {
       const id = row.dataset.id;
+
       row.querySelector('.nc-qty-dec').addEventListener('click', function () {
         const it = cart.find(function (i) { return i.id === id; });
         if (it) window.updateQuantity(id, it.quantity - 1);
@@ -611,6 +697,30 @@
       });
       row.querySelector('.nc-cart-remove').addEventListener('click', function () {
         window.removeFromCart(id);
+      });
+
+      // Bundle-only: toggle dropdown
+      var toggle = row.querySelector('.nc-bundle-toggle');
+      if (toggle) {
+        toggle.addEventListener('click', function () {
+          row.classList.toggle('nc-bundle-open');
+        });
+      }
+
+      // Bundle-only: Replace buttons
+      row.querySelectorAll('.nc-cart-replace-btn').forEach(function (btn) {
+        btn.addEventListener('click', function (e) {
+          e.stopPropagation(); // don't also toggle the dropdown
+          var idx  = parseInt(btn.dataset.idx, 10);
+          var item = cart.find(function (i) { return i.id === id; });
+          if (!item) return;
+          var prints    = item.name.split(' \u00b7 ').slice(1);
+          var keepNames = prints.filter(function (_, i) { return i !== idx; });
+          _close();
+          if (typeof window.ncEnterReplaceMode === 'function') {
+            window.ncEnterReplaceMode(id, keepNames);
+          }
+        });
       });
     });
   }
