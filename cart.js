@@ -332,9 +332,10 @@
       overflow: hidden;
       max-height: 36px;
       opacity: 1;
-      transition: max-height 0.22s ease,
-                  opacity    0.18s ease,
-                  margin-top 0.22s ease;
+      /* delay on CLOSE direction: wait for body to finish collapsing (0.36s) before reappearing */
+      transition: max-height 0.2s ease  0.34s,
+                  opacity    0.18s ease 0.34s,
+                  margin-top 0.2s ease  0.34s;
     }
     .nc-bundle-thumb-img {
       width: 32px;
@@ -348,16 +349,23 @@
       max-height: 0;
       opacity: 0;
       margin-top: 0;
+      /* no delay on OPEN direction: thumbs disappear immediately */
+      transition: max-height 0.2s ease  0s,
+                  opacity    0.16s ease 0s,
+                  margin-top 0.2s ease  0s;
     }
 
     /* Body wrapper — grid trick for smooth height animation */
     .nc-bundle-body-wrap {
       display: grid;
       grid-template-rows: 0fr;
-      transition: grid-template-rows 0.36s cubic-bezier(0.4, 0, 0.2, 1) 0.12s;
+      /* no delay on CLOSE direction: body collapses immediately */
+      transition: grid-template-rows 0.36s cubic-bezier(0.4, 0, 0.2, 1) 0s;
     }
     .nc-cart-item.nc-bundle-open .nc-bundle-body-wrap {
       grid-template-rows: 1fr;
+      /* delay on OPEN direction: body slides in after thumbs start fading */
+      transition: grid-template-rows 0.36s cubic-bezier(0.4, 0, 0.2, 1) 0.14s;
     }
     .nc-bundle-body {
       min-height: 0;
