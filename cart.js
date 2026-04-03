@@ -92,10 +92,41 @@
     var next   = _bundleNextTier(mCount);
     var tname  = tier ? tier.name : 'Bundle';
     var hint   = next
-      ? 'Add ' + (next.limit - mCount) + ' more to ' + next.name + ' \u00b7 ' + disc + '% \u2192 ' + _bundleSavePct(next.limit) + '%'
+      ? (next.limit - mCount) + ' more for ' + next.name + ' \u00b7 ' + disc + '% \u2192 ' + _bundleSavePct(next.limit) + '%'
       : '';
 
     item.name             = tname + ' \u00b7 ' + newPrints.join(' \u00b7 ');
+    item.price            = price;
+    item.meta.bundleCount = mCount;
+    item.meta.discountPct = disc;
+    item.meta.nextHint    = hint;
+
+    persist();
+    _update();
+  }
+
+  function _removePrintFromBundle(bundleId, printName) {
+    var item = cart.find(function (i) { return i.id === bundleId; });
+    if (!item || !item.meta || !item.meta.bundleCount) return;
+
+    var prints = item.name.split(' \u00b7 ').slice(1).filter(function (p) { return p !== printName; });
+
+    if (prints.length === 0) {
+      window.removeFromCart(bundleId);
+      return;
+    }
+
+    var mCount = prints.length;
+    var tier   = _bundleBestTier(mCount);
+    var price  = _bundleCalcPrice(mCount);
+    var disc   = _bundleSavePct(mCount);
+    var next   = _bundleNextTier(mCount);
+    var tname  = tier ? tier.name : 'Bundle';
+    var hint   = next
+      ? (next.limit - mCount) + ' more for ' + next.name + ' \u00b7 ' + disc + '% \u2192 ' + _bundleSavePct(next.limit) + '%'
+      : '';
+
+    item.name             = tname + ' \u00b7 ' + prints.join(' \u00b7 ');
     item.price            = price;
     item.meta.bundleCount = mCount;
     item.meta.discountPct = disc;
@@ -334,33 +365,40 @@
       user-select: none;
     }
 
-    /* ── Bundle meta line ── */
-    .nc-cart-item-meta {
-      font-family: 'Montserrat', sans-serif;
-      font-size: 9px;
-      letter-spacing: 0.16em;
-      text-transform: uppercase;
-      color: #9e9098;
-      margin: 3px 0 0;
-    }
-
-    /* ── Bundle row: override grid layout, full row is clickable ── */
+    /* ── Bundle row ── */
     .nc-cart-item.nc-cart-bundle {
       display: block;
       cursor: pointer;
       user-select: none;
     }
 
-    /* ── Bundle header: name | Edit (centered) | Remove · price · chevron ── */
+    /* ── Bundle header: qty · hint · edit · price · chevron ── */
     .nc-bundle-header {
       display: flex;
       align-items: center;
-      gap: 10px;
+      gap: 8px;
+      padding-bottom: 0;
     }
-    .nc-bundle-header:hover .nc-cart-item-name { color: #5c3545; }
-    .nc-bundle-header .nc-cart-item-name {
+    .nc-bundle-qty-label {
+      font-family: 'Montserrat', sans-serif;
+      font-size: 9px;
+      font-weight: 600;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: #2a2523;
+      flex-shrink: 0;
+    }
+    .nc-bundle-hint-inline {
+      font-family: 'Montserrat', sans-serif;
+      font-size: 9px;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: #5c3545;
       flex: 1;
-      margin: 0;
+      min-width: 0;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
     }
     .nc-bundle-edit-btn {
       background: none;
@@ -371,30 +409,11 @@
       letter-spacing: 0.18em;
       text-transform: uppercase;
       color: #9e9098;
-      text-decoration: none;
       padding: 0;
       flex-shrink: 0;
       transition: color 0.2s;
     }
     .nc-bundle-edit-btn:hover { color: #7b4f5c; }
-    .nc-bundle-top-right {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      flex: 1;
-      justify-content: flex-end;
-    }
-    /* Bundle Remove styled as the underlined action */
-    .nc-cart-item.nc-cart-bundle .nc-cart-remove {
-      color: #5c3545;
-      text-decoration: underline;
-      text-underline-offset: 2px;
-      transition: opacity 0.2s;
-    }
-    .nc-cart-item.nc-cart-bundle .nc-cart-remove:hover {
-      color: #5c3545;
-      opacity: 0.7;
-    }
     .nc-bundle-chevron {
       color: #9e9098;
       transition: transform 0.35s cubic-bezier(0.4, 0, 0.2, 1);
@@ -404,51 +423,15 @@
       transform: rotate(180deg);
     }
 
-    /* ── Bundle prints: thumbnail strip collapses, body slides down ── */
-
-    /* Thumbnail strip — always in DOM, hides when open */
-    .nc-bundle-thumbs {
-      display: flex;
-      flex-direction: row;
-      gap: 4px;
-      margin-top: 8px;
-      overflow: hidden;
-      max-height: 36px;
-      opacity: 1;
-      /* delay on CLOSE direction: wait for body to finish collapsing (0.36s) before reappearing */
-      transition: max-height 0.2s ease  0.34s,
-                  opacity    0.18s ease 0.34s,
-                  margin-top 0.2s ease  0.34s;
-    }
-    .nc-bundle-thumb-img {
-      width: 32px;
-      height: 32px;
-      object-fit: cover;
-      display: block;
-      flex-shrink: 0;
-      background: #cbc5bc;
-    }
-    .nc-cart-item.nc-bundle-open .nc-bundle-thumbs {
-      max-height: 0;
-      opacity: 0;
-      margin-top: 0;
-      /* no delay on OPEN direction: thumbs disappear immediately */
-      transition: max-height 0.2s ease  0s,
-                  opacity    0.16s ease 0s,
-                  margin-top 0.2s ease  0s;
-    }
-
     /* Body wrapper — grid trick for smooth height animation */
     .nc-bundle-body-wrap {
       display: grid;
       grid-template-rows: 0fr;
-      /* no delay on CLOSE direction: body collapses immediately */
-      transition: grid-template-rows 0.36s cubic-bezier(0.4, 0, 0.2, 1) 0s;
+      transition: grid-template-rows 0.32s cubic-bezier(0.4, 0, 0.2, 1) 0s;
     }
     .nc-cart-item.nc-bundle-open .nc-bundle-body-wrap {
       grid-template-rows: 1fr;
-      /* delay on OPEN direction: body slides in after thumbs start fading */
-      transition: grid-template-rows 0.36s cubic-bezier(0.4, 0, 0.2, 1) 0.14s;
+      transition: grid-template-rows 0.32s cubic-bezier(0.4, 0, 0.2, 1) 0s;
     }
     .nc-bundle-body {
       min-height: 0;
@@ -460,7 +443,7 @@
       display: flex;
       align-items: center;
       gap: 10px;
-      padding: 6px 0;
+      padding: 8px 0;
       border-bottom: 1px solid #e8e0dc;
     }
     .nc-bundle-print-row:first-child {
@@ -482,7 +465,25 @@
       text-transform: uppercase;
       color: #7a6f68;
       flex: 1;
+      min-width: 0;
     }
+    /* Per-print Remove — underlined plum */
+    .nc-bundle-print-remove {
+      background: none;
+      border: none;
+      cursor: pointer;
+      font-family: 'Montserrat', sans-serif;
+      font-size: 9px;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: #5c3545;
+      text-decoration: underline;
+      text-underline-offset: 2px;
+      padding: 0;
+      flex-shrink: 0;
+      transition: opacity 0.2s;
+    }
+    .nc-bundle-print-remove:hover { opacity: 0.7; }
 
     /* ── Bundle print qty stepper ── */
     .nc-bun-qty {
@@ -825,18 +826,8 @@
         : '';
 
       if (item.meta && item.meta.bundleCount) {
-        // ── Bundle item: header + single animated print list ──
-        var parts    = item.name.split(' \u00b7 ');
-        var tierName = parts[0];
-        var prints   = parts.slice(1);
-
-        // Thumbnail strip (collapsed view)
-        var thumbsHtml = prints.map(function (p) {
-          var src = _printImg(p);
-          return src
-            ? '<img class="nc-bundle-thumb-img" src="' + _esc(src) + '" alt="' + _esc(p) + '" loading="lazy">'
-            : '<span class="nc-bundle-thumb-img"></span>';
-        }).join('');
+        // ── Bundle item ──
+        var prints = item.name.split(' \u00b7 ').slice(1);
 
         // Group duplicate prints for qty display
         var printCounts = {};
@@ -846,7 +837,12 @@
           printCounts[p]++;
         });
 
-        // Expanded body rows (dropdown view) with qty steppers
+        // Header hint (inline, no "Add" prefix)
+        var hintHtml = item.meta.nextHint
+          ? '<span class="nc-bundle-hint-inline">' + _esc(item.meta.nextHint) + '</span>'
+          : '<span class="nc-bundle-hint-inline"></span>';
+
+        // Expanded body rows with REMOVE + stepper
         var bodyRows = printOrder.map(function (p) {
           var qty = printCounts[p];
           var src = _printImg(p);
@@ -855,35 +851,27 @@
             : '<span class="nc-bundle-body-img"></span>';
           return '<div class="nc-bundle-print-row">' + imgEl +
             '<span class="nc-bundle-body-name">' + _esc(p) + '</span>' +
+            '<button class="nc-bundle-print-remove" data-print="' + _esc(p) + '" aria-label="Remove ' + _esc(p) + '">Remove</button>' +
             '<div class="nc-bun-qty">' +
-              '<button class="nc-bun-qty-dec" data-print="' + _esc(p) + '" aria-label="Decrease quantity">\u2212</button>' +
+              '<button class="nc-bun-qty-dec" data-print="' + _esc(p) + '" aria-label="Decrease">\u2212</button>' +
               '<span class="nc-bun-qty-count">' + qty + '</span>' +
-              '<button class="nc-bun-qty-inc" data-print="' + _esc(p) + '" aria-label="Increase quantity">+</button>' +
+              '<button class="nc-bun-qty-inc" data-print="' + _esc(p) + '" aria-label="Increase">+</button>' +
             '</div>' +
           '</div>';
         }).join('');
 
-        // Only show current discount in the bundle body; nextHint lives in the footer
-        var metaRow = item.meta.discountPct > 0
-          ? '<p class="nc-cart-item-meta">Saving ' + item.meta.discountPct + '%</p>'
-          : '';
-
         return [
           '<div class="nc-cart-item nc-cart-bundle" data-id="' + _esc(item.id) + '" role="listitem">',
           '  <div class="nc-bundle-header">',
-          '    <p class="nc-cart-item-name">' + _esc(tierName) + '</p>',
+          '    <span class="nc-bundle-qty-label">Qty.\u00a0' + item.meta.bundleCount + '</span>',
+          hintHtml,
           '    <button class="nc-bundle-edit-btn" aria-label="Edit this bundle">Edit</button>',
-          '    <div class="nc-bundle-top-right">',
-          '      <button class="nc-cart-remove" aria-label="Remove ' + _esc(item.name) + '">Remove</button>',
-          '      <span class="nc-cart-item-price">' + _fmt(item.price * item.quantity) + '</span>',
-          '      ' + chevronSvg,
-          '    </div>',
+          '    <span class="nc-cart-item-price">' + _fmt(item.price * item.quantity) + '</span>',
+          '    ' + chevronSvg,
           '  </div>',
-          '  <div class="nc-bundle-thumbs">' + thumbsHtml + '</div>',
           '  <div class="nc-bundle-body-wrap">',
           '    <div class="nc-bundle-body">',
           bodyRows,
-          metaRow,
           '    </div>',
           '  </div>',
           '</div>',
@@ -926,12 +914,16 @@
         if (it) window.updateQuantity(id, it.quantity + 1);
       });
 
-      row.querySelector('.nc-cart-remove').addEventListener('click', function (e) {
-        e.stopPropagation();
-        window.removeFromCart(id);
-      });
+      // Regular item remove
+      var removeBtn = row.querySelector('.nc-cart-remove');
+      if (removeBtn) {
+        removeBtn.addEventListener('click', function (e) {
+          e.stopPropagation();
+          window.removeFromCart(id);
+        });
+      }
 
-      // Bundle-only: click anywhere on the row to toggle
+      // Bundle-only
       if (row.classList.contains('nc-cart-bundle')) {
         // Restore open state after re-render
         if (openBundleIds.indexOf(id) >= 0) {
@@ -955,6 +947,14 @@
             }
           });
         }
+
+        // Per-print remove
+        row.querySelectorAll('.nc-bundle-print-remove').forEach(function (btn) {
+          btn.addEventListener('click', function (e) {
+            e.stopPropagation();
+            _removePrintFromBundle(id, btn.dataset.print);
+          });
+        });
 
         // Per-print qty steppers
         row.querySelectorAll('.nc-bun-qty-dec, .nc-bun-qty-inc').forEach(function (btn) {
@@ -1023,17 +1023,8 @@
   }
 
   function _updateBundleHint() {
-    if (!bundleHintEl) return;
-    var hint = '';
-    cart.forEach(function (item) {
-      if (!hint && item.meta && item.meta.nextHint) hint = item.meta.nextHint;
-    });
-    if (hint) {
-      bundleHintEl.style.display = '';
-      bundleHintEl.textContent = hint;
-    } else {
-      bundleHintEl.style.display = 'none';
-    }
+    // Hint is now shown inline in each bundle header; always hide the footer section
+    if (bundleHintEl) bundleHintEl.style.display = 'none';
   }
 
   function _update() {
