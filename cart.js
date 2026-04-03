@@ -321,19 +321,22 @@
       transform: rotate(180deg);
     }
 
-    /* ── Bundle prints: FLIP-animated horizontal → vertical ── */
-    .nc-bundle-prints {
+    /* ── Bundle prints: thumbnail strip collapses, body slides down ── */
+
+    /* Thumbnail strip — always in DOM, hides when open */
+    .nc-bundle-thumbs {
       display: flex;
       flex-direction: row;
-      flex-wrap: wrap;
       gap: 4px;
       margin-top: 8px;
+      overflow: hidden;
+      max-height: 36px;
+      opacity: 1;
+      transition: max-height 0.22s ease,
+                  opacity    0.18s ease,
+                  margin-top 0.22s ease;
     }
-    .nc-bundle-print-item {
-      display: flex;
-      align-items: center;
-    }
-    .nc-bundle-print-img {
+    .nc-bundle-thumb-img {
       width: 32px;
       height: 32px;
       object-fit: cover;
@@ -341,42 +344,52 @@
       flex-shrink: 0;
       background: #cbc5bc;
     }
-    .nc-bundle-print-name {
+    .nc-cart-item.nc-bundle-open .nc-bundle-thumbs {
+      max-height: 0;
+      opacity: 0;
+      margin-top: 0;
+    }
+
+    /* Body wrapper — grid trick for smooth height animation */
+    .nc-bundle-body-wrap {
+      display: grid;
+      grid-template-rows: 0fr;
+      transition: grid-template-rows 0.36s cubic-bezier(0.4, 0, 0.2, 1) 0.12s;
+    }
+    .nc-cart-item.nc-bundle-open .nc-bundle-body-wrap {
+      grid-template-rows: 1fr;
+    }
+    .nc-bundle-body {
+      min-height: 0;
+      overflow: hidden;
+    }
+
+    /* Print rows inside the body */
+    .nc-bundle-print-row {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 6px 0;
+      border-bottom: 1px solid #e8e0dc;
+    }
+    .nc-bundle-print-row:first-child {
+      border-top: 1px solid #d9d4cc;
+      margin-top: 8px;
+    }
+    .nc-bundle-body-img {
+      width: 36px;
+      height: 36px;
+      object-fit: cover;
+      display: block;
+      flex-shrink: 0;
+      background: #cbc5bc;
+    }
+    .nc-bundle-body-name {
       font-family: 'Montserrat', sans-serif;
       font-size: 9px;
       letter-spacing: 0.14em;
       text-transform: uppercase;
       color: #7a6f68;
-      white-space: nowrap;
-      max-width: 0;
-      overflow: hidden;
-      opacity: 0;
-      padding-left: 0;
-      transition: max-width 0.35s cubic-bezier(0.4, 0, 0.2, 1),
-                  opacity 0.2s 0.18s,
-                  padding-left 0.35s;
-    }
-    /* Expanded state */
-    .nc-cart-item.nc-bundle-open .nc-bundle-prints {
-      flex-direction: column;
-      gap: 0;
-      margin-top: 10px;
-      border-top: 1px solid #d9d4cc;
-      padding-top: 4px;
-    }
-    .nc-cart-item.nc-bundle-open .nc-bundle-print-item {
-      padding: 5px 0;
-      border-bottom: 1px solid #e8e0dc;
-    }
-    .nc-cart-item.nc-bundle-open .nc-bundle-print-name {
-      max-width: 200px;
-      opacity: 1;
-      padding-left: 10px;
-    }
-    .nc-cart-item.nc-bundle-open .nc-bundle-print-name {
-      max-width: 200px;
-      opacity: 1;
-      padding-left: 10px;
     }
 
     /* ── Remove link ── */
@@ -670,15 +683,22 @@
         var tierName = parts[0];
         var prints   = parts.slice(1);
 
-        // Single list of prints — animates from horizontal row → vertical list
-        var printItems = prints.map(function (p) {
+        // Thumbnail strip (collapsed view)
+        var thumbsHtml = prints.map(function (p) {
+          var src = _printImg(p);
+          return src
+            ? '<img class="nc-bundle-thumb-img" src="' + _esc(src) + '" alt="' + _esc(p) + '" loading="lazy">'
+            : '<span class="nc-bundle-thumb-img"></span>';
+        }).join('');
+
+        // Expanded body rows (dropdown view)
+        var bodyRows = prints.map(function (p) {
           var src = _printImg(p);
           var imgEl = src
-            ? '<img class="nc-bundle-print-img" src="' + _esc(src) + '" alt="' + _esc(p) + '" loading="lazy">'
-            : '<span class="nc-bundle-print-img"></span>';
-          return '<div class="nc-bundle-print-item">' +
-            imgEl +
-            '<span class="nc-bundle-print-name">' + _esc(p) + '</span>' +
+            ? '<img class="nc-bundle-body-img" src="' + _esc(src) + '" alt="' + _esc(p) + '" loading="lazy">'
+            : '<span class="nc-bundle-body-img"></span>';
+          return '<div class="nc-bundle-print-row">' + imgEl +
+            '<span class="nc-bundle-body-name">' + _esc(p) + '</span>' +
           '</div>';
         }).join('');
 
@@ -702,8 +722,13 @@
           '      ' + chevronSvg,
           '    </div>',
           '  </div>',
-          '  <div class="nc-bundle-prints">' + printItems + '</div>',
+          '  <div class="nc-bundle-thumbs">' + thumbsHtml + '</div>',
+          '  <div class="nc-bundle-body-wrap">',
+          '    <div class="nc-bundle-body">',
+          bodyRows,
           metaRow,
+          '    </div>',
+          '  </div>',
           '</div>',
         ].join('');
       }
@@ -749,66 +774,12 @@
         window.removeFromCart(id);
       });
 
-      // Bundle-only: click anywhere on the entire row to toggle (FLIP animation)
+      // Bundle-only: click anywhere on the row to toggle
       if (row.classList.contains('nc-cart-bundle')) {
         row.addEventListener('click', function () {
-          var isOpen = row.classList.contains('nc-bundle-open');
-          var imgs   = row.querySelectorAll('.nc-bundle-print-img');
-          var names  = row.querySelectorAll('.nc-bundle-print-name');
-
-          // FIRST: snapshot current positions before any layout change
-          var rects = Array.from(imgs).map(function (img) {
-            return img.getBoundingClientRect();
-          });
-
-          // When closing: immediately zero names so their max-width transition
-          // doesn't shift flex items during the FLIP (that causes the jumping)
-          if (isOpen) {
-            names.forEach(function (n) {
-              n.style.transition = 'none';
-              n.style.maxWidth   = '0';
-              n.style.opacity    = '0';
-              n.style.paddingLeft = '0';
-            });
-          }
-
-          // Toggle state — instantly reflows layout
           row.classList.toggle('nc-bundle-open');
-
-          // LAST: read all new positions and apply inverse transforms atomically
-          imgs.forEach(function (img, i) {
-            var last = img.getBoundingClientRect();
-            img.style.transition = 'none';
-            img.style.transform  = 'translate(' +
-              (rects[i].left - last.left) + 'px, ' +
-              (rects[i].top  - last.top)  + 'px)';
-          });
-
-          // Force one synchronous reflow so all transforms are "seen" by the browser
-          if (imgs.length) imgs[0].getBoundingClientRect();
-
-          // PLAY: start all animations in a single frame so they stay in sync
-          requestAnimationFrame(function () {
-            imgs.forEach(function (img) {
-              img.style.transition = 'transform 0.38s cubic-bezier(0.4, 0, 0.2, 1)';
-              img.style.transform  = '';
-            });
-          });
-
-          // Cleanup after animation
-          setTimeout(function () {
-            imgs.forEach(function (img) {
-              img.style.transition = '';
-              img.style.transform  = '';
-            });
-            // If we were closing, remove the inline name styles we set above
-            if (isOpen) {
-              names.forEach(function (n) { n.style.cssText = ''; });
-            }
-          }, 420);
         });
 
-        // Edit button — stop propagation so it doesn't also toggle the dropdown
         var editBtn = row.querySelector('.nc-bundle-edit-btn');
         if (editBtn) {
           editBtn.addEventListener('click', function (e) {
