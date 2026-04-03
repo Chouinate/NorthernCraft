@@ -98,7 +98,7 @@ async function sendOrderEmail(session) {
 module.exports = async (req, res) => {
   if (req.method !== 'POST') return res.status(405).end();
 
-  const stripe = new Stripe(process.env.STRIPE_SECRET_KEY);
+  const stripe = new Stripe(process.env.Stripe_Secret || process.env.STRIPE_SECRET_KEY);
   const rawBody = await getRawBody(req);
   const sig     = req.headers['stripe-signature'];
 
