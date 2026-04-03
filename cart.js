@@ -372,21 +372,27 @@
       user-select: none;
     }
 
-    /* ── Bundle header: qty · hint · edit · price · chevron ── */
+    /* ── Bundle header: two-column layout ── */
     .nc-bundle-header {
       display: flex;
-      align-items: center;
-      gap: 8px;
-      padding-bottom: 0;
+      align-items: flex-start;
+      gap: 10px;
+    }
+    /* Left: stacked qty label + hint */
+    .nc-bundle-header-left {
+      flex: 1;
+      min-width: 0;
+      display: flex;
+      flex-direction: column;
+      gap: 3px;
     }
     .nc-bundle-qty-label {
       font-family: 'Montserrat', sans-serif;
       font-size: 9px;
       font-weight: 600;
-      letter-spacing: 0.14em;
+      letter-spacing: 0.16em;
       text-transform: uppercase;
       color: #2a2523;
-      flex-shrink: 0;
     }
     .nc-bundle-hint-inline {
       font-family: 'Montserrat', sans-serif;
@@ -394,11 +400,20 @@
       letter-spacing: 0.12em;
       text-transform: uppercase;
       color: #5c3545;
-      flex: 1;
-      min-width: 0;
-      overflow: hidden;
-      text-overflow: ellipsis;
-      white-space: nowrap;
+      line-height: 1.4;
+    }
+    /* Right: price + chevron on top row, Edit below */
+    .nc-bundle-header-right {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-end;
+      gap: 4px;
+      flex-shrink: 0;
+    }
+    .nc-bundle-header-right-top {
+      display: flex;
+      align-items: center;
+      gap: 8px;
     }
     .nc-bundle-edit-btn {
       background: none;
@@ -410,7 +425,6 @@
       text-transform: uppercase;
       color: #9e9098;
       padding: 0;
-      flex-shrink: 0;
       transition: color 0.2s;
     }
     .nc-bundle-edit-btn:hover { color: #7b4f5c; }
@@ -423,15 +437,45 @@
       transform: rotate(180deg);
     }
 
+    /* Thumbnail strip — visible when collapsed, hides when open */
+    .nc-bundle-thumbs {
+      display: flex;
+      flex-direction: row;
+      gap: 4px;
+      margin-top: 8px;
+      overflow: hidden;
+      max-height: 36px;
+      opacity: 1;
+      transition: max-height 0.2s ease  0.34s,
+                  opacity    0.18s ease 0.34s,
+                  margin-top 0.2s ease  0.34s;
+    }
+    .nc-bundle-thumb-img {
+      width: 32px;
+      height: 32px;
+      object-fit: cover;
+      display: block;
+      flex-shrink: 0;
+      background: #cbc5bc;
+    }
+    .nc-cart-item.nc-bundle-open .nc-bundle-thumbs {
+      max-height: 0;
+      opacity: 0;
+      margin-top: 0;
+      transition: max-height 0.2s ease  0s,
+                  opacity    0.16s ease 0s,
+                  margin-top 0.2s ease  0s;
+    }
+
     /* Body wrapper — grid trick for smooth height animation */
     .nc-bundle-body-wrap {
       display: grid;
       grid-template-rows: 0fr;
-      transition: grid-template-rows 0.32s cubic-bezier(0.4, 0, 0.2, 1) 0s;
+      transition: grid-template-rows 0.36s cubic-bezier(0.4, 0, 0.2, 1) 0s;
     }
     .nc-cart-item.nc-bundle-open .nc-bundle-body-wrap {
       grid-template-rows: 1fr;
-      transition: grid-template-rows 0.32s cubic-bezier(0.4, 0, 0.2, 1) 0s;
+      transition: grid-template-rows 0.36s cubic-bezier(0.4, 0, 0.2, 1) 0.14s;
     }
     .nc-bundle-body {
       min-height: 0;
@@ -837,10 +881,13 @@
           printCounts[p]++;
         });
 
-        // Header hint (inline, no "Add" prefix)
-        var hintHtml = item.meta.nextHint
-          ? '<span class="nc-bundle-hint-inline">' + _esc(item.meta.nextHint) + '</span>'
-          : '<span class="nc-bundle-hint-inline"></span>';
+        // Thumbnail strip (collapsed view)
+        var thumbsHtml = prints.map(function (p) {
+          var src = _printImg(p);
+          return src
+            ? '<img class="nc-bundle-thumb-img" src="' + _esc(src) + '" alt="' + _esc(p) + '" loading="lazy">'
+            : '<span class="nc-bundle-thumb-img"></span>';
+        }).join('');
 
         // Expanded body rows with REMOVE + stepper
         var bodyRows = printOrder.map(function (p) {
@@ -860,15 +907,26 @@
           '</div>';
         }).join('');
 
+        var hintText = item.meta.nextHint
+          ? '<span class="nc-bundle-hint-inline">' + _esc(item.meta.nextHint) + '</span>'
+          : '';
+
         return [
           '<div class="nc-cart-item nc-cart-bundle" data-id="' + _esc(item.id) + '" role="listitem">',
           '  <div class="nc-bundle-header">',
-          '    <span class="nc-bundle-qty-label">Qty.\u00a0' + item.meta.bundleCount + '</span>',
-          hintHtml,
-          '    <button class="nc-bundle-edit-btn" aria-label="Edit this bundle">Edit</button>',
-          '    <span class="nc-cart-item-price">' + _fmt(item.price * item.quantity) + '</span>',
-          '    ' + chevronSvg,
+          '    <div class="nc-bundle-header-left">',
+          '      <span class="nc-bundle-qty-label">Qty.\u00a0' + item.meta.bundleCount + '</span>',
+          hintText,
+          '    </div>',
+          '    <div class="nc-bundle-header-right">',
+          '      <div class="nc-bundle-header-right-top">',
+          '        <span class="nc-cart-item-price">' + _fmt(item.price * item.quantity) + '</span>',
+          '        ' + chevronSvg,
+          '      </div>',
+          '      <button class="nc-bundle-edit-btn" aria-label="Edit this bundle">Edit</button>',
+          '    </div>',
           '  </div>',
+          '  <div class="nc-bundle-thumbs">' + thumbsHtml + '</div>',
           '  <div class="nc-bundle-body-wrap">',
           '    <div class="nc-bundle-body">',
           bodyRows,
