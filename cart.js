@@ -267,9 +267,11 @@
       margin: 3px 0 0;
     }
 
-    /* ── Bundle row: override grid layout ── */
+    /* ── Bundle row: override grid layout, full row is clickable ── */
     .nc-cart-item.nc-cart-bundle {
       display: block;
+      cursor: pointer;
+      user-select: none;
     }
 
     /* ── Bundle header: name | [remove · edit] | price | chevron ── */
@@ -277,8 +279,6 @@
       display: flex;
       align-items: center;
       gap: 10px;
-      cursor: pointer;
-      user-select: none;
     }
     .nc-bundle-header:hover .nc-cart-item-name { color: #5c3545; }
     .nc-bundle-header .nc-cart-item-name {
@@ -314,37 +314,32 @@
     }
     .nc-bundle-chevron {
       color: #9e9098;
-      transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      transition: transform 0.35s cubic-bezier(0.4, 0, 0.2, 1);
       flex-shrink: 0;
     }
     .nc-cart-item.nc-bundle-open .nc-bundle-chevron {
       transform: rotate(180deg);
     }
 
-    /* ── Bundle prints: single list that morphs horizontal ↔ vertical ── */
+    /* ── Bundle prints: FLIP-animated horizontal → vertical ── */
     .nc-bundle-prints {
       display: flex;
+      flex-direction: row;
       flex-wrap: wrap;
+      gap: 4px;
       margin-top: 8px;
     }
     .nc-bundle-print-item {
       display: flex;
       align-items: center;
-      overflow: hidden;
-      width: 30px;
-      padding-right: 4px;
-      transition: width 0.38s cubic-bezier(0.4, 0, 0.2, 1),
-                  padding 0.38s cubic-bezier(0.4, 0, 0.2, 1);
     }
     .nc-bundle-print-img {
-      width: 30px;
-      height: 30px;
+      width: 32px;
+      height: 32px;
       object-fit: cover;
       display: block;
       flex-shrink: 0;
       background: #cbc5bc;
-      transition: width 0.38s cubic-bezier(0.4, 0, 0.2, 1),
-                  height 0.38s cubic-bezier(0.4, 0, 0.2, 1);
     }
     .nc-bundle-print-name {
       font-family: 'Montserrat', sans-serif;
@@ -357,25 +352,26 @@
       overflow: hidden;
       opacity: 0;
       padding-left: 0;
-      transition: max-width 0.38s cubic-bezier(0.4, 0, 0.2, 1),
-                  opacity 0.2s 0.15s,
-                  padding-left 0.38s;
+      transition: max-width 0.35s cubic-bezier(0.4, 0, 0.2, 1),
+                  opacity 0.2s 0.18s,
+                  padding-left 0.35s;
     }
     /* Expanded state */
     .nc-cart-item.nc-bundle-open .nc-bundle-prints {
+      flex-direction: column;
+      gap: 0;
       margin-top: 10px;
       border-top: 1px solid #d9d4cc;
       padding-top: 4px;
     }
     .nc-cart-item.nc-bundle-open .nc-bundle-print-item {
-      width: 100%;
-      padding: 6px 0;
-      padding-right: 0;
+      padding: 5px 0;
       border-bottom: 1px solid #e8e0dc;
     }
-    .nc-cart-item.nc-bundle-open .nc-bundle-print-img {
-      width: 38px;
-      height: 38px;
+    .nc-cart-item.nc-bundle-open .nc-bundle-print-name {
+      max-width: 200px;
+      opacity: 1;
+      padding-left: 10px;
     }
     .nc-cart-item.nc-bundle-open .nc-bundle-print-name {
       max-width: 200px;
@@ -753,27 +749,59 @@
         window.removeFromCart(id);
       });
 
-      // Bundle-only: toggle animated print list on header click
-      var header = row.querySelector('.nc-bundle-header');
-      if (header) {
-        header.addEventListener('click', function () {
-          row.classList.toggle('nc-bundle-open');
-        });
-      }
+      // Bundle-only: click anywhere on the entire row to toggle (FLIP animation)
+      if (row.classList.contains('nc-cart-bundle')) {
+        row.addEventListener('click', function () {
+          var imgs = row.querySelectorAll('.nc-bundle-print-img');
 
-      // Bundle-only: Edit button (in header)
-      var editBtn = row.querySelector('.nc-bundle-edit-btn');
-      if (editBtn) {
-        editBtn.addEventListener('click', function (e) {
-          e.stopPropagation();
-          var item = cart.find(function (i) { return i.id === id; });
-          if (!item) return;
-          var allPrints = item.name.split(' \u00b7 ').slice(1);
-          _close();
-          if (typeof window.ncEnterReplaceMode === 'function') {
-            window.ncEnterReplaceMode(id, allPrints);
-          }
+          // FIRST: snapshot current positions of all images
+          var rects = Array.from(imgs).map(function (img) {
+            return img.getBoundingClientRect();
+          });
+
+          // Toggle class — instantly reflows layout to new state
+          row.classList.toggle('nc-bundle-open');
+
+          // LAST → INVERT → PLAY: each image flies from old spot to new spot
+          imgs.forEach(function (img, i) {
+            var last = img.getBoundingClientRect();
+            var dx   = rects[i].left - last.left;
+            var dy   = rects[i].top  - last.top;
+
+            img.style.transition = 'none';
+            img.style.transform  = 'translate(' + dx + 'px, ' + dy + 'px)';
+
+            requestAnimationFrame(function () {
+              requestAnimationFrame(function () {
+                img.style.transition = 'transform 0.38s cubic-bezier(0.4, 0, 0.2, 1)';
+                img.style.transform  = '';
+              });
+            });
+          });
+
+          // Clean up inline styles after animation finishes
+          setTimeout(function () {
+            imgs.forEach(function (img) {
+              img.style.transition = '';
+              img.style.transform  = '';
+            });
+          }, 420);
         });
+
+        // Edit button — stop propagation so it doesn't also toggle the dropdown
+        var editBtn = row.querySelector('.nc-bundle-edit-btn');
+        if (editBtn) {
+          editBtn.addEventListener('click', function (e) {
+            e.stopPropagation();
+            var item = cart.find(function (i) { return i.id === id; });
+            if (!item) return;
+            var allPrints = item.name.split(' \u00b7 ').slice(1);
+            _close();
+            if (typeof window.ncEnterReplaceMode === 'function') {
+              window.ncEnterReplaceMode(id, allPrints);
+            }
+          });
+        }
       }
     });
   }
