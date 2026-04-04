@@ -18,7 +18,7 @@
 (function () {
   'use strict';
 
-  var PK = 'pk_live_51TEHZaChIqZnLnt9FvtaiVA62udYtyrAP7Xlebh4w8iqGd4lhzI7xho6uSa806lT3GJUm1idP5BRIKjteqVdGJhx00gHoOw86G';
+  var PK = 'pk_test_51TEHZaChIqZnLnt9pV24fyuZswtM6AS2nmjoD6QvozIEbTnK4seeL7oDCLVQ8HfZXjFa5R5Dz70XG6QMWWurHgVA001V7OH0C9';
   var SERVER = (window.STRIPE_SERVER_URL || '').replace(/\/$/, '');
 
   // ── Payment method logos — symbol-only, ~14 px tall when rendered ─────────────
