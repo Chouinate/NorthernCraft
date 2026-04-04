@@ -186,6 +186,16 @@
     '  font-size: 10px; letter-spacing: 0.18em;',
     '  text-transform: uppercase; color: #7a6f68; margin: 0;',
     '}',
+    '.nc-thankyou-contact {',
+    '  font-family: "Montserrat", sans-serif;',
+    '  font-size: 11px; letter-spacing: 0.06em;',
+    '  color: #7a6f68; margin: 20px 0 0; padding-top: 16px;',
+    '  border-top: 1px solid #d9d4cc;',
+    '}',
+    '.nc-thankyou-contact a {',
+    '  color: #5c3545; text-decoration: none;',
+    '}',
+    '.nc-thankyou-contact a:hover { text-decoration: underline; }',
 
   ].join('\n');
 
@@ -222,9 +232,8 @@
     sub.textContent = 'Confirmation will be sent to ' + (email || 'your email');
 
     var contact = document.createElement('p');
-    contact.className = 'nc-thankyou-sub';
-    contact.style.marginTop = '12px';
-    contact.innerHTML = 'Questions? <a href="mailto:nate@northerncraftnh.com" style="color:inherit">nate@northerncraftnh.com</a>';
+    contact.className = 'nc-thankyou-contact';
+    contact.innerHTML = 'Questions? <a href="mailto:nate@northerncraftnh.com">nate@northerncraftnh.com</a>';
 
     box.appendChild(closeBtn);
     box.appendChild(title);
