@@ -388,11 +388,11 @@
     }
     .nc-bundle-qty-label {
       font-family: 'Montserrat', sans-serif;
-      font-size: 9px;
-      font-weight: 600;
+      font-size: 11px;
+      font-weight: 500;
       letter-spacing: 0.16em;
       text-transform: uppercase;
-      color: #2a2523;
+      color: #5c3545;
     }
     .nc-bundle-hint-inline {
       font-family: 'Montserrat', sans-serif;
