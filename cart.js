@@ -402,7 +402,7 @@
       color: #5c3545;
       line-height: 1.4;
     }
-    /* Right: price + chevron on top row, Remove below */
+    /* Right: price + chevron on top row, Remove + Edit below */
     .nc-bundle-header-right {
       display: flex;
       flex-direction: column;
@@ -414,6 +414,11 @@
       display: flex;
       align-items: center;
       gap: 8px;
+    }
+    .nc-bundle-header-right-actions {
+      display: flex;
+      align-items: center;
+      gap: 10px;
     }
     .nc-bundle-edit-btn {
       background: none;
@@ -448,6 +453,11 @@
     }
     .nc-cart-item.nc-bundle-open .nc-bundle-chevron {
       transform: rotate(180deg);
+    }
+
+    /* Hint row — sits between header and thumbnail strip */
+    .nc-bundle-hint-row {
+      margin-top: 5px;
     }
 
     /* Thumbnail strip — visible when collapsed, hides when open */
@@ -938,17 +948,19 @@
           '  <div class="nc-bundle-header">',
           '    <div class="nc-bundle-header-left">',
           '      <span class="nc-bundle-qty-label">Qty.\u00a0' + item.meta.bundleCount + '</span>',
-          hintText,
-          '      <button class="nc-bundle-edit-btn" aria-label="Edit this bundle">Edit</button>',
           '    </div>',
           '    <div class="nc-bundle-header-right">',
           '      <div class="nc-bundle-header-right-top">',
           '        <span class="nc-cart-item-price">' + _fmt(item.price * item.quantity) + '</span>',
           '        ' + chevronSvg,
           '      </div>',
-          '      <button class="nc-bundle-remove-btn" aria-label="Remove this bundle">Remove</button>',
+          '      <div class="nc-bundle-header-right-actions">',
+          '        <button class="nc-bundle-remove-btn" aria-label="Remove this bundle">Remove</button>',
+          '        <button class="nc-bundle-edit-btn" aria-label="Edit this bundle">Edit</button>',
+          '      </div>',
           '    </div>',
           '  </div>',
+          hintText ? '  <div class="nc-bundle-hint-row">' + hintText + '</div>' : '',
           '  <div class="nc-bundle-thumbs">' + thumbsHtml + '</div>',
           '  <div class="nc-bundle-body-wrap">',
           '    <div class="nc-bundle-body">',
