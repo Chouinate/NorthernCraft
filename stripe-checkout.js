@@ -221,9 +221,15 @@
     sub.className = 'nc-thankyou-sub';
     sub.textContent = 'Confirmation will be sent to ' + (email || 'your email');
 
+    var contact = document.createElement('p');
+    contact.className = 'nc-thankyou-sub';
+    contact.style.marginTop = '12px';
+    contact.innerHTML = 'Questions? <a href="mailto:nate@northerncraftnh.com" style="color:inherit">nate@northerncraftnh.com</a>';
+
     box.appendChild(closeBtn);
     box.appendChild(title);
     box.appendChild(sub);
+    box.appendChild(contact);
     overlay.appendChild(box);
     overlay.addEventListener('click', function (e) {
       if (e.target === overlay) overlay.remove();
