@@ -402,7 +402,7 @@
       color: #5c3545;
       line-height: 1.4;
     }
-    /* Right: price + chevron on top row, Edit below */
+    /* Right: price + chevron on top row, Remove below */
     .nc-bundle-header-right {
       display: flex;
       flex-direction: column;
@@ -428,6 +428,19 @@
       transition: color 0.2s;
     }
     .nc-bundle-edit-btn:hover { color: #7b4f5c; }
+    .nc-bundle-remove-btn {
+      background: none;
+      border: none;
+      cursor: pointer;
+      font-family: 'Montserrat', sans-serif;
+      font-size: 9px;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: #9e9098;
+      padding: 0;
+      transition: color 0.2s;
+    }
+    .nc-bundle-remove-btn:hover { color: #7b4f5c; }
     .nc-bundle-chevron {
       color: #9e9098;
       transition: transform 0.35s cubic-bezier(0.4, 0, 0.2, 1);
@@ -926,13 +939,14 @@
           '    <div class="nc-bundle-header-left">',
           '      <span class="nc-bundle-qty-label">Qty.\u00a0' + item.meta.bundleCount + '</span>',
           hintText,
+          '      <button class="nc-bundle-edit-btn" aria-label="Edit this bundle">Edit</button>',
           '    </div>',
           '    <div class="nc-bundle-header-right">',
           '      <div class="nc-bundle-header-right-top">',
           '        <span class="nc-cart-item-price">' + _fmt(item.price * item.quantity) + '</span>',
           '        ' + chevronSvg,
           '      </div>',
-          '      <button class="nc-bundle-edit-btn" aria-label="Edit this bundle">Edit</button>',
+          '      <button class="nc-bundle-remove-btn" aria-label="Remove this bundle">Remove</button>',
           '    </div>',
           '  </div>',
           '  <div class="nc-bundle-thumbs">' + thumbsHtml + '</div>',
@@ -1012,6 +1026,14 @@
             if (typeof window.ncEnterReplaceMode === 'function') {
               window.ncEnterReplaceMode(id, allPrints);
             }
+          });
+        }
+
+        var removeBundleBtn = row.querySelector('.nc-bundle-remove-btn');
+        if (removeBundleBtn) {
+          removeBundleBtn.addEventListener('click', function (e) {
+            e.stopPropagation();
+            window.removeFromCart(id);
           });
         }
 
