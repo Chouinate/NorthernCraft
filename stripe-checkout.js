@@ -18,7 +18,7 @@
 (function () {
   'use strict';
 
-  var PK = 'pk_test_51TEHZaChIqZnLnt9pV24fyuZswtM6AS2nmjoD6QvozIEbTnK4seeL7oDCLVQ8HfZXjFa5R5Dz70XG6QMWWurHgVA001V7OH0C9';
+  var PK = 'pk_live_51TEHZaChIqZnLnt9FvtaiVA62udYtyrAP7Xlebh4w8iqGd4lhzI7xho6uSa806lT3GJUm1idP5BRIKjteqVdGJhx00gHoOw86G';
   var SERVER = (window.STRIPE_SERVER_URL || '').replace(/\/$/, '');
 
   // ── Payment method logos — symbol-only, ~14 px tall when rendered ─────────────
@@ -155,6 +155,48 @@
     '}',
 
     '#stripe-checkout-container { margin-top: 24px; }',
+
+    /* ── Order-complete popup ── */
+    '.nc-thankyou-overlay {',
+    '  position: fixed; inset: 0; z-index: 10000;',
+    '  background: rgba(30,24,22,0.85);',
+    '  display: flex; align-items: center; justify-content: center;',
+    '  padding: 20px;',
+    '}',
+    '.nc-thankyou-box {',
+    '  background: #ece8e1;',
+    '  width: 100%; max-width: 440px;',
+    '  padding: 52px 40px 44px;',
+    '  position: relative; text-align: center; border-radius: 2px;',
+    '}',
+    '.nc-thankyou-close {',
+    '  position: absolute; top: 14px; right: 14px;',
+    '  background: none; border: none; cursor: pointer;',
+    '  font-size: 18px; line-height: 1; padding: 4px 8px;',
+    '  color: #9e9098; transition: color 0.2s;',
+    '}',
+    '.nc-thankyou-close:hover { color: #2a2523; }',
+    '.nc-thankyou-title {',
+    '  font-family: "Cormorant Garamond", Georgia, serif;',
+    '  font-size: 28px; font-weight: 400;',
+    '  color: #2a2523; letter-spacing: 0.04em; margin: 0 0 16px;',
+    '}',
+    '.nc-thankyou-sub {',
+    '  font-family: "Montserrat", sans-serif;',
+    '  font-size: 10px; letter-spacing: 0.18em;',
+    '  text-transform: uppercase; color: #7a6f68; margin: 0;',
+    '}',
+    '.nc-thankyou-contact {',
+    '  font-family: "Montserrat", sans-serif;',
+    '  font-size: 11px; letter-spacing: 0.06em;',
+    '  color: #7a6f68; margin: 20px 0 0; padding-top: 16px;',
+    '  border-top: 1px solid #d9d4cc;',
+    '}',
+    '.nc-thankyou-contact a {',
+    '  color: #5c3545; text-decoration: none;',
+    '}',
+    '.nc-thankyou-contact a:hover { text-decoration: underline; }',
+
   ].join('\n');
 
   function _injectStyles() {
@@ -164,6 +206,45 @@
   }
 
   // ── Helpers ─────────────────────────────────────────────────────────────────
+  function _showOrderCompletePopup(email) {
+    var existing = document.getElementById('nc-thankyou-overlay');
+    if (existing) existing.remove();
+
+    var overlay = document.createElement('div');
+    overlay.id = 'nc-thankyou-overlay';
+    overlay.className = 'nc-thankyou-overlay';
+
+    var box = document.createElement('div');
+    box.className = 'nc-thankyou-box';
+
+    var closeBtn = document.createElement('button');
+    closeBtn.className = 'nc-thankyou-close';
+    closeBtn.setAttribute('aria-label', 'Close');
+    closeBtn.innerHTML = '&times;';
+    closeBtn.addEventListener('click', function () { overlay.remove(); });
+
+    var title = document.createElement('p');
+    title.className = 'nc-thankyou-title';
+    title.textContent = 'Thank you for your order!';
+
+    var sub = document.createElement('p');
+    sub.className = 'nc-thankyou-sub';
+    sub.textContent = 'Confirmation will be sent to ' + (email || 'your email');
+
+    var contact = document.createElement('p');
+    contact.className = 'nc-thankyou-contact';
+    contact.innerHTML = 'Questions? <a href="mailto:nate@northerncraftnh.com">nate@northerncraftnh.com</a>';
+
+    box.appendChild(closeBtn);
+    box.appendChild(title);
+    box.appendChild(sub);
+    box.appendChild(contact);
+    overlay.appendChild(box);
+    overlay.addEventListener('click', function (e) {
+      if (e.target === overlay) overlay.remove();
+    });
+    document.body.appendChild(overlay);
+  }
   function _buildReturnUrl() {
     var base = window.location.origin + window.location.pathname;
     var qs = new URLSearchParams(window.location.search);
@@ -304,20 +385,19 @@
     fetch(SERVER + '/session-status?session_id=' + encodeURIComponent(sessionId))
       .then(function (res) { return res.json(); })
       .then(function (data) {
-        var container = document.getElementById('checkout-buttons');
-        if (!container) return;
-
         if (data.status === 'complete') {
           if (typeof window.clearCart === 'function') window.clearCart();
-          var email = data.customer_email ? _esc(data.customer_email) : 'your email';
-          container.innerHTML =
-            '<p class="nc-pay-success">Thank you for your order!</p>' +
-            '<p class="nc-pay-success-sub">Confirmation will be sent to ' + email + '</p>';
+          var email = data.customer_email || '';
+          _showOrderCompletePopup(email);
 
-        } else if (data.status === 'open') {
-          _initButton();
         } else {
-          _showError(container, 'Payment could not be confirmed. Please contact us.');
+          var container = document.getElementById('checkout-buttons');
+          if (!container) return;
+          if (data.status === 'open') {
+            _initButton();
+          } else {
+            _showError(container, 'Payment could not be confirmed. Please contact us.');
+          }
         }
       })
       .catch(function () {
