@@ -819,6 +819,21 @@
     });
 
     _update();
+
+    // Fetch country once; cart-checkout.js reads window.NC_COUNTRY to decide
+    // whether to render payment buttons or an "international" notice.
+    if (!window.NC_COUNTRY) {
+      var geoServer = (window.STRIPE_SERVER_URL || '').replace(/\/$/, '');
+      fetch(geoServer + '/api/geo')
+        .then(function (r) { return r.ok ? r.json() : { country: 'US' }; })
+        .then(function (d) {
+          window.NC_COUNTRY = d.country || 'US';
+          _updateShippingNotice();
+        })
+        .catch(function () {
+          window.NC_COUNTRY = 'US';
+        });
+    }
   }
 
   // ─── Drawer open / close ─────────────────────────────────────────────────────
@@ -1102,6 +1117,12 @@
 
   function _updateShippingNotice() {
     if (!shippingNoticeEl) return;
+
+    // Don't show US-specific free-shipping messaging to international visitors.
+    if (window.NC_COUNTRY && window.NC_COUNTRY !== 'US' && window.NC_COUNTRY !== 'CA') {
+      shippingNoticeEl.style.display = 'none';
+      return;
+    }
 
     const totalQty = cart.reduce(function (s, i) {
       return s + (i.meta && i.meta.bundleCount ? i.meta.bundleCount * i.quantity : i.quantity);

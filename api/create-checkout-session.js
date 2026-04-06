@@ -26,10 +26,26 @@ function canadaRateCents(itemCount) {
   return 5000;
 }
 
-function shippingOptions(itemCount) {
-  const usCents     = usRateCents(itemCount);
-  const canadaCents = canadaRateCents(itemCount);
+function shippingOptions(itemCount, country) {
+  if (country === 'CA') {
+    const canadaCents = canadaRateCents(itemCount);
+    return [
+      {
+        shipping_rate_data: {
+          type:         'fixed_amount',
+          fixed_amount: { amount: canadaCents, currency: 'usd' },
+          display_name: 'Standard Shipping (Canada)',
+          delivery_estimate: {
+            minimum: { unit: 'business_day', value: 10 },
+            maximum: { unit: 'business_day', value: 21 },
+          },
+        },
+      },
+    ];
+  }
 
+  // Default: US
+  const usCents = usRateCents(itemCount);
   return [
     {
       shipping_rate_data: {
@@ -39,17 +55,6 @@ function shippingOptions(itemCount) {
         delivery_estimate: {
           minimum: { unit: 'business_day', value: 5 },
           maximum: { unit: 'business_day', value: 10 },
-        },
-      },
-    },
-    {
-      shipping_rate_data: {
-        type:         'fixed_amount',
-        fixed_amount: { amount: canadaCents, currency: 'usd' },
-        display_name: 'Standard Shipping (Canada)',
-        delivery_estimate: {
-          minimum: { unit: 'business_day', value: 10 },
-          maximum: { unit: 'business_day', value: 21 },
         },
       },
     },
@@ -65,7 +70,7 @@ module.exports = async (req, res) => {
   if (req.method !== 'POST') return res.status(405).json({ error: 'Method not allowed.' });
 
   const stripe = new Stripe(process.env.Stripe_Secret || process.env.STRIPE_SECRET_KEY);
-  const { items, itemCount, return_url, payment_method_types } = req.body;
+  const { items, itemCount, country, return_url, payment_method_types } = req.body;
 
   if (!Array.isArray(items) || items.length === 0) {
     return res.status(400).json({ error: 'Cart is empty.' });
@@ -73,6 +78,11 @@ module.exports = async (req, res) => {
   if (!return_url || typeof return_url !== 'string') {
     return res.status(400).json({ error: 'return_url is required.' });
   }
+
+  if (country === 'OTHER') {
+    return res.status(400).json({ error: 'Shipping is not available in your region.' });
+  }
+  const resolvedCountry = country === 'CA' ? 'CA' : 'US';
 
   // Total item count — use explicit value from client, fall back to summing quantities
   const totalItems = Number.isInteger(itemCount) && itemCount > 0
@@ -98,8 +108,8 @@ module.exports = async (req, res) => {
       line_items,
       return_url,
       billing_address_collection:  'required',
-      shipping_address_collection: { allowed_countries: ['US', 'CA'] },
-      shipping_options:            shippingOptions(totalItems),
+      shipping_address_collection: { allowed_countries: [resolvedCountry] },
+      shipping_options:            shippingOptions(totalItems, resolvedCountry),
     };
 
     if (Array.isArray(payment_method_types) && payment_method_types.length > 0) {
