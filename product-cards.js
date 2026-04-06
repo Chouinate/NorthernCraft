@@ -544,6 +544,7 @@
     selected.forEach(function (c) { c.classList.remove('pc-sel'); });
     selected   = [];
     activeProd = null;
+    history.replaceState(null, '', '/');
     bar.classList.add('bb-on');
     bar.setAttribute('aria-hidden', 'false');
     document.body.classList.add('bb-active');
@@ -562,6 +563,8 @@
       price: Number(card.dataset.price) || SINGLE,
       image: card.dataset.image || '',
     };
+
+    history.replaceState(null, '', '/' + card.dataset.id);
 
     barThumb.src = activeProd.image;
     barThumb.alt = activeProd.name;
@@ -582,12 +585,14 @@
       card.classList.remove('pc-sel');
       if (selected.length === 0) { deactivate(); return; }
       var show = selected[selected.length - 1];
+      history.replaceState(null, '', '/' + show.dataset.id);
       barThumb.src = show.dataset.image || '';
       barThumb.alt = show.dataset.name  || '';
       barName.textContent = show.dataset.name || '';
     } else {
       selected.push(card);
       card.classList.add('pc-sel');
+      history.replaceState(null, '', '/' + card.dataset.id);
       barThumb.src = card.dataset.image || '';
       barThumb.alt = card.dataset.name  || '';
       barName.textContent = card.dataset.name || '';
@@ -646,6 +651,7 @@
     selected.forEach(function (c) { c.classList.remove('pc-sel'); });
     selected   = [];
     activeProd = null;
+    history.replaceState(null, '', '/');
     document.body.classList.remove('bb-active');
     bar.classList.remove('bb-on');
     bar.setAttribute('aria-hidden', 'true');
@@ -708,6 +714,10 @@
     } else {
       activate(card);
     }
+    setTimeout(function () {
+      var coll = document.getElementById('collection');
+      if (coll) coll.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }, 50);
   }
 
   /* ── boot ─────────────────────────────────────────────────────────── */
