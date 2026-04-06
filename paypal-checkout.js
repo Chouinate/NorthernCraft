@@ -221,46 +221,36 @@
         height: 45,
       },
 
-      // ── Build the order from the live cart ───────────────────────────────────
-      createOrder: function (data, actions) {
+      // ── Build the order server-side (prices derived from item IDs, never from client) ──
+      createOrder: function () {
         _clearMsg();
 
-        var items = typeof window.getCart      === 'function' ? window.getCart()      : [];
-        var total = typeof window.getCartTotal === 'function' ? window.getCartTotal() : 0;
+        var items = typeof window.getCart === 'function' ? window.getCart() : [];
 
         if (!items.length) {
           _showMsg('Your cart is empty.', false);
           return Promise.reject(new Error('Cart is empty.'));
         }
 
-        // Round every value consistently to avoid PayPal amount-mismatch errors.
-        var itemTotal = 0;
-        var lineItems = items.map(function (item) {
-          var unit = Math.round(Number(item.price) * 100) / 100;
-          var qty  = Math.max(1, parseInt(item.quantity, 10) || 1);
-          itemTotal += unit * qty;
-          return {
-            name:        String(item.name).substring(0, 127),
-            unit_amount: { currency_code: 'USD', value: unit.toFixed(2) },
-            quantity:    String(qty),
-          };
-        });
-
-        // Use recomputed itemTotal so breakdown matches (avoids floating-point drift).
-        var orderTotal = (Math.round(itemTotal * 100) / 100).toFixed(2);
-
-        return actions.order.create({
-          purchase_units: [{
-            amount: {
-              currency_code: 'USD',
-              value: orderTotal,
-              breakdown: {
-                item_total: { currency_code: 'USD', value: orderTotal },
-              },
-            },
-            items: lineItems,
-          }],
-        });
+        return fetch(SERVER + '/create-paypal-order', {
+          method:  'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body:    JSON.stringify({ items: items }),
+        })
+          .then(function (res) {
+            return res.json().then(function (data) {
+              if (!res.ok) throw new Error(data.error || ('Server error ' + res.status));
+              return data;
+            });
+          })
+          .then(function (data) {
+            if (data.error) throw new Error(data.error);
+            return data.orderID;
+          })
+          .catch(function (err) {
+            _showMsg(err.message || 'Could not create PayPal order. Please try again.', false);
+            return Promise.reject(err);
+          });
       },
 
       // ── Payment approved: capture and show thank-you ─────────────────────────

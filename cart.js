@@ -1080,7 +1080,7 @@
             '<button class="nc-bundle-print-remove" data-print="' + _esc(p) + '" aria-label="Remove ' + _esc(p) + '">Remove</button>' +
             '<div class="nc-bun-qty">' +
               '<button class="nc-bun-qty-dec" data-print="' + _esc(p) + '" aria-label="Decrease">\u2212</button>' +
-              '<span class="nc-bun-qty-count">' + qty + '</span>' +
+              '<span class="nc-bun-qty-count">' + parseInt(qty, 10) + '</span>' +
               '<button class="nc-bun-qty-inc" data-print="' + _esc(p) + '" aria-label="Increase">+</button>' +
             '</div>' +
           '</div>';
@@ -1103,7 +1103,7 @@
           '<div class="nc-cart-item nc-cart-bundle" data-id="' + _esc(item.id) + '" role="listitem">',
           '  <div class="nc-bundle-header">',
           '    <div class="nc-bundle-header-left">',
-          '      <span class="nc-bundle-qty-label">Qty.\u00a0' + item.meta.bundleCount + '</span>',
+          '      <span class="nc-bundle-qty-label">Qty.\u00a0' + parseInt(item.meta.bundleCount, 10) + '</span>',
           '    </div>',
           '    <div class="nc-bundle-header-right">',
           '      <div class="nc-bundle-header-right-top">',
@@ -1138,7 +1138,7 @@
         '  <div class="nc-cart-item-bottom">',
         '    <div class="nc-qty" role="group" aria-label="Quantity">',
         '      <button class="nc-qty-dec" aria-label="Decrease quantity">\u2212</button>',
-        '      <span class="nc-qty-count" aria-live="polite">' + item.quantity + '</span>',
+        '      <span class="nc-qty-count" aria-live="polite">' + parseInt(item.quantity, 10) + '</span>',
         '      <button class="nc-qty-inc" aria-label="Increase quantity">+</button>',
         '    </div>',
         '    <button class="nc-cart-remove" aria-label="Remove ' + _esc(item.name) + '">Remove</button>',
