@@ -654,48 +654,41 @@
   function handleAdd() {
     if (!selected.length || typeof window.addToCart !== 'function') return;
 
-    if (selected.length === 1) {
-      var solo = activeProd || {
-        id:    selected[0].dataset.id,
-        name:  selected[0].dataset.name,
-        price: Number(selected[0].dataset.price) || SINGLE,
-        image: selected[0].dataset.image || '',
-      };
-      window.addToCart(solo.id, solo.name, SINGLE, solo.image);
-    } else {
-      var newNames = selected.map(function (c) { return c.dataset.name; });
-      var img0     = selected[0].dataset.image || '';
-      var cart     = typeof window.getCart === 'function' ? window.getCart() : [];
-      var mNames = [], mCount = 0, mImg = img0;
+    var newNames = selected.map(function (c) { return c.dataset.name; });
+    var img0     = selected[0].dataset.image || '';
+    var cart     = typeof window.getCart === 'function' ? window.getCart() : [];
+    var mNames = [], mCount = 0, mImg = img0;
 
-      cart.forEach(function (item) {
-        if (item.meta && item.meta.bundleCount) {
-          mNames  = mNames.concat(item.name.replace(/^[^\u00b7]+\u00b7\s*/, '').split(' \u00b7 '));
-          mCount += item.meta.bundleCount * item.quantity;
-          if (!mImg && item.image) mImg = item.image;
-          window.removeFromCart(item.id);
-        }
-      });
+    cart.forEach(function (item) {
+      if (item.meta && item.meta.bundleCount) {
+        mNames  = mNames.concat(item.name.replace(/^[^\u00b7]+\u00b7\s*/, '').split(' \u00b7 '));
+        mCount += item.meta.bundleCount * item.quantity;
+      } else {
+        for (var q = 0; q < item.quantity; q++) mNames.push(item.name);
+        mCount += item.quantity;
+      }
+      if (!mImg && item.image) mImg = item.image;
+      window.removeFromCart(item.id);
+    });
 
-      mNames  = mNames.concat(newNames);
-      mCount += newNames.length;
+    mNames  = mNames.concat(newNames);
+    mCount += newNames.length;
 
-      var tier  = bestTier(mCount);
-      var price = calcPrice(mCount);
-      var disc  = savePct(mCount);
-      var next  = nextTier(mCount);
-      var id    = 'bundle-' + mCount + '-' + Date.now();
-      var tname = tier ? tier.name : 'Bundle';
-      var hint  = next
-        ? (next.limit - mCount) + ' more for ' + next.name + ' \u00b7 ' + disc + '% \u2192 ' + savePct(next.limit) + '%'
-        : '';
+    var tier  = bestTier(mCount);
+    var price = calcPrice(mCount);
+    var disc  = savePct(mCount);
+    var next  = nextTier(mCount);
+    var id    = 'bundle-' + mCount + '-' + Date.now();
+    var tname = tier ? tier.name : (mCount === 1 ? 'Print' : 'Bundle');
+    var hint  = next
+      ? (next.limit - mCount) + ' more for ' + next.name + ' \u00b7 ' + disc + '% \u2192 ' + savePct(next.limit) + '%'
+      : '';
 
-      window.addToCart(id, tname + ' \u00b7 ' + mNames.join(' \u00b7 '), price, mImg, {
-        bundleCount: mCount,
-        discountPct: disc,
-        nextHint:    hint,
-      });
-    }
+    window.addToCart(id, tname + ' \u00b7 ' + mNames.join(' \u00b7 '), price, mImg, {
+      bundleCount: mCount,
+      discountPct: disc,
+      nextHint:    hint,
+    });
 
     deactivate();
     var icon = document.getElementById('cart-icon');
