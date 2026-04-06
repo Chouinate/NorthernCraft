@@ -384,6 +384,8 @@
 
     window.enterBuildMode = activateEmpty;
 
+    autoOpenFromPath();
+
     // Called from cart when user clicks Replace on a bundle print.
     // Removes that bundle, pre-selects all kept prints, and enters build mode
     // so the user picks one replacement print then hits Add to Cart.
@@ -693,6 +695,19 @@
     deactivate();
     var icon = document.getElementById('cart-icon');
     if (icon) icon.click();
+  }
+
+  /* ── auto-open product from URL path (e.g. /summit) ─────────────── */
+  function autoOpenFromPath() {
+    var slug = window.location.pathname.replace(/^\//, '').split('/')[0].toLowerCase();
+    if (!slug) return;
+    var card = document.querySelector('.product-card[data-id="' + slug + '"]');
+    if (!card) return;
+    if (isMobile()) {
+      showModal(card);
+    } else {
+      activate(card);
+    }
   }
 
   /* ── boot ─────────────────────────────────────────────────────────── */

@@ -4,6 +4,20 @@
       "includeFiles": "api/**"
     }
   },
+  "rewrites": [
+    { "source": "/solstice", "destination": "/index.html" },
+    { "source": "/bloom",    "destination": "/index.html" },
+    { "source": "/petal",    "destination": "/index.html" },
+    { "source": "/quarry",   "destination": "/index.html" },
+    { "source": "/meadow",   "destination": "/index.html" },
+    { "source": "/summit",   "destination": "/index.html" },
+    { "source": "/grove",    "destination": "/index.html" },
+    { "source": "/flora",    "destination": "/index.html" },
+    { "source": "/north",    "destination": "/index.html" },
+    { "source": "/blossom",  "destination": "/index.html" },
+    { "source": "/rosette",  "destination": "/index.html" },
+    { "source": "/flare",    "destination": "/index.html" }
+  ],
   "headers": [
     {
       "source": "/(.*)",
