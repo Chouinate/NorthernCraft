@@ -24,7 +24,7 @@
       "headers": [
         {
           "key": "Content-Security-Policy",
-          "value": "default-src 'self'; script-src 'self' 'unsafe-inline' https://js.stripe.com https://www.paypal.com https://www.paypalobjects.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data: blob: https://*.stripe.com https://www.paypalobjects.com; frame-src https://js.stripe.com https://hooks.stripe.com https://www.paypal.com https://www.sandbox.paypal.com; connect-src 'self' https://api.stripe.com https://errors.stripe.com https://events.stripe.com https://northerncraftnh.vercel.app https://script.google.com; worker-src blob:; object-src 'none';"
+          "value": "default-src 'self'; script-src 'self' 'unsafe-inline' https://js.stripe.com https://www.paypal.com https://www.paypalobjects.com https://va.vercel-scripts.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data: blob: https://*.stripe.com https://www.paypalobjects.com; frame-src https://js.stripe.com https://hooks.stripe.com https://www.paypal.com https://www.sandbox.paypal.com; connect-src 'self' https://api.stripe.com https://errors.stripe.com https://events.stripe.com https://northerncraftnh.vercel.app https://script.google.com https://va.vercel-scripts.com; worker-src blob:; object-src 'none';"
         }
       ]
     }
