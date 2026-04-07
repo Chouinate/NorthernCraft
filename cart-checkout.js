@@ -208,6 +208,18 @@
     '}',
     '.nc-thankyou-contact a:hover { text-decoration: underline; }',
 
+    /* ── International shipping notice ── */
+    '.nc-intl-notice {',
+    '  font-family: "Montserrat", sans-serif;',
+    '  font-size: 10px; line-height: 1.7; letter-spacing: 0.06em;',
+    '  color: #7a6f68; text-align: center;',
+    '  padding: 16px 4px 0;',
+    '}',
+    '.nc-intl-notice a {',
+    '  color: #5c3545; text-decoration: none;',
+    '}',
+    '.nc-intl-notice a:hover { text-decoration: underline; }',
+
   ].join('\n');
 
   // ── Helpers ─────────────────────────────────────────────────────────────────
@@ -405,6 +417,7 @@
     var body = {
       items:      items,
       itemCount:  itemCount,
+      country:    window.NC_COUNTRY || 'US',
       return_url: _buildReturnUrl(),
     };
     if (methodTypes) body.payment_method_types = methodTypes;
@@ -610,6 +623,33 @@
 
   }
 
+  // ── International shipping notice ────────────────────────────────────────────
+  function _renderIntlNotice(payArea) {
+    var notice = document.createElement('p');
+    notice.className = 'nc-intl-notice';
+
+    var line1 = document.createTextNode(
+      'We don\u2019t currently offer shipping to your region, but we\u2019d love to help.'
+    );
+    var br1 = document.createElement('br');
+    var line2 = document.createTextNode(
+      'Reach out \u2014 we\u2019re open to custom orders and digital downloads.'
+    );
+    var br2 = document.createElement('br');
+    var br3 = document.createElement('br');
+    var link = document.createElement('a');
+    link.href = 'mailto:nate@northerncraftnh.com';
+    link.textContent = 'nate@northerncraftnh.com';
+
+    notice.appendChild(line1);
+    notice.appendChild(br1);
+    notice.appendChild(line2);
+    notice.appendChild(br2);
+    notice.appendChild(br3);
+    notice.appendChild(link);
+    payArea.appendChild(notice);
+  }
+
   // ── Boot ────────────────────────────────────────────────────────────────────
   function _init() {
     var style = document.createElement('style');
@@ -623,34 +663,59 @@
     var payArea = document.querySelector('.nc-cart-pay-area');
     if (!payArea) return;
 
-    // Load Stripe and PayPal in parallel; degrade gracefully if either fails
-    var stripeReady  = _loadStripe().then(function () { return true; })
-                                    .catch(function () { return false; });
-    var paypalReady  = (function () {
-      if (window.PAYPAL_CLIENT_ID) {
-        return _loadPayPal(window.PAYPAL_CLIENT_ID)
-          .then(function () { return true; })
-          .catch(function (e) { console.warn('[cart-checkout/paypal]', e.message); return false; });
-      }
-      return fetch(SERVER + '/paypal-client-id')
-        .then(function (r) { return r.json(); })
-        .then(function (d) {
-          if (!d.clientId) throw new Error('No PayPal client ID');
-          return _loadPayPal(d.clientId);
-        })
-        .then(function () { return true; })
-        .catch(function (e) {
-          console.warn('[cart-checkout/paypal]', e.message);
-          return false;
+    // Wait for cart.js to resolve the visitor's country (fetched from /api/geo),
+    // then decide whether to show payment options or an international notice.
+    // Poll for up to GEO_POLL_TIMEOUT_MS (cart.js fetch usually resolves in < 200ms).
+    var GEO_POLL_INTERVAL_MS = 50;
+    var GEO_POLL_TIMEOUT_MS  = 2000;
+    var geoReady = window.NC_COUNTRY
+      ? Promise.resolve(window.NC_COUNTRY)
+      : new Promise(function (resolve) {
+          var elapsed = 0;
+          var poll = setInterval(function () {
+            elapsed += GEO_POLL_INTERVAL_MS;
+            if (window.NC_COUNTRY || elapsed >= GEO_POLL_TIMEOUT_MS) {
+              clearInterval(poll);
+              resolve(window.NC_COUNTRY || 'US');
+            }
+          }, GEO_POLL_INTERVAL_MS);
         });
-    }());
 
-    Promise.all([stripeReady, paypalReady]).then(function (results) {
-      var hasStripe = results[0];
-      var hasPayPal = results[1];
-      if (hasStripe || hasPayPal) {
-        _renderPaymentOptions(payArea, hasPayPal, hasStripe);
+    geoReady.then(function (country) {
+      if (country === 'OTHER') {
+        _renderIntlNotice(payArea);
+        return;
       }
+
+      // Load Stripe and PayPal in parallel; degrade gracefully if either fails
+      var stripeReady = _loadStripe().then(function () { return true; })
+                                     .catch(function () { return false; });
+      var paypalReady = (function () {
+        if (window.PAYPAL_CLIENT_ID) {
+          return _loadPayPal(window.PAYPAL_CLIENT_ID)
+            .then(function () { return true; })
+            .catch(function (e) { console.warn('[cart-checkout/paypal]', e.message); return false; });
+        }
+        return fetch(SERVER + '/paypal-client-id')
+          .then(function (r) { return r.json(); })
+          .then(function (d) {
+            if (!d.clientId) throw new Error('No PayPal client ID');
+            return _loadPayPal(d.clientId);
+          })
+          .then(function () { return true; })
+          .catch(function (e) {
+            console.warn('[cart-checkout/paypal]', e.message);
+            return false;
+          });
+      }());
+
+      Promise.all([stripeReady, paypalReady]).then(function (results) {
+        var hasStripe = results[0];
+        var hasPayPal = results[1];
+        if (hasStripe || hasPayPal) {
+          _renderPaymentOptions(payArea, hasPayPal, hasStripe);
+        }
+      });
     });
   }
 

@@ -384,6 +384,8 @@
 
     window.enterBuildMode = activateEmpty;
 
+    autoOpenFromPath();
+
     // Called from cart when user clicks Replace on a bundle print.
     // Removes that bundle, pre-selects all kept prints, and enters build mode
     // so the user picks one replacement print then hits Add to Cart.
@@ -542,6 +544,7 @@
     selected.forEach(function (c) { c.classList.remove('pc-sel'); });
     selected   = [];
     activeProd = null;
+    history.replaceState(null, '', '/');
     bar.classList.add('bb-on');
     bar.setAttribute('aria-hidden', 'false');
     document.body.classList.add('bb-active');
@@ -560,6 +563,8 @@
       price: Number(card.dataset.price) || SINGLE,
       image: card.dataset.image || '',
     };
+
+    history.replaceState(null, '', '/' + card.dataset.id);
 
     barThumb.src = activeProd.image;
     barThumb.alt = activeProd.name;
@@ -580,12 +585,14 @@
       card.classList.remove('pc-sel');
       if (selected.length === 0) { deactivate(); return; }
       var show = selected[selected.length - 1];
+      history.replaceState(null, '', '/' + show.dataset.id);
       barThumb.src = show.dataset.image || '';
       barThumb.alt = show.dataset.name  || '';
       barName.textContent = show.dataset.name || '';
     } else {
       selected.push(card);
       card.classList.add('pc-sel');
+      history.replaceState(null, '', '/' + card.dataset.id);
       barThumb.src = card.dataset.image || '';
       barThumb.alt = card.dataset.name  || '';
       barName.textContent = card.dataset.name || '';
@@ -644,6 +651,7 @@
     selected.forEach(function (c) { c.classList.remove('pc-sel'); });
     selected   = [];
     activeProd = null;
+    history.replaceState(null, '', '/');
     document.body.classList.remove('bb-active');
     bar.classList.remove('bb-on');
     bar.setAttribute('aria-hidden', 'true');
@@ -654,52 +662,62 @@
   function handleAdd() {
     if (!selected.length || typeof window.addToCart !== 'function') return;
 
-    if (selected.length === 1) {
-      var solo = activeProd || {
-        id:    selected[0].dataset.id,
-        name:  selected[0].dataset.name,
-        price: Number(selected[0].dataset.price) || SINGLE,
-        image: selected[0].dataset.image || '',
-      };
-      window.addToCart(solo.id, solo.name, SINGLE, solo.image);
-    } else {
-      var newNames = selected.map(function (c) { return c.dataset.name; });
-      var img0     = selected[0].dataset.image || '';
-      var cart     = typeof window.getCart === 'function' ? window.getCart() : [];
-      var mNames = [], mCount = 0, mImg = img0;
+    var newNames = selected.map(function (c) { return c.dataset.name; });
+    var img0     = selected[0].dataset.image || '';
+    var cart     = typeof window.getCart === 'function' ? window.getCart() : [];
+    var mNames = [], mCount = 0, mImg = img0;
 
-      cart.forEach(function (item) {
-        if (item.meta && item.meta.bundleCount) {
-          mNames  = mNames.concat(item.name.replace(/^[^\u00b7]+\u00b7\s*/, '').split(' \u00b7 '));
-          mCount += item.meta.bundleCount * item.quantity;
-          if (!mImg && item.image) mImg = item.image;
-          window.removeFromCart(item.id);
-        }
-      });
+    cart.forEach(function (item) {
+      if (item.meta && item.meta.bundleCount) {
+        mNames  = mNames.concat(item.name.replace(/^[^\u00b7]+\u00b7\s*/, '').split(' \u00b7 '));
+        mCount += item.meta.bundleCount * item.quantity;
+      } else {
+        for (var q = 0; q < item.quantity; q++) mNames.push(item.name);
+        mCount += item.quantity;
+      }
+      if (!mImg && item.image) mImg = item.image;
+      window.removeFromCart(item.id);
+    });
 
-      mNames  = mNames.concat(newNames);
-      mCount += newNames.length;
+    mNames  = mNames.concat(newNames);
+    mCount += newNames.length;
 
-      var tier  = bestTier(mCount);
-      var price = calcPrice(mCount);
-      var disc  = savePct(mCount);
-      var next  = nextTier(mCount);
-      var id    = 'bundle-' + mCount + '-' + Date.now();
-      var tname = tier ? tier.name : 'Bundle';
-      var hint  = next
-        ? (next.limit - mCount) + ' more for ' + next.name + ' \u00b7 ' + disc + '% \u2192 ' + savePct(next.limit) + '%'
-        : '';
+    var tier  = bestTier(mCount);
+    var price = calcPrice(mCount);
+    var disc  = savePct(mCount);
+    var next  = nextTier(mCount);
+    var id    = 'bundle-' + mCount + '-' + Date.now();
+    var tname = tier ? tier.name : (mCount === 1 ? 'Print' : 'Bundle');
+    var hint  = next
+      ? (next.limit - mCount) + ' more for ' + next.name + ' \u00b7 ' + disc + '% \u2192 ' + savePct(next.limit) + '% off'
+      : '';
 
-      window.addToCart(id, tname + ' \u00b7 ' + mNames.join(' \u00b7 '), price, mImg, {
-        bundleCount: mCount,
-        discountPct: disc,
-        nextHint:    hint,
-      });
-    }
+    window.addToCart(id, tname + ' \u00b7 ' + mNames.join(' \u00b7 '), price, mImg, {
+      bundleCount: mCount,
+      discountPct: disc,
+      nextHint:    hint,
+    });
 
     deactivate();
     var icon = document.getElementById('cart-icon');
     if (icon) icon.click();
+  }
+
+  /* ── auto-open product from URL path (e.g. /summit) ─────────────── */
+  function autoOpenFromPath() {
+    var slug = window.location.pathname.replace(/^\//, '').split('/')[0].toLowerCase();
+    if (!slug) return;
+    var card = document.querySelector('.product-card[data-id="' + slug + '"]');
+    if (!card) return;
+    if (isMobile()) {
+      showModal(card);
+    } else {
+      activate(card);
+    }
+    setTimeout(function () {
+      var coll = document.getElementById('collection');
+      if (coll) coll.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }, 50);
   }
 
   /* ── boot ─────────────────────────────────────────────────────────── */

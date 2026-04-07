@@ -4,13 +4,27 @@
       "includeFiles": "api/**"
     }
   },
+  "rewrites": [
+    { "source": "/solstice", "destination": "/index.html" },
+    { "source": "/bloom",    "destination": "/index.html" },
+    { "source": "/petal",    "destination": "/index.html" },
+    { "source": "/quarry",   "destination": "/index.html" },
+    { "source": "/meadow",   "destination": "/index.html" },
+    { "source": "/summit",   "destination": "/index.html" },
+    { "source": "/grove",    "destination": "/index.html" },
+    { "source": "/flora",    "destination": "/index.html" },
+    { "source": "/north",    "destination": "/index.html" },
+    { "source": "/blossom",  "destination": "/index.html" },
+    { "source": "/rosette",  "destination": "/index.html" },
+    { "source": "/flare",    "destination": "/index.html" }
+  ],
   "headers": [
     {
       "source": "/(.*)",
       "headers": [
         {
           "key": "Content-Security-Policy",
-          "value": "default-src 'self'; script-src 'self' 'unsafe-inline' https://js.stripe.com https://www.paypal.com https://www.paypalobjects.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data: blob: https://*.stripe.com https://www.paypalobjects.com; frame-src https://js.stripe.com https://hooks.stripe.com https://www.paypal.com https://www.sandbox.paypal.com; connect-src 'self' https://api.stripe.com https://errors.stripe.com https://events.stripe.com https://northerncraftnh.vercel.app https://script.google.com; worker-src blob:; object-src 'none';"
+          "value": "default-src 'self'; script-src 'self' 'unsafe-inline' https://js.stripe.com https://www.paypal.com https://www.paypalobjects.com https://va.vercel-scripts.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data: blob: https://*.stripe.com https://www.paypalobjects.com; frame-src https://js.stripe.com https://hooks.stripe.com https://www.paypal.com https://www.sandbox.paypal.com; connect-src 'self' https://api.stripe.com https://errors.stripe.com https://events.stripe.com https://northerncraftnh.vercel.app https://script.google.com https://va.vercel-scripts.com; worker-src blob:; object-src 'none';"
         }
       ]
     }

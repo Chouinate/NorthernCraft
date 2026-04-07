@@ -1,35 +1,28 @@
 'use strict';
 const Stripe = require('stripe');
+const { canonicalUnitAmountCents } = require('./_prices');
+const { usRateCents, canadaRateCents } = require('./_shipping');
 
-/* ── Shipping rate lookup ────────────────────────────────────────────────────
-   Each item weighs 0.6 lb.
-   US:     1 item = $7   |   2+ items = free
-   Canada: weight-based (matches Google Merchant config)
-     0.0–1.0 lb  (1 item)   = $12
-     1.1–2.0 lbs (2–3 items) = $15
-     2.1–3.0 lbs (4–5 items) = $19
-     3.1–4.0 lbs (6 items)   = $26
-     4.1+ lbs    (7+ items)  = $50
-──────────────────────────────────────────────────────────────────────────── */
-const ITEM_WEIGHT_LB = 0.6;
+function shippingOptions(itemCount, country) {
+  if (country === 'CA') {
+    const canadaCents = canadaRateCents(itemCount);
+    return [
+      {
+        shipping_rate_data: {
+          type:         'fixed_amount',
+          fixed_amount: { amount: canadaCents, currency: 'usd' },
+          display_name: 'Standard Shipping (Canada)',
+          delivery_estimate: {
+            minimum: { unit: 'business_day', value: 10 },
+            maximum: { unit: 'business_day', value: 21 },
+          },
+        },
+      },
+    ];
+  }
 
-function usRateCents(itemCount) {
-  return itemCount >= 2 ? 0 : 700;
-}
-
-function canadaRateCents(itemCount) {
-  const weight = itemCount * ITEM_WEIGHT_LB;
-  if (weight <= 1.0) return 1200;
-  if (weight <= 2.0) return 1500;
-  if (weight <= 3.0) return 1900;
-  if (weight <= 4.0) return 2600;
-  return 5000;
-}
-
-function shippingOptions(itemCount) {
-  const usCents     = usRateCents(itemCount);
-  const canadaCents = canadaRateCents(itemCount);
-
+  // Default: US
+  const usCents = usRateCents(itemCount);
   return [
     {
       shipping_rate_data: {
@@ -39,17 +32,6 @@ function shippingOptions(itemCount) {
         delivery_estimate: {
           minimum: { unit: 'business_day', value: 5 },
           maximum: { unit: 'business_day', value: 10 },
-        },
-      },
-    },
-    {
-      shipping_rate_data: {
-        type:         'fixed_amount',
-        fixed_amount: { amount: canadaCents, currency: 'usd' },
-        display_name: 'Standard Shipping (Canada)',
-        delivery_estimate: {
-          minimum: { unit: 'business_day', value: 10 },
-          maximum: { unit: 'business_day', value: 21 },
         },
       },
     },
@@ -65,13 +47,25 @@ module.exports = async (req, res) => {
   if (req.method !== 'POST') return res.status(405).json({ error: 'Method not allowed.' });
 
   const stripe = new Stripe(process.env.Stripe_Secret || process.env.STRIPE_SECRET_KEY);
-  const { items, itemCount, return_url, payment_method_types } = req.body;
+  const { items, itemCount, country, return_url, payment_method_types } = req.body;
 
   if (!Array.isArray(items) || items.length === 0) {
     return res.status(400).json({ error: 'Cart is empty.' });
   }
   if (!return_url || typeof return_url !== 'string') {
     return res.status(400).json({ error: 'return_url is required.' });
+  }
+
+  if (country === 'OTHER') {
+    return res.status(400).json({ error: 'Shipping is not available in your region.' });
+  }
+  const resolvedCountry = country === 'CA' ? 'CA' : 'US';
+
+  // Reject any item whose id we cannot price server-side.
+  for (const item of items) {
+    if (canonicalUnitAmountCents(item) === null) {
+      return res.status(400).json({ error: `Unknown item: ${String(item.id)}` });
+    }
   }
 
   // Total item count — use explicit value from client, fall back to summing quantities
@@ -87,7 +81,7 @@ module.exports = async (req, res) => {
           name: String(item.name),
           ...(item.image ? { images: [String(item.image)] } : {}),
         },
-        unit_amount: Math.round(Number(item.price) * 100),
+        unit_amount: canonicalUnitAmountCents(item), // server-authoritative; client price ignored
       },
       quantity: Math.max(1, parseInt(item.quantity, 10) || 1),
     }));
@@ -98,8 +92,8 @@ module.exports = async (req, res) => {
       line_items,
       return_url,
       billing_address_collection:  'required',
-      shipping_address_collection: { allowed_countries: ['US', 'CA'] },
-      shipping_options:            shippingOptions(totalItems),
+      shipping_address_collection: { allowed_countries: [resolvedCountry] },
+      shipping_options:            shippingOptions(totalItems, resolvedCountry),
     };
 
     if (Array.isArray(payment_method_types) && payment_method_types.length > 0) {
