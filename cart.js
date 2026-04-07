@@ -742,10 +742,150 @@
       .nc-cart-item  { padding: 16px 20px; }
       .nc-cart-footer { padding: 14px 20px 24px; }
     }
+
+    /* ── International notice popup ── */
+    .nc-intl-popup-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(42, 37, 35, 0.55);
+      z-index: 1000;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 24px;
+      animation: nc-intl-fadein 0.25s ease;
+    }
+    @keyframes nc-intl-fadein {
+      from { opacity: 0; }
+      to   { opacity: 1; }
+    }
+    .nc-intl-popup {
+      background: #ece8e1;
+      border-radius: 4px;
+      padding: 40px 36px 32px;
+      max-width: 420px;
+      width: 100%;
+      position: relative;
+      text-align: center;
+      box-shadow: 0 8px 48px rgba(42, 37, 35, 0.22);
+      animation: nc-intl-slidein 0.25s ease;
+    }
+    @keyframes nc-intl-slidein {
+      from { transform: translateY(14px); opacity: 0; }
+      to   { transform: translateY(0);    opacity: 1; }
+    }
+    .nc-intl-popup-close {
+      position: absolute;
+      top: 12px;
+      right: 14px;
+      background: none;
+      border: none;
+      cursor: pointer;
+      color: #7a6f68;
+      font-size: 22px;
+      line-height: 1;
+      padding: 4px 6px;
+      transition: color 0.2s;
+    }
+    .nc-intl-popup-close:hover { color: #2a2523; }
+    .nc-intl-popup-heading {
+      font-family: 'Cormorant Garamond', Georgia, serif;
+      font-size: 22px;
+      font-weight: 400;
+      color: #2a2523;
+      letter-spacing: 0.04em;
+      margin: 0 0 14px;
+    }
+    .nc-intl-popup-body {
+      font-size: 14px;
+      line-height: 1.7;
+      color: #7a6f68;
+      margin: 0 0 22px;
+    }
+    .nc-intl-popup-link {
+      color: #5c3545;
+      text-decoration: none;
+    }
+    .nc-intl-popup-link:hover { text-decoration: underline; }
+    .nc-intl-popup-btn {
+      display: inline-block;
+      padding: 10px 30px;
+      background: #2a2523;
+      color: #fff;
+      border: none;
+      cursor: pointer;
+      font-size: 11px;
+      letter-spacing: 0.13em;
+      text-transform: uppercase;
+      font-family: inherit;
+      transition: background 0.2s;
+    }
+    .nc-intl-popup-btn:hover { background: #5c3545; }
+    @media (max-width: 480px) {
+      .nc-intl-popup { padding: 36px 24px 28px; }
+    }
   `;
 
   // ─── DOM Elements ────────────────────────────────────────────────────────────
   let overlay, drawer, itemsList, totalEl, shippingNoticeEl, bundleHintEl, badge;
+
+  // ─── International visitor popup ─────────────────────────────────────────────
+  function _showIntlPopup() {
+    // Only show once per browser session so it doesn't re-appear on every page load
+    if (sessionStorage.getItem('nc-intl-seen')) return;
+    sessionStorage.setItem('nc-intl-seen', '1');
+
+    var popOverlay = document.createElement('div');
+    popOverlay.className = 'nc-intl-popup-overlay';
+
+    var popBox = document.createElement('div');
+    popBox.className = 'nc-intl-popup';
+    popBox.setAttribute('role', 'dialog');
+    popBox.setAttribute('aria-modal', 'true');
+
+    var closeBtn = document.createElement('button');
+    closeBtn.className = 'nc-intl-popup-close';
+    closeBtn.setAttribute('aria-label', 'Close');
+    closeBtn.textContent = '\u00D7';
+
+    var heading = document.createElement('p');
+    heading.className = 'nc-intl-popup-heading';
+    heading.textContent = 'Thanks for Checking Us Out!';
+
+    var body = document.createElement('p');
+    body.className = 'nc-intl-popup-body';
+    body.appendChild(document.createTextNode(
+      'Unfortunately, we don\u2019t currently ship outside the US and Canada \u2014 ' +
+      'we\u2019d hate for you to get excited building a set only to hit a wall at checkout. ' +
+      'Check back soon, and if you\u2019re interested in a custom order or digital download, ' +
+      'don\u2019t hesitate to reach out!'
+    ));
+    body.appendChild(document.createElement('br'));
+    body.appendChild(document.createElement('br'));
+    var link = document.createElement('a');
+    link.className = 'nc-intl-popup-link';
+    link.href = 'mailto:nate@northerncraftnh.com';
+    link.textContent = 'nate@northerncraftnh.com';
+    body.appendChild(link);
+
+    var confirmBtn = document.createElement('button');
+    confirmBtn.className = 'nc-intl-popup-btn';
+    confirmBtn.textContent = 'Got It';
+
+    function _dismiss() { document.body.removeChild(popOverlay); }
+    closeBtn.addEventListener('click', _dismiss);
+    confirmBtn.addEventListener('click', _dismiss);
+    popOverlay.addEventListener('click', function (e) {
+      if (e.target === popOverlay) _dismiss();
+    });
+
+    popBox.appendChild(closeBtn);
+    popBox.appendChild(heading);
+    popBox.appendChild(body);
+    popBox.appendChild(confirmBtn);
+    popOverlay.appendChild(popBox);
+    document.body.appendChild(popOverlay);
+  }
 
   function _init() {
     const styleEl = document.createElement('style');
@@ -819,6 +959,22 @@
     });
 
     _update();
+
+    // Fetch country once; cart-checkout.js reads window.NC_COUNTRY to decide
+    // whether to render payment buttons or an "international" notice.
+    if (!window.NC_COUNTRY) {
+      var geoServer = (window.STRIPE_SERVER_URL || '').replace(/\/$/, '');
+      fetch(geoServer + '/api/geo')
+        .then(function (r) { return r.ok ? r.json() : { country: 'US' }; })
+        .then(function (d) {
+          window.NC_COUNTRY = d.country || 'US';
+          _updateShippingNotice();
+          if (window.NC_COUNTRY === 'OTHER') { _showIntlPopup(); }
+        })
+        .catch(function () {
+          window.NC_COUNTRY = 'US';
+        });
+    }
   }
 
   // ─── Drawer open / close ─────────────────────────────────────────────────────
@@ -924,7 +1080,7 @@
             '<button class="nc-bundle-print-remove" data-print="' + _esc(p) + '" aria-label="Remove ' + _esc(p) + '">Remove</button>' +
             '<div class="nc-bun-qty">' +
               '<button class="nc-bun-qty-dec" data-print="' + _esc(p) + '" aria-label="Decrease">\u2212</button>' +
-              '<span class="nc-bun-qty-count">' + qty + '</span>' +
+              '<span class="nc-bun-qty-count">' + parseInt(qty, 10) + '</span>' +
               '<button class="nc-bun-qty-inc" data-print="' + _esc(p) + '" aria-label="Increase">+</button>' +
             '</div>' +
           '</div>';
@@ -947,7 +1103,7 @@
           '<div class="nc-cart-item nc-cart-bundle" data-id="' + _esc(item.id) + '" role="listitem">',
           '  <div class="nc-bundle-header">',
           '    <div class="nc-bundle-header-left">',
-          '      <span class="nc-bundle-qty-label">Qty.\u00a0' + item.meta.bundleCount + '</span>',
+          '      <span class="nc-bundle-qty-label">Qty.\u00a0' + parseInt(item.meta.bundleCount, 10) + '</span>',
           '    </div>',
           '    <div class="nc-bundle-header-right">',
           '      <div class="nc-bundle-header-right-top">',
@@ -982,7 +1138,7 @@
         '  <div class="nc-cart-item-bottom">',
         '    <div class="nc-qty" role="group" aria-label="Quantity">',
         '      <button class="nc-qty-dec" aria-label="Decrease quantity">\u2212</button>',
-        '      <span class="nc-qty-count" aria-live="polite">' + item.quantity + '</span>',
+        '      <span class="nc-qty-count" aria-live="polite">' + parseInt(item.quantity, 10) + '</span>',
         '      <button class="nc-qty-inc" aria-label="Increase quantity">+</button>',
         '    </div>',
         '    <button class="nc-cart-remove" aria-label="Remove ' + _esc(item.name) + '">Remove</button>',
@@ -1102,6 +1258,12 @@
 
   function _updateShippingNotice() {
     if (!shippingNoticeEl) return;
+
+    // Don't show US-specific free-shipping messaging to international visitors.
+    if (window.NC_COUNTRY && window.NC_COUNTRY !== 'US' && window.NC_COUNTRY !== 'CA') {
+      shippingNoticeEl.style.display = 'none';
+      return;
+    }
 
     const totalQty = cart.reduce(function (s, i) {
       return s + (i.meta && i.meta.bundleCount ? i.meta.bundleCount * i.quantity : i.quantity);

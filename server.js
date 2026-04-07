@@ -17,6 +17,7 @@ require('dotenv').config();
 const express = require('express');
 const cors    = require('cors');
 const Stripe  = require('stripe');
+const { canonicalUnitAmountCents } = require('./api/_prices');
 
 // ── Guard ────────────────────────────────────────────────────────────────────
 if (!process.env.STRIPE_SECRET_KEY) {
@@ -43,6 +44,13 @@ app.post('/create-checkout-session', async (req, res) => {
       return res.status(400).json({ error: 'return_url is required.' });
     }
 
+    // Reject any item whose id we cannot price server-side.
+    for (const item of items) {
+      if (canonicalUnitAmountCents(item) === null) {
+        return res.status(400).json({ error: `Unknown item: ${String(item.id)}` });
+      }
+    }
+
     const line_items = items.map(item => ({
       price_data: {
         currency: 'usd',
@@ -50,7 +58,7 @@ app.post('/create-checkout-session', async (req, res) => {
           name: String(item.name),
           ...(item.image ? { images: [String(item.image)] } : {}),
         },
-        unit_amount: Math.round(Number(item.price) * 100), // dollars → cents
+        unit_amount: canonicalUnitAmountCents(item), // server-authoritative; client price ignored
       },
       quantity: Math.max(1, parseInt(item.quantity, 10) || 1),
     }));
