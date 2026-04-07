@@ -17,6 +17,9 @@
 
   var SERVER = (window.STRIPE_SERVER_URL || '').replace(/\/$/, '');
 
+  // Stash item metadata between createOrder and onShippingAddressChange.
+  var _orderMeta = null;
+
   // ── Styles ──────────────────────────────────────────────────────────────────
   // .nc-pay-success / .nc-pay-success-sub are already injected by
   // stripe-checkout.js; we re-declare them here for standalone resilience.
@@ -232,10 +235,14 @@
           return Promise.reject(new Error('Cart is empty.'));
         }
 
+        var country = (window.NC_COUNTRY === 'CA' || window.NC_COUNTRY === 'US')
+          ? window.NC_COUNTRY
+          : 'US';
+
         return fetch(SERVER + '/create-paypal-order', {
           method:  'POST',
           headers: { 'Content-Type': 'application/json' },
-          body:    JSON.stringify({ items: items }),
+          body:    JSON.stringify({ items: items, country: country }),
         })
           .then(function (res) {
             return res.json().then(function (data) {
@@ -245,12 +252,45 @@
           })
           .then(function (data) {
             if (data.error) throw new Error(data.error);
+            // Stash item count and item total for onShippingAddressChange
+            _orderMeta = {
+              totalItemCount: data.totalItemCount,
+              itemTotalCents: Math.round(parseFloat(data.itemTotalValue || 0) * 100),
+              items:          items,
+            };
             return data.orderID;
           })
           .catch(function (err) {
             _showMsg(err.message || 'Could not create PayPal order. Please try again.', false);
             return Promise.reject(err);
           });
+      },
+
+      // ── Buyer changed their shipping address in the PayPal popup ─────────────
+      onShippingAddressChange: function (data, actions) {
+        var cc = (data.shippingAddress && data.shippingAddress.countryCode) || '';
+        if (cc !== 'US' && cc !== 'CA') {
+          // Reject addresses outside US and Canada
+          return actions.reject();
+        }
+
+        var meta = _orderMeta;
+        if (!meta) return; // nothing to patch if order metadata is missing
+
+        return fetch(SERVER + '/patch-paypal-order', {
+          method:  'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body:    JSON.stringify({
+            orderID:        data.orderID,
+            country:        cc,
+            totalItemCount: meta.totalItemCount,
+            itemTotalCents: meta.itemTotalCents,
+          }),
+        }).then(function (res) {
+          if (!res.ok) return actions.reject();
+        }).catch(function () {
+          return actions.reject();
+        });
       },
 
       // ── Payment approved: capture and show thank-you ─────────────────────────
