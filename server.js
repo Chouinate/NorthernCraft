@@ -40,6 +40,9 @@ app.post('/create-checkout-session', async (req, res) => {
     if (!Array.isArray(items) || items.length === 0) {
       return res.status(400).json({ error: 'Cart is empty.' });
     }
+    if (items.length > 50) {
+      return res.status(400).json({ error: 'Too many items.' });
+    }
     if (!return_url || typeof return_url !== 'string') {
       return res.status(400).json({ error: 'return_url is required.' });
     }

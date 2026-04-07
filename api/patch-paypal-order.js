@@ -7,15 +7,17 @@
  * changes their shipping address inside the PayPal popup.  Called from
  * paypal-checkout.js's onShippingAddressChange handler.
  *
- * Body: { orderID, country, totalItemCount }
- *   orderID        — PayPal order ID to patch
- *   country        — 'US' or 'CA'
- *   totalItemCount — total number of tiles (used to compute shipping)
- *   itemTotalCents — sum of line-item costs in cents (used to rebuild grand total)
+ * Body: { orderID, country, items }
+ *   orderID — PayPal order ID to patch
+ *   country — 'US' or 'CA'
+ *   items   — full cart array (same shape as create-paypal-order).
+ *             itemTotalCents and totalItemCount are re-derived server-side from
+ *             these items; any client-supplied totals are ignored.
  *
  * Returns: { ok: true }
  */
 
+const { canonicalUnitAmountCents } = require('./_prices');
 const { shippingCents } = require('./_shipping');
 
 const PAYPAL_BASE_URL = (process.env.PAYPAL_BASE_URL || 'https://api-m.paypal.com').replace(/\/$/, '');
@@ -46,16 +48,34 @@ module.exports = async (req, res) => {
   if (req.method === 'OPTIONS') return res.status(200).end();
   if (req.method !== 'POST') return res.status(405).json({ error: 'Method not allowed.' });
 
-  const { orderID, country: rawCountry, totalItemCount, itemTotalCents } = req.body;
+  const { orderID, country: rawCountry, items } = req.body;
 
   if (!orderID || typeof orderID !== 'string') {
     return res.status(400).json({ error: 'orderID is required.' });
   }
-  if (typeof totalItemCount !== 'number' || totalItemCount < 1) {
-    return res.status(400).json({ error: 'totalItemCount is required.' });
+  if (!Array.isArray(items) || items.length === 0) {
+    return res.status(400).json({ error: 'items is required.' });
   }
-  if (typeof itemTotalCents !== 'number' || itemTotalCents < 0) {
-    return res.status(400).json({ error: 'itemTotalCents is required.' });
+  if (items.length > 50) {
+    return res.status(400).json({ error: 'Too many items.' });
+  }
+
+  // Reject any item whose id we cannot price server-side.
+  for (const item of items) {
+    if (canonicalUnitAmountCents(item) === null) {
+      return res.status(400).json({ error: `Invalid item: item ID cannot be priced server-side.` });
+    }
+  }
+
+  // Re-derive totals server-side — never trust client-supplied amounts.
+  let itemTotalCents = 0;
+  let totalItemCount = 0;
+  for (const item of items) {
+    const unitCents  = canonicalUnitAmountCents(item);
+    const qty        = Math.max(1, parseInt(item.quantity, 10) || 1);
+    const bundleSize = (item.meta && item.meta.bundleCount) ? parseInt(item.meta.bundleCount, 10) : 1;
+    itemTotalCents  += unitCents * qty;
+    totalItemCount  += qty * Math.max(1, bundleSize);
   }
 
   const country        = rawCountry === 'CA' ? 'CA' : 'US';

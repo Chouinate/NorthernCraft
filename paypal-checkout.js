@@ -252,11 +252,10 @@
           })
           .then(function (data) {
             if (data.error) throw new Error(data.error);
-            // Stash item count and item total for onShippingAddressChange
+            // Stash items and country for onShippingAddressChange
             _orderMeta = {
-              totalItemCount: data.totalItemCount,
-              itemTotalCents: Math.round(parseFloat(data.itemTotalValue || 0) * 100),
-              items:          items,
+              items:   items,
+              country: country,
             };
             return data.orderID;
           })
@@ -281,10 +280,9 @@
           method:  'POST',
           headers: { 'Content-Type': 'application/json' },
           body:    JSON.stringify({
-            orderID:        data.orderID,
-            country:        cc,
-            totalItemCount: meta.totalItemCount,
-            itemTotalCents: meta.itemTotalCents,
+            orderID: data.orderID,
+            country: cc,
+            items:   meta.items,
           }),
         }).then(function (res) {
           if (!res.ok) return actions.reject();
