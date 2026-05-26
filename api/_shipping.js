@@ -25,7 +25,8 @@
      >6.0 lb = 13+ items   PMI heavy
 ─────────────────────────────────────────────────────────────────────────── */
 
-const ITEM_WEIGHT_LB = 0.5;
+const ITEM_WEIGHT_LB       = 0.5;
+const PACKAGE_OVERHEAD_LB  = 0.75;  // box + padding, shared across all items
 
 const EU_COUNTRIES = new Set([
   'GB','IE','FR','DE','IT','ES','PT','NL','BE','AT','CH','LU',
@@ -70,7 +71,7 @@ function usRateCents(itemCount) {
 
 // Canada — USPS FCPI (1–8 items), PMI for 9+
 function canadaRateCents(itemCount) {
-  const w = itemCount * ITEM_WEIGHT_LB;
+  const w = itemCount * ITEM_WEIGHT_LB + PACKAGE_OVERHEAD_LB;
   if (w <= 1.0) return 1200;  // 1–2 items
   if (w <= 2.0) return 1500;  // 3–4 items
   if (w <= 3.0) return 1900;  // 5–6 items
@@ -81,7 +82,7 @@ function canadaRateCents(itemCount) {
 
 // UK + Europe — USPS FCPI (1–8 items), PMI for 9+
 function euRateCents(itemCount) {
-  const w = itemCount * ITEM_WEIGHT_LB;
+  const w = itemCount * ITEM_WEIGHT_LB + PACKAGE_OVERHEAD_LB;
   if (w <= 1.0) return 1900;  // 1–2 items
   if (w <= 2.0) return 2300;  // 3–4 items
   if (w <= 3.0) return 2700;  // 5–6 items
@@ -92,7 +93,7 @@ function euRateCents(itemCount) {
 
 // Asia-Pacific — USPS FCPI (1–8 items), PMI for 9+
 function apRateCents(itemCount) {
-  const w = itemCount * ITEM_WEIGHT_LB;
+  const w = itemCount * ITEM_WEIGHT_LB + PACKAGE_OVERHEAD_LB;
   if (w <= 1.0) return 2000;  // 1–2 items
   if (w <= 2.0) return 2500;  // 3–4 items
   if (w <= 3.0) return 3000;  // 5–6 items
@@ -103,7 +104,7 @@ function apRateCents(itemCount) {
 
 // Rest of world — USPS FCPI (1–8 items), PMI for 9+
 function intlRateCents(itemCount) {
-  const w = itemCount * ITEM_WEIGHT_LB;
+  const w = itemCount * ITEM_WEIGHT_LB + PACKAGE_OVERHEAD_LB;
   if (w <= 1.0) return 2200;  // 1–2 items
   if (w <= 2.0) return 2700;  // 3–4 items
   if (w <= 3.0) return 3300;  // 5–6 items
