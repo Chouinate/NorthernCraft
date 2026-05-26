@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Returns & Refunds — Northern Craft NH</title>
+  <title>Shipping & Returns — Northern Craft NH</title>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,300;1,400&family=Montserrat:wght@300;400;500&display=block" rel="stylesheet" />
@@ -83,8 +83,40 @@
       font-weight: 400;
       line-height: 1.15;
       color: var(--charcoal);
-      margin-bottom: 48px;
+      margin-bottom: 40px;
     }
+
+    /* ── TABS ── */
+    .policy-tabs {
+      display: flex;
+      border-bottom: 1px solid rgba(92,53,69,0.15);
+      margin-bottom: 0;
+    }
+    .tab-btn {
+      background: none;
+      border: none;
+      border-bottom: 2px solid transparent;
+      margin-bottom: -1px;
+      padding: 10px 0;
+      margin-right: 32px;
+      font-family: var(--ff-sans);
+      font-size: 10px;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--text-muted);
+      cursor: pointer;
+      transition: color 0.2s, border-color 0.2s;
+    }
+    .tab-btn.active {
+      color: var(--mauve-dark);
+      border-bottom-color: var(--mauve-dark);
+    }
+    .tab-btn:hover:not(.active) { color: var(--charcoal); }
+
+    /* ── POLICY BLOCKS ── */
+    .tab-content { display: none; }
+    .tab-content.active { display: block; }
+
     .policy-block {
       border-top: 1px solid rgba(92,53,69,0.15);
       padding: 32px 0;
@@ -97,6 +129,10 @@
       line-height: 1.8;
       color: var(--charcoal);
       font-weight: 300;
+    }
+    .policy-block p + p { margin-top: 12px; }
+    .policy-block strong {
+      font-weight: 500;
     }
     .policy-block a {
       color: var(--mauve-dark);
@@ -187,22 +223,55 @@
 
   <div class="page-wrap">
     <p class="page-label">Northern Craft NH</p>
-    <h1>Returns &amp; Refunds</h1>
+    <h1>Shipping &amp; Returns</h1>
 
-    <div class="policy-block">
-      <p>Changed your mind? It happens. If the piece is in original condition, send it back within 14 days and I'll refund you — just cover the return shipping.</p>
+    <div class="policy-tabs">
+      <button class="tab-btn active" data-tab="shipping">Shipping</button>
+      <button class="tab-btn" data-tab="returns">Returns</button>
     </div>
 
-    <div class="policy-block">
-      <p>Arrived damaged? Shoot me a photo and I'll take care of it. Replacement or refund, whatever works for you.</p>
+    <!-- ── SHIPPING ── -->
+    <div id="tab-shipping" class="tab-content active">
+
+      <div class="policy-block">
+        <p>Each piece is made by hand in my spare time — I genuinely appreciate your patience. I usually get things out sooner, but please allow up to 10–14 days for your order to ship.</p>
+      </div>
+
+      <div class="policy-block">
+        <p><strong>United States</strong></p>
+        <p>First item ships for $7. Order two or more and shipping is on me.</p>
+      </div>
+
+      <div class="policy-block">
+        <p><strong>Canada &amp; International</strong></p>
+        <p>Ships via USPS International. Rates are calculated at checkout based on your location and order size. Please note — import duties or taxes may be collected on delivery by your local carrier. Those fees are set by your country and aren't part of your order total.</p>
+      </div>
+
+      <div class="policy-block">
+        <p>Questions about your order? <a href="mailto:nate@northerncraftnh.com">nate@northerncraftnh.com</a></p>
+      </div>
+
     </div>
 
-    <div class="policy-block">
-      <p>Custom pieces are final sale, but if something's not right, reach out. I'll always work with you.</p>
-    </div>
+    <!-- ── RETURNS ── -->
+    <div id="tab-returns" class="tab-content">
 
-    <div class="policy-block">
-      <p>Questions? <a href="mailto:nate@northerncraftnh.com">nate@northerncraftnh.com</a></p>
+      <div class="policy-block">
+        <p>Changed your mind? It happens. If the piece is in original condition, send it back within 14 days of delivery and I'll refund you. Return shipping is at your expense — I'm not able to provide return labels, especially for international orders.</p>
+      </div>
+
+      <div class="policy-block">
+        <p>Arrived damaged? Shoot me a photo and I'll take care of it. Replacement or refund, whatever works best for you.</p>
+      </div>
+
+      <div class="policy-block">
+        <p>Custom pieces are final sale, but if something's not right, reach out. I'll always work with you.</p>
+      </div>
+
+      <div class="policy-block">
+        <p>Questions? <a href="mailto:nate@northerncraftnh.com">nate@northerncraftnh.com</a></p>
+      </div>
+
     </div>
 
     <a href="/" class="back-link">Back to site</a>
@@ -223,6 +292,17 @@
       <p class="footer-copy">© 2026 Northern Craft NH</p>
     </div>
   </footer>
+
+  <script>
+    document.querySelectorAll('.tab-btn').forEach(function (btn) {
+      btn.addEventListener('click', function () {
+        document.querySelectorAll('.tab-btn').forEach(function (b) { b.classList.remove('active'); });
+        document.querySelectorAll('.tab-content').forEach(function (c) { c.classList.remove('active'); });
+        btn.classList.add('active');
+        document.getElementById('tab-' + btn.dataset.tab).classList.add('active');
+      });
+    });
+  </script>
 
 </body>
 </html>

@@ -5,6 +5,8 @@
     }
   },
   "rewrites": [
+    { "source": "/returns",  "destination": "/returns.html" },
+    { "source": "/shipping", "destination": "/returns.html" },
     { "source": "/solstice", "destination": "/index.html" },
     { "source": "/bloom",    "destination": "/index.html" },
     { "source": "/petal",    "destination": "/index.html" },
