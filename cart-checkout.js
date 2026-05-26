@@ -623,30 +623,13 @@
 
   }
 
-  // ── International shipping notice ────────────────────────────────────────────
+  // ── International duties notice ──────────────────────────────────────────
   function _renderIntlNotice(payArea) {
     var notice = document.createElement('p');
     notice.className = 'nc-intl-notice';
-
-    var line1 = document.createTextNode(
-      'We don\u2019t currently offer shipping to your region, but we\u2019d love to help.'
-    );
-    var br1 = document.createElement('br');
-    var line2 = document.createTextNode(
-      'Reach out \u2014 we\u2019re open to custom orders and digital downloads.'
-    );
-    var br2 = document.createElement('br');
-    var br3 = document.createElement('br');
-    var link = document.createElement('a');
-    link.href = 'mailto:nate@northerncraftnh.com';
-    link.textContent = 'nate@northerncraftnh.com';
-
-    notice.appendChild(line1);
-    notice.appendChild(br1);
-    notice.appendChild(line2);
-    notice.appendChild(br2);
-    notice.appendChild(br3);
-    notice.appendChild(link);
+    notice.textContent =
+      'Heads up — your country may collect import duties or taxes on delivery. ' +
+      'These aren’t included in your total.';
     payArea.appendChild(notice);
   }
 
@@ -709,6 +692,7 @@
         var hasPayPal = results[1];
         if (hasStripe || hasPayPal) {
           _renderPaymentOptions(payArea, hasPayPal, hasStripe);
+          if (country !== 'US') _renderIntlNotice(payArea);
         }
       });
     });
