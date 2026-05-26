@@ -551,6 +551,18 @@
       paypal.Buttons({
         style: { layout: 'vertical', color: 'gold', shape: 'rect', label: 'paypal', height: 42 },
 
+        // Validate before the PayPal flow opens so an empty cart shows a
+        // friendly message instead of a generic payment error.
+        onClick: function (data, actions) {
+          var items = typeof window.getCart === 'function' ? window.getCart() : [];
+          if (!items.length) {
+            _showCartError('Your cart is empty.');
+            return actions.reject();
+          }
+          _clearCartError();
+          return actions.resolve();
+        },
+
         createOrder: function (data, actions) {
           _clearCartError();
           var items = typeof window.getCart      === 'function' ? window.getCart()      : [];
