@@ -682,11 +682,6 @@
         });
 
     geoReady.then(function (country) {
-      if (country === 'OTHER') {
-        _renderIntlNotice(payArea);
-        return;
-      }
-
       // Load Stripe and PayPal in parallel; degrade gracefully if either fails
       var stripeReady = _loadStripe().then(function () { return true; })
                                      .catch(function () { return false; });

@@ -1,37 +1,31 @@
 'use strict';
 const Stripe = require('stripe');
 const { canonicalUnitAmountCents } = require('./_prices');
-const { usRateCents, canadaRateCents } = require('./_shipping');
+const { shippingCents, countryToZone, ALLOWED_COUNTRIES } = require('./_shipping');
 
-function shippingOptions(itemCount, country) {
-  if (country === 'CA') {
-    const canadaCents = canadaRateCents(itemCount);
-    return [
-      {
-        shipping_rate_data: {
-          type:         'fixed_amount',
-          fixed_amount: { amount: canadaCents, currency: 'usd' },
-          display_name: 'Standard Shipping (Canada)',
-          delivery_estimate: {
-            minimum: { unit: 'business_day', value: 10 },
-            maximum: { unit: 'business_day', value: 21 },
-          },
-        },
-      },
-    ];
-  }
+function shippingOptions(itemCount, countryCode) {
+  const zone  = countryToZone(countryCode);
+  const cents = shippingCents(itemCount, countryCode);
 
-  // Default: US
-  const usCents = usRateCents(itemCount);
+  const ZONE_LABELS = {
+    US:   { name: cents === 0 ? 'Free Shipping (US)' : 'Standard Shipping (US)',       min: 5,  max: 10 },
+    CA:   { name: 'Standard Shipping (Canada)',                                          min: 10, max: 21 },
+    EU:   { name: 'Standard Shipping (UK & Europe)',                                     min: 10, max: 21 },
+    AP:   { name: 'Standard Shipping (Asia-Pacific)',                                    min: 14, max: 28 },
+    INTL: { name: 'Standard Shipping (International)',                                   min: 14, max: 28 },
+  };
+
+  const label = ZONE_LABELS[zone] || ZONE_LABELS.INTL;
+
   return [
     {
       shipping_rate_data: {
         type:         'fixed_amount',
-        fixed_amount: { amount: usCents, currency: 'usd' },
-        display_name: usCents === 0 ? 'Free Shipping (US)' : 'Standard Shipping (US)',
+        fixed_amount: { amount: cents, currency: 'usd' },
+        display_name: label.name,
         delivery_estimate: {
-          minimum: { unit: 'business_day', value: 5 },
-          maximum: { unit: 'business_day', value: 10 },
+          minimum: { unit: 'business_day', value: label.min },
+          maximum: { unit: 'business_day', value: label.max },
         },
       },
     },
@@ -56,10 +50,9 @@ module.exports = async (req, res) => {
     return res.status(400).json({ error: 'return_url is required.' });
   }
 
-  if (country === 'OTHER') {
-    return res.status(400).json({ error: 'Shipping is not available in your region.' });
-  }
-  const resolvedCountry = country === 'CA' ? 'CA' : 'US';
+  const countryCode = (typeof country === 'string' && country.match(/^[A-Z]{2}$/))
+    ? country
+    : 'US';
 
   // Reject any item whose id we cannot price server-side.
   for (const item of items) {
@@ -68,7 +61,6 @@ module.exports = async (req, res) => {
     }
   }
 
-  // Total item count — use explicit value from client, fall back to summing quantities
   const totalItems = Number.isInteger(itemCount) && itemCount > 0
     ? itemCount
     : items.reduce((sum, i) => sum + (parseInt(i.quantity, 10) || 1), 0);
@@ -81,7 +73,7 @@ module.exports = async (req, res) => {
           name: String(item.name),
           ...(item.image ? { images: [String(item.image)] } : {}),
         },
-        unit_amount: canonicalUnitAmountCents(item), // server-authoritative; client price ignored
+        unit_amount: canonicalUnitAmountCents(item),
       },
       quantity: Math.max(1, parseInt(item.quantity, 10) || 1),
     }));
@@ -92,14 +84,13 @@ module.exports = async (req, res) => {
       line_items,
       return_url,
       billing_address_collection:  'required',
-      shipping_address_collection: { allowed_countries: [resolvedCountry] },
-      shipping_options:            shippingOptions(totalItems, resolvedCountry),
+      shipping_address_collection: { allowed_countries: ALLOWED_COUNTRIES },
+      shipping_options:            shippingOptions(totalItems, countryCode),
     };
 
     if (Array.isArray(payment_method_types) && payment_method_types.length > 0) {
       sessionParams.payment_method_types = payment_method_types;
     }
-    // automatic_payment_methods is the default in newer Stripe API versions — no need to set it
 
     const session = await stripe.checkout.sessions.create(sessionParams);
     res.json({ clientSecret: session.client_secret });

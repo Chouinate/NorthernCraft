@@ -56,7 +56,9 @@ module.exports = async (req, res) => {
     return res.status(400).json({ error: 'Cart is empty.' });
   }
 
-  const country = rawCountry === 'CA' ? 'CA' : 'US';
+  const country = (typeof rawCountry === 'string' && rawCountry.match(/^[A-Z]{2}$/))
+    ? rawCountry
+    : 'US';
 
   // Reject any item whose id we cannot price server-side.
   for (const item of items) {

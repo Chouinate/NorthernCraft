@@ -58,7 +58,9 @@ module.exports = async (req, res) => {
     return res.status(400).json({ error: 'itemTotalCents is required.' });
   }
 
-  const country        = rawCountry === 'CA' ? 'CA' : 'US';
+  const country = (typeof rawCountry === 'string' && rawCountry.match(/^[A-Z]{2}$/))
+    ? rawCountry
+    : 'US';
   const shippingVal    = shippingCents(totalItemCount, country);
   const grandTotal     = ((itemTotalCents + shippingVal) / 100).toFixed(2);
   const itemTotalValue = (itemTotalCents / 100).toFixed(2);
