@@ -969,7 +969,6 @@
         .then(function (d) {
           window.NC_COUNTRY = d.country || 'US';
           _updateShippingNotice();
-          if (window.NC_COUNTRY === 'OTHER') { _showIntlPopup(); }
         })
         .catch(function () {
           window.NC_COUNTRY = 'US';
@@ -1259,8 +1258,8 @@
   function _updateShippingNotice() {
     if (!shippingNoticeEl) return;
 
-    // Don't show US-specific free-shipping messaging to international visitors.
-    if (window.NC_COUNTRY && window.NC_COUNTRY !== 'US' && window.NC_COUNTRY !== 'CA') {
+    // Free-shipping messaging only applies to US orders.
+    if (window.NC_COUNTRY && window.NC_COUNTRY !== 'US') {
       shippingNoticeEl.style.display = 'none';
       return;
     }

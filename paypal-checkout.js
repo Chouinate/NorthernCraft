@@ -235,9 +235,7 @@
           return Promise.reject(new Error('Cart is empty.'));
         }
 
-        var country = (window.NC_COUNTRY === 'CA' || window.NC_COUNTRY === 'US')
-          ? window.NC_COUNTRY
-          : 'US';
+        var country = window.NC_COUNTRY || 'US';
 
         return fetch(SERVER + '/create-paypal-order', {
           method:  'POST',
@@ -269,10 +267,6 @@
       // ── Buyer changed their shipping address in the PayPal popup ─────────────
       onShippingAddressChange: function (data, actions) {
         var cc = (data.shippingAddress && data.shippingAddress.countryCode) || '';
-        if (cc !== 'US' && cc !== 'CA') {
-          // Reject addresses outside US and Canada
-          return actions.reject();
-        }
 
         var meta = _orderMeta;
         if (!meta) return; // nothing to patch if order metadata is missing
