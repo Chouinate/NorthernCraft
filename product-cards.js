@@ -703,9 +703,13 @@
     if (icon) icon.click();
   }
 
-  /* ── auto-open product from URL path (e.g. /summit) ─────────────── */
+  /* ── auto-open product from URL (?product=solstice or /summit) ──── */
   function autoOpenFromPath() {
-    var slug = window.location.pathname.replace(/^\//, '').split('/')[0].toLowerCase();
+    var params = new URLSearchParams(window.location.search);
+    var slug = (params.get('product') || '').toLowerCase();
+    if (!slug) {
+      slug = window.location.pathname.replace(/^\//, '').split('/')[0].toLowerCase();
+    }
     if (!slug) return;
     var card = document.querySelector('.product-card[data-id="' + slug + '"]');
     if (!card) return;
