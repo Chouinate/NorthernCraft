@@ -10,7 +10,7 @@
    Above that, Priority Mail International applies (9–12 items).
    Verify heavy tiers (≤6 lb, >6 lb) at https://app.pirateship.com/get-rates
 
-   US:   1 item = $7  |  2+ items = free shipping
+   US:   1–3 items = $10 flat  |  4+ items = free shipping
    CA:   weight-based tiers (USPS FCPI / PMI)
    EU:   UK + Europe, weight-based tiers
    AP:   Australia, NZ, Japan, Korea, Singapore, HK, Taiwan, SE Asia
@@ -66,7 +66,7 @@ function countryToZone(code) {
 }
 
 function usRateCents(itemCount) {
-  return itemCount >= 2 ? 0 : 700;
+  return itemCount >= 4 ? 0 : 1000;
 }
 
 // Canada — USPS FCPI (1–8 items), PMI for 9+

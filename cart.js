@@ -1269,7 +1269,7 @@
     }, 0);
     if (totalQty === 0) {
       shippingNoticeEl.style.display = 'none';
-    } else if (totalQty >= 2) {
+    } else if (totalQty >= 4) {
       shippingNoticeEl.style.display = '';
       shippingNoticeEl.className = 'nc-cart-shipping-notice earned';
       shippingNoticeEl.innerHTML = '';
@@ -1279,7 +1279,10 @@
       shippingNoticeEl.style.display = '';
       shippingNoticeEl.className = 'nc-cart-shipping-notice promo';
       shippingNoticeEl.innerHTML = '';
-      shippingNoticeEl.appendChild(document.createTextNode('Free shipping when you buy 2 or more'));
+      var remaining = 4 - totalQty;
+      shippingNoticeEl.appendChild(document.createTextNode(
+        'Add ' + remaining + ' more for free shipping'
+      ));
       shippingNoticeEl.appendChild(_makeInfoBtn());
     }
   }
